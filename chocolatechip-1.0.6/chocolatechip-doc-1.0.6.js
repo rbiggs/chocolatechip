@@ -1431,4 +1431,4 @@ Redistributions in binary form must reproduce the above copyright notice, this l
     	window.__$ = $;
     	window.__$$ = $.$$;
     }
-})(); 
+})( ); 
