@@ -387,14 +387,6 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 		},
 		
 		anim : function ( options, duration, easing ) {
-			if (options.onstart) {
-				options.onstart();
-			}
-			if (options.onend) {
-				if (null) {
-					options.onend();
-				}
-			}
 			var value = "-webkit-transition: all " + (duration + " " || ".5s ") + easing + ";" || "" + ";";
 			for (prop in options) {
 				value += prop + ":" + options[prop] + ";";
