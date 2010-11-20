@@ -326,14 +326,15 @@ Redistributions in binary form must reproduce the above copyright notice, this l
     $.extend(String.prototype, {
     	
 		capitalize : function ( ) {
+			var str = this;
 			return this.charAt(0).toUpperCase() + this.substring(1).toLowerCase();
 		},
 		
 		capitalizeAll : function ( ) {
 			var str = this.split(" ");
 			newstr = [];
-			str.forEach(function(item) {
-				newstr.push($.capitalize(item));
+			newstr.forEach(function(item) {
+				newstr.push(item.capitalize());
 			});
 			return newstr.join(" ");
 		}

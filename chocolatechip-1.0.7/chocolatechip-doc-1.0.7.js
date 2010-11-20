@@ -1061,8 +1061,9 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 		*  var name = $.capitalize("robert"); // returns Robert
 		*
 		*/
-		capitalize : function ( string ) {
-			return string.charAt(0).toUpperCase() + string.substring(1).toLowerCase();
+		capitalize : function ( ) {
+			var str = this;
+			return str.charAt(0).toUpperCase() + str.substring(1).toLowerCase();
 		},
 		
 		/** 
@@ -1089,13 +1090,13 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 		*  var name = $.capitalize("get out now"); // returns Get Out Now
 		*
 		*/
-		capitalizeAll : function ( string ) {
-			string = string.split(" ");
-			newstring = [];
-			string.forEach(function(item) {
-				newstring.push($.capitalize(item));
+		capitalizeAll : function ( ) {
+			str = this.split(" ");
+			newstr = [];
+			str.forEach(function(item) {
+				newstr.push(item.capitalize());
 			});
-			return newstring.join(" ");
+			return newstr.join(" ");
 		}
     });
     
