@@ -320,22 +320,24 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 	$.extend($, {
 		style : function ( element, property ) {
 			return document.defaultView.getComputedStyle(element, null).getPropertyValue(property.toLowerCase());
-		},
-    	
-		capitalize : function ( string ) {
-			return string.charAt(0).toUpperCase() + string.substring(1).toLowerCase();
-		},
-		
-		capitalizeAll : function ( string ) {
-			string = string.split(" ");
-			newstring = [];
-			string.forEach(function(item) {
-				newstring.push($.capitalize(item));
-			});
-			return newstring.join(" ");
 		}
     });
-	
+    
+    $.extend(String.prototype, {
+    	
+		capitalize : function ( ) {
+			return this.charAt(0).toUpperCase() + this.substring(1).toLowerCase();
+		},
+		
+		capitalizeAll : function ( ) {
+			var str = this.split(" ");
+			newstr = [];
+			str.forEach(function(item) {
+				newstr.push($.capitalize(item));
+			});
+			return newstr.join(" ");
+		}
+    });
     
 	$.extend(HTMLElement.prototype, {
 		css : function ( styles, replace ) {
