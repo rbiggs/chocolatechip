@@ -14,9 +14,9 @@ ChocolateChip version 1.0.8
 4. Refactored the Element.css method to return the computed style of a CSS property. The functionality was provided by the $.style method, but since it's directly implemented on the element, you only need to pass the CSS property whose value you wish to retrieve:
    console.log("The font color is: " + $("#item").css("color"));
 
-5. Added new method: Element.top(). This method returns the computed offset top of the element relative to the top of the document.
+5. Added new method: Element.getTop(). This method returns the computed offset top of the element relative to the top of the document.
 
-6. Added new method: Element.left(). This method returns the computed offset left of the element relative to the left side of the document.
+6. Added new method: Element.getLeft(). This method returns the computed offset left of the element relative to the left side of the document.
 
 7. Added new method: String.capitalize(). This method capitalizes the first character of a string.
 
