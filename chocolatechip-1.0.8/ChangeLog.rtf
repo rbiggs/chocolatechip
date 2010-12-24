@@ -24,15 +24,11 @@ ChocolateChip version 1.0.8\
 \
 6. Added new method: Element.getLeft(). This method returns the computed offset left of the element relative to the left side of the document.\
 \
-7. Added new method: String.capitalize(). This method capitalizes the first character of a string.\
+7. Refactored $.ready method to only register one DOMContentLoaded event event when multiple instances of the $.ready method are invoked. It does this by using a new $.DOMReadyList array to hold each instance of the $.ready method, and a new method -- $.executeWhenDOMReady() -- which iterates over the $. DOMReadyList array of functions to execute and finally removes the DOMContentLoaded event from the document.\
 \
-8. Added new method: String.capitalizeAll(). This method capitalizes the first character of every word in a string.\
+8. Added new method: Element.data. This method can take two parameters, the last of which is optional. The method allows getting and setting HTML5 dataset values on an element. If the browser doesn't yet support the HTML5 dataset API, the method provides a workaround using regular attribute methods. The two parameters are key and value. If value is not supplied, the method returns the value of the key passed. If key and value are passed, the method sets those dataset pairs, prefixing the key with "data-". By default all datasets are prefixed with "data-", so $("#item").data("first-name", "John") would add the dataset: data-first-name="John" to the element.\
 \
-9. Refactored $.ready method to only register one DOMContentLoaded event event when multiple instances of the $.ready method are invoked. It does this by using a new $.DOMReadyList array to hold each instance of the $.ready method, and a new method -- $.executeWhenDOMReady() -- which iterates over the $. DOMReadyList array of functions to execute and finally removes the DOMContentLoaded event from the document.\
-\
-10. Added new method: Element.data. This method can take two parameters, the last of which is optional. The method allows getting and setting HTML5 dataset values on an element. If the browser doesn't yet support the HTML5 dataset API, the method provides a workaround using regular attribute methods. The two parameters are key and value. If value is not supplied, the method returns the value of the key passed. If key and value are passed, the method sets those dataset pairs, prefixing the key with "data-". By default all datasets are prefixed with "data-", so $("#item").data("first-name", "John") would add the dataset: data-first-name="John" to the element.\
-\
-11. Added new method: Element.removeData. This method removes the dataset indicated by the passed parameter key. To remove the dataset from the above example, you would use: $("#item").removeData("first-name");\
+9. Added new method: Element.removeData. This method removes the dataset indicated by the passed parameter key. To remove the dataset from the above example, you would use: $("#item").removeData("first-name");\
 \
 Nov 18, 2010\
 ChocolateChip version 1.0.7\
