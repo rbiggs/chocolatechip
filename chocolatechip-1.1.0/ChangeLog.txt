@@ -1,0 +1,264 @@
+Change Log
+Jan 18, 2011
+ChocolateChip version 1.1.0
+=======================================
+1. Refactored $ method to fix error where its sometimes failed to return node when no context was supplied.
+
+2. Refactored the orientation method to execute when the DOMContentLoaded event fires. It also executes on the desktop when there is a window resize. This is to facility desktop development simulating orientation change by resizing the window.
+
+3. Refactored Element.xhr to handle exception thrown by Element.jsonxhr when there no callback for error handling.
+
+4. Added new method: $.setLocalStorage to add a key/value pair to localStorage.
+
+5. Added new method: $.getLocalStorage to get the value of a localStorage key.
+
+6. Added new method: $ removeLocalStorage to remove the passed key from localStorage.
+
+Jan 15, 2011
+ChocolateChip version 1.0.9
+=======================================
+1.  Refactored Element.delegate() method to get around child elements preventing event bubbling from reaching the delegate parent target. Now when you designate the element to receive the event, if the event target is a child or descendant node, the event will bubble up until it reaches the designated element and then fire the callback.
+
+2. Fixed bug in Element.anim where style transitions were't working with newly refactored Element.css method from ChocolateChip version 1.0.8.
+
+Dec 23, 2010
+ChocolateChip version 1.0.8
+=======================================
+1. Removed $.style method and rolled its functionality into the Element.css method.
+
+2. Refactored the Element.css method to handle property/value pairs for set styles:
+    ${"#item").css("color", "red");
+
+3. Refactored the Element.css method to accept a string of multiple property/value pairs delimited by curly braces and quotes:
+   $("#item").css("{ font-size: 24px; color: blue; background-color: yellow; }");
+
+4. Refactored the Element.css method to return the computed style of a CSS property:
+   console.log("The font color is: " + $("#item").css("color"));
+
+5. Added new method: Element.top(). This method returns the computed offset top of the element relative to the top of the document.
+
+6. Added new method: Element.left(). This method returns the computed offset left of the element relative to the left side of the document.
+
+7. Added new method: String.capitalize(). This method capitalizes the first character of a string.
+
+8. Added new method: String.capitalizeAll(). This method capitalizes the first character of every word in a string.
+
+9. Refactored $.ready method to only register one DOMContentLoaded event event when multiple instances of the $.ready method are invoked. It does this by using a new $.DOMReadyList array to hold each instance of the $.ready method, and a new method -- $.executeWhenDOMReady() -- which iterates over the $. DOMReadyList array of functions to execute and finally removes the DOMContentLoaded event from the document.
+
+10. Added new method: Element.data. This method can take two parameters, the last of which is optional. The method allows getting and setting HTML5 dataset values on an element. If the browser doesn't yet support the HTML5 dataset API, the method provides a workaround using regular attribute methods. The two parameters are key and value. If value is not supplied, the method returns the value of the key passed. If key and value are passed, the method sets those dataset pairs, prefixing the key with "data-". By default all datasets are prefixed with "data-", so $("#item").data("first-name", "John") would add the dataset: data-first-name="John" to the element.
+
+11. Added new method: Element.removeData. This method removes the dataset indicated by the passed parameter key. To remove the dataset from the above example, you would use: $("#item").removeData("first-name");
+
+Nov 18, 2010
+ChocolateChip version 1.0.7
+=======================================
+1. Refactored $.insert method to one third size.
+
+2. Added new method: $.capitalize(string). This method capitalizes the first letter of a string.
+
+3. Added new method: $.capitalizeAll(string). This method capitalizes every word in a string.
+
+4. Added new method: Element.delegate(selector, event, callback). Call this method on a element to use as the listener for selectors, events and callbacks on its descendants defined by selector.
+
+5. Added new method: Element.trigger(event). Call this method on an element to fire an event on another element.
+
+6. Added new method: Element.ancestorByPosition(position). This method returns the ancestor designated by the position(integer) supplied. If no position is supplied, the method returns the immediate ancestor. If the number is greater than the number of actual ancestors, the body tag is returns as the ancestor.
+
+7. Added new method: Element.anim(options, duration, easing). Call this method on an element to trigger CSS transitions. Options are the property/values to animate, duration is the time the animation should last. If no easing is supplied, it defaults to linear easing (none).
+
+8. Added new method: $.delay(function, time). This sets the amount of time to wait before executing the passed in function.
+
+9. Added new method: $.defer(function). This postpones the execution of a function until the callstack is clear. A deferred function will execute after all other code has executed, unless there is some code with a delay timer.
+
+10. Added new method: $.enclose(function, enclosure). The method allows you to enclose one function inside another so that you can do something before and after the passed in function is executed.
+
+11. Added new method: $.compose(function, function, etc.). This method passes in functions as arguments consumed by the previous function. Each argument is passed to the preceding function, right to left.
+
+12. Added new method: $.template(string, data). This is based on John Resig's JavaScript Micro Template framework (http://ejohn.org). It allows for JavaScript-parsed templates that consume JSON data.
+
+13. Added in support for Function.prototype.bind for earlier versions of Webkit.
+ 
+Nov 7, 2010
+ChocolateChip version 1.0.6
+=======================================
+
+1. Refactored library to use EcmaScript 5's Object.defineProperty() method to create and extend ChocolateChip's objects.
+
+Oct 10, 2010 
+ChocolateChip version 1.0.5
+=======================================
+1. After a lot of trouble sorting out issues caused by merging $ and $$, I've reverted to keeping theme separate again. Now $ always returns a single node and $$ returns an iterable array, as in previous versions of ChocolateChip.
+
+2. Added new method: Element.delegate(selector, event, callback). This allow you to listen for events and execute callbacks on the descendant nodes of the element designated by the selector supplied.
+
+3. Added check for the existence of $ and $$ in the global namespace before returning them. If they already exist, the are aliased as __$ and __$$. This allows the user to use other libraries that use these aliases. The user can assign __$ and __$ to whatever aliases he or she chooses.
+
+Sep 25, 2010 
+ChocolateChip version 1.0.4
+=======================================
+1. Refactored $ method to include the functionality of $$. $ can return a single node or an iterable  array of nodes, depending on the selector supplied. collectionToArray is now a private method of $. If a single node is returned, you can treat it like a normal single DOM node, attaching methods directly to it:
+    $("#menu").css("display:none");
+If $ returns a collection, you can iterate over it like $$ did:
+    $("p").forEach(function( p ) {
+        p.css("background-color: yellow");
+    });
+Iteration will always fail if $ returns a single node, so you will need to check the results where the number of nodes is dynamic and can vary from one to many:
+    var p = $.("p");
+    if (p.length) {
+        $("p").forEach(function( p ) {
+            p.css("background-color: yellow");
+        });
+    } else {
+        p.css("background-color: yellow");
+    }
+
+2. Changed $.getStyle to just $.style. Left $.getStyle as alias for $.style for backwards compatibility.
+
+3. Added global alias $$ for $ for backwards compatibility.
+
+4. Added the following properties which return true or false: iphone, ipad, ipod, android, webs, blackberry, online, standalone.
+
+Sep 16, 2010
+ChocolateChip version 1.0.3
+=======================================
+1. Refactored Element.first(), Element.last(),  to use EcmaScript 5' firstElementChild and lastElementChild properties instead of the children property(a little more straightforward) to eliminate need to check for empty text nodes.
+
+2. Added new method: $.importScript(url). This imports the script at the supplied url and inserts it into the header tag so that it gets parsed immediately.
+
+3. Refactored Element.empty() to simply set the element's textContent to empty. Same result as removing child nodes one by one, but more efficient.
+
+4. Refacted Element.insert() to use EcmaScript 5's new relational node properties to eliminate the need for checking for empty text nodes.
+
+Aug 30, 2010
+ChocolateChip version 1.0.2
+=======================================
+1. Refactored Element.first(), Element.last(),  to use EcmaScript 5' children property to eliminate need to check for empty text nodes.
+
+2. Added new method: Element.child(position), which returns the child node based not the supplied position.
+
+3. Refactored Element.previous() and Element.next() to use EcmaScript 5's previousElementSibling and nextElementSibling properties to avoid the need to check for empty text nodes.
+
+
+Aug 12, 2010
+ChocolateChip version 1.0.1
+=======================================
+1. Refactored Element.remove() to remove all events before deleting the node.
+
+2. Element.fill() now deletes the elements child nodes and uses insert to create HTML nodes if the supplied string defines HTML content.
+
+3. Refactored Element.text() to return the innerText of the element or, if a string is supplied, replaces the element's existing innerText with the new text.
+
+4. Refactored all for loops as while or do/while loops for performance boost.
+
+5. Added new method: Element.ancestorTag(selector). This finds the first instance of the ancestor of the element based on the supplied tag.
+
+6. Added new method: Element.ancestorClass(selector). This finds the first instance of the ancestor of the element based on the supplied class.
+
+7. Added new method: Element.bind(event, callback) for binding events to elements. This is a convenience method for addEventListener.
+
+8. Added new method: Element.unbind(event, callback) for unbinding events from an element.
+
+Aug 7, 2010
+ChocolateChip version 1.0
+=======================================
+1. After a lot of testing, I decided to revert to a simpler approach for ChocolateChip. All methods that affect elements are attached to elements by extending their prototypes. Otherwise, other methods are attached directly to the $ object.
+
+2. Reverted to $ method for returning single nodes.
+
+3. Added new method: $.collectionToArray(collection). This returns the supplied collection as an array.
+
+4. Updated $$ to use $. collectionToArray() to convert the found nodes into an array, which it returns. This allows you to use array extras, such as foreEach, etc. directly on the returned result of the method. For example: 
+$$("p").forEach(function(p) {
+	p.css("background-color: yellow");
+});
+
+5. The following methods are attached directly to the $ object: make, getStyle, loadEvent, unload, loadPage, ready, events, 
+
+6. $ and $$ are passed out as global properties on the window object.
+
+7. The following methods are used to extend the prototype of the HTMLElement's prototype: hasClass, addClass, removeClass, toggleClass, remove, empty, removeEvents, fill, text, css, previous, next, insert, before, after, clone, wrap, unwrap, xhr, xhrjson.
+
+8. Omitted the ChocolateChip.on() method in favor of using native addEventListener and removeEventListener for managing events.
+
+May 10, 2010
+ChocolateChip beta 2
+=======================================
+1. Created new constructor for framework: ChocolateChip(selector). This gets returns as $ on the window object.
+
+2. Added new method: ChocolateChip.extend(property). This allows you to extend ChocolateChip with properties or methods chained to ChocolateChip's prototype.
+
+3. Added new method: ChocolateChip.find(selector). This returns a collection of nodes defined by the selector.
+
+4. Added new method: ChocolateChip.first(). This returns the first node of a collection.
+
+5. Added new method: ChocolateChip.last(). This returns the last node of a collection.
+
+6. Added new method: ChocolateChip.prev(). This returns the previous node of the element.
+
+7. Added new method: ChocolateChip.next(). This returns the next node after the element.
+
+8. Added new method: ChocolateChip.children(). Returns a collection of an element's child nodes.
+
+9. Added new method: ChocolateChip.size(). Returns the length of a collection.
+
+10. Added new method: ChocolateChip.clone(). Creates a clone of the element.
+
+11. Added new method: ChocolateChip.replace(newElem, oldElem). Replaces the old element with the new element.
+
+12. Added new method: ChocolateChip.wrap(element, string). Converts the string into a DOM node and wraps it around the element.
+
+13. Added new method: ChocolateChip.unwrap(element). Removes the parent node of the element.
+
+14. Added new method: ChocolateChip.insert(content, position). Inserts content at the designated position. If content is a string, it converts the string into DOM nodes. If no position is supplied, it appends the content on the element. This method can except to convenient positions: "first" and "last".
+
+15. Added new method: ChocolateChip.attr(attribute, value). This method sets the attribute and value on the element. If no value is supplied, it returns the value of the supplied attribute.
+
+16. Added new method: ChocolateChip.setStyle(property, value). Sets the supplied CSS property and value as an inline style on the element.
+
+17. Added new method: ChocolateChip.getStyle(property). Returns the computed value of the supplied CSS property.
+
+18. Added new method: ChocolateChip.css(string). Sets the element's style.cssText value to the CSS properties and values defined in the supplied string.
+
+19. Added new method: ChocolateChip.on(event). Adds supplied event to the element. 
+
+20. Added new method: ChocolateChip.removeEvents(element). Removes all events in a predetermined list from the element.
+
+21. Added new method: ChocolateChip.xhr(url, options). Basic XMLHttpRequest method to return the requested data.
+
+22. Added new method: ChocolateChip.xhrjson(url, options). Uses ChocolateChip.xhr() method to retrieve and parse JSON data.
+
+March 28, 2010
+ChocolateChip beta 1
+=======================================
+1. Create basic shell for framework for ChocolateChip with "cc" as alias. ChcolateChip has the following methods:
+
+2. $(selector) returns the first instance the supplied selector.
+
+3. $$(selector) returns a HTML collection of all instances of the selector.
+
+4. cc.make(string) returns DOM nodes created from the string of valid HTML markup.
+
+5. cc.loadPage(function) chain loads functions on the window.onload event.
+
+6. cc.ready(function) executes the passed function code block when the DOM is ready for access.
+
+ChocolateChip extends the prototype of the HTMLElement with the following methods:
+
+7. Element.hasClassName. Allows you to check if the element has the supplied class.
+
+8. Element.addClassName. Adds the supplied class to the element.
+
+9. Element.removeClassName. Removes the supplied class if it is present.
+
+10. Element.toggleClassName. If one class is supplied, the method toggles it on and off on the element. If two classes are supplied, it adds the first, then toggles with the second.
+
+11. Element.text() returns the text of the element and its child nodes.
+
+12. Element.getStyle(property) returns the computed style of the property on the element.
+
+13. Element.remove() removes the element from the document.
+
+14. Element.empty() removes all child nodes from the element.
+
+15. Element.fill(string) replaces the element's child nodes with the supplied string (plain text).
+
