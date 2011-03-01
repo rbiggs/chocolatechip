@@ -15,7 +15,7 @@
 * 
 * LICENSE: BSD
 *
-* Version: 1.0.6
+* Version 1.0.7
 * 
 * Copyright (c) 2010, Robert Biggs
 * All rights reserved.
@@ -30,6 +30,7 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 */
 
 (function() {
+
 	/** 
 	* 
 	* This method uses querySelectorAll to the designated node or nodes. In the case of a singular node, it returns just that node. If there are more than one matching elements, it returns a DOM collection as an array. It uses a private method $.collectionToArray to convert the collection of nodes into an array.
@@ -43,10 +44,12 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 	* syntax:
 	*
 	*  $(selector);
+	*  $(selector, context);
 	*
 	* arguments:
 	*
-	* - string:string A string defining a valid CSS selector.
+	* - selector:string A string defining a valid CSS selector.
+	* - context:string A string defining a valid CSS selector or an actual node.
 	* 
 	* @return {Node} Returns the node found by querySelectorAll. 
 	* 
@@ -54,12 +57,20 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 	*
 	*  var item = $("#item");
 	*  var menuItems = $(".menu > li");
-	*  $("section > p").forEach(function(p) {
-			p.css("color: red; background-color: yellow; padding: 10px;");
-	   });
+	*  $("section > p:first-of-type").css("color: red; background-color: yellow; padding: 10px;");
+	*  var list = $("ul", mainList);
 	*
 	*/
-    var $ = function ( selector ) {
+    var $ = function ( selector, context ) {
+    	if (!!context) {
+    		if (typeof context === "string") {
+				return document.querySelector(context + " " + selector);
+    		} else if (context.nodeType === 1) {
+    			return context.querySelector(selector);
+    		} 
+    	} else {
+    		return document.querySelector(selector);
+    	}
 		return document.querySelector(selector);
 	};
 	
@@ -100,23 +111,23 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 	   $("p:first-of-type").sing("Even a paragraph can sing!");
 	*/
     $.extend = function(obj, properties) {
-	  for (var prop in properties) {
-		if (properties.hasOwnProperty(prop)) {
-		  Object.defineProperty(obj, prop, {
-			value: properties[prop],
-			writable: true,
-			enumerable: false,
-			configurable: true
-		  });
-		}
-	  }
+		Object.keys(properties).forEach(function(prop) {
+       		if (properties.hasOwnProperty(prop)) {
+       			Object.defineProperty(obj, prop, {
+       				value: properties[prop],
+					writable: true,
+					enumerable: false,
+					configurable: true
+       			});
+       		}
+       	});
 	};
 	
 	$.extend($, {
 		/**
 		* The version of ChocolateChip
 		*/
-		version : "1.0.6",
+		version : "1.0.7",
 		
 		/** 
 		* 
@@ -166,10 +177,12 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 		* syntax:
 		*
 		*  $$(selector);
+		*  $$(selector, context);
 		*
 		* arguments:
 		*
 		* - string:string A string defining a valid CSS selector.
+	    * - context:string A string defining a valid CSS selector or an actual node.
 		* 
 		* @return {Array} Returns array of nodes found by querySelectorAll. 
 		* 
@@ -182,8 +195,16 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 		*
 		*/
 		
-		$$ : function ( selector ) {
-			return $.collectionToArray(document.querySelectorAll(selector));
+		$$ : function ( selector, context ) {
+			if (!!context) {
+				if (typeof context === "string") {
+					return $.collectionToArray(document.querySelectorAll(context + " " + selector));
+				} else if (context.nodeType === 1){
+					return $.collectionToArray(context.querySelectorAll(selector));
+				}
+			} else {
+				return $.collectionToArray(document.querySelectorAll(selector));
+			}
 		}
     });
     
@@ -336,6 +357,46 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 			} else {
 				return p.ancestorByClass(selector);
 			}
+		},
+		
+		/** 
+		* 
+		* This method return the first ancestor to match the position passed as an argument. This method is attached directly to the Element object. If no position is supplied, the method returns the immediate ancestor. If the position is greater than the actual number of ancestors, the method returns the body tag as the topmost ancestor.
+		*
+		* @method
+		* 
+		* ### ancestorByPosition
+		*
+		* @param {Integer} An integer indicating the position of the ancestor to find.
+		*
+		* syntax:
+		*
+		*  Element.ancestorByPosition(position);
+		* 
+		* arguments:
+		*
+		* - Integer:Integer An integer indicating the position of the ancestor to find.
+		*
+		* @return {Node} Returns matched ancestor node. 
+		* 
+		* example:
+		*
+		*  var ancestor = $("#item").ancestorByPosition(3);
+		*
+		*/
+		ancestorByPosition : function ( position ) {
+			position = position || 1;
+			var ancestor = this.parentNode;
+            for (var i = 1; i < position; i++) {
+            	if (ancestor.nodeName === "BODY") {
+            		return ancestor;
+            	} else {
+					if (ancestor != null) {
+						ancestor = ancestor.parentNode;
+					}
+				}
+            }
+            return ancestor;
 		}
     });
     
@@ -669,71 +730,33 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 		*
 		*/
 		insert : function ( content, position ) {
-			if (position === 1 || (typeof position === "string" && position === "first")) {
-			   if (typeof content === "string") {
-					var c = $.make(content);
-					var i = 0, len = c.length;
-					while (i < len) {
-						this.insertBefore(c[i], this.firstElementChild);
-						i++;
-					}
-				} else {
-					var i = 0, len = content.length;
-					while (i < len) {
-						this.insertBefore(content[i], this.firstElementChild);
-						i++;
-					}
-				}
-			} else if (!position || (typeof position === "string" && position === "last")) {
-			   if (typeof content === "string") {
-					  var c = $.make(content);
-					  var i = 0, len = c.length;
-					  while (i < len) {
-						this.appendChild(c[i]);
-						i++;
-					  }
-				  } else {
-					  var i = 0, len = content.length;
-					  while (i < len) {
-						this.appendChild(content[i]);
-						i++;
-					  }
-				  }
+			var c = "";
+			if (typeof content === "string") {
+				c = $.make(content);
+			} else if (content.nodeType === 1) {
+				c = [];
+				c.push(content);
 			} else {
-				var kids = this.children(el);
-				if (typeof kids === "undefined") {
-					if (typeof content === "string") {
-						 var c = $.make(content);
-						 var i = 0, len = c.length;
-						 while (i < len) {
-							this.appendChild(c[i]);
-							i++;
-						 }
-					 } else {
-						  var i = 0, len = content.length;
-						  while (i < len) {
-							 this.appendChild(content[i]);
-							 i++;
-						  }
-					 } 
-				} else {
-					if (typeof content === "string") {
-						var c = $.make(content);
-						var i = 0, len = c.length;
-						while (i < len) {
-							this.insertBefore(c[i], this.children[position - 1]);
-							i++;
-						}
-					} else {
-						var i = 0, len = content.length;
-						while (i < len) {
-							this.insertBefore(content[i], this.children[position - 1]);
-							i++;
-						}
-					}
+				c = content;
+			}
+			var i = 0;
+			var len = c.length;
+			if (!position || position > (this.children.length + 1) || position === "last") {
+				while (i < len) {
+					this.appendChild(c[i]);
+					i++;
+				}
+			} else if (position === 1 || position === "first") {
+				while (i < len) {
+					this.insertBefore(c[i], this.firstElementChild);
+					i++;
+				}
+			} else {
+				while (i < len) {
+					this.insertBefore(c[i], this.children[position - 1]);
+					i++;
 				}
 			}
-			return this;
 		},
 		
 		/** 
@@ -1014,7 +1037,70 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 		}
     });
     
-	
+    $.extend(String.prototype, {
+    
+		/** 
+		* 
+		* Method to capitalize the first letter of a string. This method is attached directly to the $ object.
+		*
+		* @method
+		* @param {String} The string to capitalize.
+		* 
+		* ### $.capitalize
+		*
+		* syntax:
+		*
+		*  $.capitalize(string);
+		*
+		* arguments:
+		*
+		* - string:string A string to capitalize.
+		* 
+		* @return {string} Returns the capitalized version of a string. 
+		* 
+		* example:
+		*
+		*  var name = $.capitalize("robert"); // returns Robert
+		*
+		*/
+		capitalize : function ( ) {
+			var str = this;
+			return str.charAt(0).toUpperCase() + str.substring(1).toLowerCase();
+		},
+		
+		/** 
+		* 
+		* Method to capitalize the first letter of a words in a string. This method is attached directly to the $ object.
+		*
+		* @method
+		* @param {String} The string to capitalize.
+		* 
+		* ### $.capitalize
+		*
+		* syntax:
+		*
+		*  $.capitalize(string);
+		*
+		* arguments:
+		*
+		* - string:string A string to capitalize.
+		* 
+		* @return {string} Returns the capitalized version of a string. 
+		* 
+		* example:
+		*
+		*  var name = $.capitalize("get out now"); // returns Get Out Now
+		*
+		*/
+		capitalizeAll : function ( ) {
+			str = this.split(" ");
+			newstr = [];
+			str.forEach(function(item) {
+				newstr.push(item.capitalize());
+			});
+			return newstr.join(" ");
+		}
+    });
     
 	$.extend(HTMLElement.prototype, {
 		/** 
@@ -1104,7 +1190,7 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 		* 
 		* example:
 		*
-		*  $("#"doIt").unbind("click", doSomething);
+		*  $("#doIt").unbind("click", doSomething);
 		* 
 		*/
 		unbind : function( event, callback ) {
@@ -1135,10 +1221,239 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 				this[$.events[i]] = null;
 				i++;
 			}
+		},
+		
+		/** 
+		* A method to create event delegation.
+		*
+		* @method
+		* 
+		* ### delegate
+		*
+		* syntax:
+		*
+		*  element.delegate(selector, event, callback);
+		*
+		* arguments:
+		* 
+		*  - selector: A valid selector for the target element(s).
+		*  - event: An event to be fired on the element.
+		*  - function: A callback to be executed in relation to the target element.
+		* 
+		* example:
+		*
+		*  $("body").delegate("p", "click", function(element) {
+				element.css("background-color: yellow");
+		   });
+		* 
+		*/
+		delegate : function ( selector, event, callback ) {
+			this.bind(event, function(e) {
+				var target = e.target;
+				$$(selector).forEach(function(element) {
+					if (element.isEqualNode(target)) {
+						callback.call(this, target);
+					} 
+				});
+			});
+		},
+		
+		/** 
+		* A method to fire events on elements.
+		*
+		* @method
+		* 
+		* ### trigger
+		*
+		* syntax:
+		*
+		*  element.trigger(event);
+		*
+		* arguments:
+		* 
+		*  - event: An event to be fired on the element.
+		* 
+		* example:
+		*
+		*  $("#importantButton").bind("click", function() {
+	           $("#link").trigger("click");
+		   });
+		* 
+		*/
+		trigger : function ( event ) {
+			if( document.createEvent ) {
+			  var evtObj = document.createEvent('Events');
+			  evtObj.initEvent(event, true, false);
+			  this.dispatchEvent(evtObj);
+			}
+		},
+		
+		/** 
+		* A method to implement CSS-based transition animations on elements.
+		*
+		* @method
+		* 
+		* ### anim
+		*
+		* syntax:
+		*
+		*  element.anim(options, duration, easing);
+		*
+		* arguments:
+		* 
+		*  - object literal: An object literal of key value pairs of CSS properties and values.
+		*  - time: integer or float A valid integer or float representing time.
+		*  - string: string A string defining an easing function for the animation.
+		* 
+		* example:
+		*
+		*  $("#animate").bind("click", function() {
+			   this.anim({"-webkit-transform": "rotate3d(30, 150, 200, 180deg) scale(3) translate3d(-50%, -30%, 140%)", "opacity": .25, "-webkit-transform-style" : "preserve-3d", "-webkit-perspective": 500}, 2, "ease-in-out");
+		    });
+		* 
+		*/
+		anim : function ( options, duration, easing ) {
+			var value = "-webkit-transition: all " + (duration + " " || ".5s ") + easing + ";" || "" + ";";
+			for (prop in options) {
+				value += prop + ":" + options[prop] + ";";
+			}
+			this.css(value);
 		}
 	});
-	
 	$.extend($, {
+		
+		/** 
+		* A method to delay the execution of a function.
+		*
+		* @method
+		* 
+		* ### delay
+		*
+		* syntax:
+		*
+		*  $.delay(function, time);
+		*
+		* arguments:
+		* 
+		*  - function: A function to execute.
+		*  - time: integer or float A valid integer or float representing time in milliseconds for delay.
+		* 
+		* example:
+		*
+		*  $.delay(function() {
+		       console.log("This message is delayed by two seconds.");
+		   }, 2000);
+		* 
+		*/
+		delay : function ( fnc, time ) {
+			var argv = Array.prototype.slice.call(arguments, 2);
+    		return setTimeout(function() { 
+    			return fnc.apply(fnc, argv); 
+    		}, time);
+		},
+		
+		/** 
+		* A method to postpone the execution of a function until the callstack is clear.
+		*
+		* @method
+		* 
+		* ### defer
+		*
+		* syntax:
+		*
+		*  $.defer(function);
+		*
+		* arguments:
+		* 
+		*  - function: A function to execute.
+		* 
+		* example:
+		*
+		*  $.defer(function() { 
+			   console.log("This comes before Squawk!"); 
+		   });
+		* 
+		*/
+		defer : function ( fnc ) {
+			return $.delay.apply($, [fnc, 1].concat(Array.prototype.slice.call(arguments, 1)));
+		},
+		
+		/** 
+		* 
+		* Method to capitalize the first letter of a words in a string. This method is attached directly to the $ object.
+		*
+		* @method
+		* @param {Function} The function to enclose.
+		* @param {Function} The function which will enclose.
+		* 
+		* ### $.enclose
+		*
+		* syntax:
+		*
+		*  $.enclose(function, enclosure);
+		*
+		* arguments:
+		*
+		* - function:function A function to enclose.
+		* - function:function A function with which to enclose.
+		* 
+		* @return {function} Returns the result of the enclosed function with output for the enclosing function. 
+		* 
+		* example:
+		*
+		*  var hello = function(name) { return "Hello, " + name + "!"; };
+		   hello = $.enclose(hello, function(func) {
+  			   return "Before I said, \"" + func("Stan") + "\" I thought about it for a while.";
+		   });
+		*
+		*/
+		enclose : function(func, enclosure) {
+		  	return function() {
+				var args = [func].concat(Array.prototype.slice.call(arguments));
+				return enclosure.apply(enclosure, args);
+		  	};
+		},
+		
+		/** 
+		* 
+		* Method to return the composition of several functions, where each function consumes the return value of the function that follows. This method is attached directly to the $ object.
+		*
+		* @method
+		* @param {Function} A function to pass as an argument.
+		* @param {Function} A second function to pass as an argument.
+		* 
+		* ### $.compose(function, function, etc.)
+		*
+		* syntax:
+		*
+		*  $.capitalize(string);
+		*
+		* arguments:
+		*
+		* - function:function A function to pass as an argument.
+		* 
+		* @return {function} Returns the result of the execution of each function passed as an argument. 
+		* 
+		* example:
+		*
+		*  var greet    = function(name) { return "Hi there, " + name; };
+		   var exclaim  = function(statement) { return statement + "!"; };
+		   var remark = function(remark) { return remark + " You know I'm glad to see you."; };
+		   var welcome = $.compose(remark, greet, exclaim);
+		   console.log(welcome('Jeff')); // => Hi there, Jeff! You know I'm glad to see you.
+		*
+		*/
+		compose : function() {
+		  	var funcs = Array.prototype.slice.call(arguments);
+		  	return function() {
+				var args = Array.prototype.slice.call(arguments);
+				for (var i=funcs.length-1; i >= 0; i--) {
+			  		args = [funcs[i].apply(this, args)];
+				}
+				return args[0];
+		  	};
+		},
+		
 		/** 
 		* 
 		* An array of events to be removed before a node is deleted from a document. This array is attached directly to the $ object.
@@ -1209,10 +1524,81 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 		   });
 		*
 		*/
-		
 		ready : function ( callback ) {
 			document.addEventListener("DOMContentLoaded", callback, false);
-		}
+		},
+		
+		/** 
+		* 
+		* A method to hide the browser's address bar. This is used at page load time and when the user navigates to different views.
+		*
+		* @method
+		* 
+		* ### hideURLbar
+		*
+		* syntax:
+		*
+		*  $.hideURLbar();
+		*
+		* example:
+		*
+		*  $.hideURLbar();
+		*
+		*/
+		hideURLbar : function() {
+			window.scrollTo(0, 1);
+		},
+		
+		/** 
+		* 
+		* A method to import external scripts into the document. This method is attached directly to the $ object.
+		*
+		* @method
+		* 
+		* ### importScript
+		*
+		* syntax:
+		*
+		*  $.importScript(URI);
+		*
+		* arguments:
+		*
+		* - URI:URI A valid URI of the script to import into the document.
+		*
+		* example:
+		*
+		*  $.importScript("https://bozo.com/scripts/myScript.js");
+		*
+		*/
+		importScript : function ( url ) {
+			var script = document.createElement("script");
+			script.setAttribute("type", "text/javascript");
+			script.setAttribute("src", url);
+			$("head").appendChild(script);
+		},
+    
+		/** 
+		* 
+		* Properties to determine device platform, network connection and standalone status.
+		*
+		* syntax: 
+		*  $.standalone // returns true or false
+		*
+		* example:
+		*  if (!$.standalone) {
+			   alert("Please install this app before using.");
+		   }
+		*
+		*/
+	
+    	iphone : /iphone/i.test(navigator.userAgent),
+    	ipad : /ipad/i.test(navigator.userAgent),
+    	ipod : /ipod/i.test(navigator.userAgent),
+    	android : /android/i.test(navigator.userAgent),
+    	webos : /webos/i.test(navigator.userAgent),
+    	blackberry : /blackberry/i.test(navigator.userAgent),
+    	online :  navigator.onLine,
+    	standalone : navigator.standalone
     });
     
 	$.extend(HTMLElement.prototype, {
@@ -1324,81 +1710,77 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 			return this;
 		}
     });
-	
-	$.extend($, {
-		/** 
-		* 
-		* A method to hide the browser's address bar. This is used at page load time and when the user navigates to different views.
-		*
-		* @method
-		* 
-		* ### hideURLbar
-		*
-		* syntax:
-		*
-		*  $.hideURLbar();
-		*
-		* example:
-		*
-		*  $.hideURLbar();
-		*
-		*/
-		hideURLbar : function() {
-			window.scrollTo(0, 1);
-		},
+
+	$.extend($, {	
+		
+  		// JavaScript Micro Template
+		// John Resig - http://ejohn.org/ - MIT Licensed
 		
 		/** 
 		* 
-		* A method to import external scripts into the document. This method is attached directly to the $ object.
+		* A cache for templates to be used later. Is used by 
+		*
+		*/
+		jsmtCache : {},
+		
+		/** 
+		* 
+		* A method to parse a JavaScript Micro Template and populate it with JSON data.
 		*
 		* @method
+		* @param {String} The template to parse.
+		* @param {JSON} The data to parse for the template.
 		* 
-		* ### importScript
+		* ### xhrjson
 		*
-		* syntax:
+		* template:
 		*
-		*  $.importScript(URI);
+		*  $.template(str, data);
 		*
 		* arguments:
 		*
-		* - URI:URI A valid URI of the script to import into the document.
-		*
-		* example:
-		*
-		*  $.importScript("https://bozo.com/scripts/myScript.js");
-		*
-		*/
-		importScript : function ( url ) {
-			var script = document.createElement("script");
-			script.setAttribute("type", "text/javascript");
-			script.setAttribute("src", url);
-			$("head").appendChild(script);
-		},
-    
-		/** 
+		* - string:String A string defining the template to use.
+		* - JSON:object literal JSON data to be mapped to elements in the template.
 		* 
-		* Properties to determine device platform, network connection and standalone status.
-		*
-		* syntax: 
-		*  $.standalone // returns true or false
-		*
 		* example:
-		*  if (!$.standalone) {
-			   alert("Please install this app before using.");
-		   }
+		*
+		*  var result = $.template("tpl_1", data);
+		*  $.ready(function() {
+		*     $("#tpl_1_output").insert(result);
+		*  });
 		*
 		*/
+        template : function tmpl(str, data) {
+        	var err = "";
+        	try {
+				// Figure out if we're getting a template, or if we need to
+				// load the template - and be sure to cache the result.
+				var fn = !/\W/.test(str) ?
+				$.jsmtCache[str] = $.jsmtCache[str] ||
+				$.template(document.getElementById(str).innerHTML) : 
+				// Generate a reusable function that will serve as a template
+				// generator (and which will be cached).
+				new Function("obj", "var p = [];" +
+				// Introduce the data as local variables using with(){}
+				"with (obj) { p.push('" +
+				// Convert the template into pure JavaScript
+				str.replace(/[\r\t\n]/g, " ")
+				.replace(/'(?=[^#]*#>)/g, "\t")
+				.split("'").join("\\'")
+				.split("\t").join("'")
+				.replace(/<%=(.+?)%>/g, "',$1,'")
+				.split("<%").join("');")
+				.split("%>").join("p.push('")
+				+ "');}return p.join('');");
+				// Provide some basic currying to the user
+				return data ? fn(data) : fn;
+			} catch (e) {
+				err = e.message;
+			}
+			//return err.htmlEncode();
+		}
+	});
 	
-    	iphone : /iphone/i.test(navigator.userAgent),
-    	ipad : /ipad/i.test(navigator.userAgent),
-    	ipod : /ipod/i.test(navigator.userAgent),
-    	android : /android/i.test(navigator.userAgent),
-    	webos : /webos/i.test(navigator.userAgent),
-    	blackberry : /blackberry/i.test(navigator.userAgent),
-    	online :  navigator.onLine,
-    	standalone : navigator.standalone
-    });
-    
 	/** 
 	* 
 	* A method to track the mobile device's orientation, whether in portrait or landscape mode.
@@ -1433,4 +1815,13 @@ Redistributions in binary form must reproduce the above copyright notice, this l
     	window.__$ = $;
     	window.__$$ = $.$$;
     }
-})("ChocolateChip"); 
+})(); 
+
+if (!Function.prototype.bind) {
+  	Function.prototype.bind = function(func, obj) {
+    	var args = Array.prototype.slice.call(arguments, 2);
+    	return function() {
+      	return func.apply(obj || {}, args.concat(Array.prototype.slice.call(arguments)));
+    	};
+  	};
+}
