@@ -2,7 +2,7 @@
 * 
 ||======================================================================||        
 ||                                                            _         ||       cZ8D) 
-||   ___  _                   _        _           ___  _    (_)        ||      (O) /8\ 
+||   ___  _                    _        _          ___  _    (_)        ||      (O) /8\ 
 ||  / __|| |_   ___  ___  ___ | | __ _ | |_  ___  / __|| |_   _  ____   ||         /888\ 
 || | (__ | ' \ / _ \/ __|/ _ \| |/ _` ||  _|/ -_)| (__ | ' \ | ||  _ \  ||       /ZO88OZ\ 
 ||  \___||_||_|\___/\___|\___/|_|\__,_| \__|\___| \___||_||_||_|| .__/  ||     /$O88DD88O$\ 
@@ -15,7 +15,7 @@
 * 
 * LICENSE: BSD
 *
-* Version 1.0.7
+* Version: 1.0.8
 * 
 * Copyright (c) 2010, Robert Biggs
 * All rights reserved.
@@ -127,7 +127,7 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 		/**
 		* The version of ChocolateChip
 		*/
-		version : "1.0.7",
+		version : "1.0.8",
 		
 		/** 
 		* 
@@ -317,15 +317,17 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 		*
 		*/
 		ancestorByTag : function ( selector ) {
-			var p = this.parentNode;
-			if (!p) {
-				return false;
-			}
-			if (p.tagName.toLowerCase() == selector) {
-				return p;
-			} else {
-				return p.ancestorByTag(selector);
-			}
+			try {
+				var p = this.parentNode;
+				if (!p) {
+					return false;
+				}
+				if (p.tagName.toLowerCase() == selector) {
+					return p;
+				} else {
+					return p.ancestorByTag(selector);
+				}
+			} catch(e) { return false; }
 		},
 		
 		/** 
@@ -348,15 +350,17 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 		*
 		*/
 		ancestorByClass : function ( selector ) {
-			var p = this.parentNode;
-			if (!p) {
-				return false;
-			}
-			if (p.hasClass(selector)) {
-				return p;
-			} else {
-				return p.ancestorByClass(selector);
-			}
+			try {
+				var p = this.parentNode;
+				if (!p) {
+					return false;
+				}
+				if (p.hasClass(selector)) {
+					return p;
+				} else {
+					return p.ancestorByClass(selector);
+				}
+			} catch(e) { return false; }
 		},
 		
 		/** 
@@ -385,18 +389,20 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 		*
 		*/
 		ancestorByPosition : function ( position ) {
-			position = position || 1;
-			var ancestor = this.parentNode;
-            for (var i = 1; i < position; i++) {
-            	if (ancestor.nodeName === "BODY") {
-            		return ancestor;
-            	} else {
-					if (ancestor != null) {
-						ancestor = ancestor.parentNode;
-					}
-				}
-            }
-            return ancestor;
+			try {
+				 position = position || 1;
+				 var ancestor = this.parentNode;
+				 for (var i = 1; i < position; i++) {
+					 if (ancestor.nodeName === "BODY") {
+						 return ancestor;
+					 } else {
+						 if (ancestor != null) {
+							 ancestor = ancestor.parentNode;
+						 }
+					 }
+				 }
+				 return ancestor;
+			} catch(e) { return false; }
 		}
     });
     
@@ -907,8 +913,6 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 		*
 		* - className:string the name of the CSS class to add.
 		* 
-		* @return {style} Returns computed style of element. 
-		*
 		* example:
 		*
 		*  $("#item").addClass("hover");
@@ -1002,38 +1006,109 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 					this.addClass(secondClassName);
 				}
 			}
-		}
-    });
-    
-	$.extend($, {
+		},
+		
 		/** 
 		* 
-		* Method to get the computed style of an element. This may be the inline style, or the style derived from stylesheet(s). This method is attached directly to the $ object.
+		* Get the precise top position of an element in relation to the top viewport.
 		*
 		* @method
-		* @param {Element} The node from which a style value will be retrieved.
-		* @param {CSS Property} A string defining the CSS property to retrieve.
 		* 
-		* ### $.getStyle
+		* ### getTop
 		*
 		* syntax:
 		*
-		*  $.getStyle(element, property);
+		*  $(selector).getTop();
+		*
+		* example:
+		*
+		*  $("#item").getTop();
+		*  var button = $(".button");
+		*  var buttonTop = button.getTop();
+		*
+		*/
+		getTop : function() {
+			var element = this;
+			var pos = 0;
+			while (element.offsetParent) {
+				pos += element.offsetTop;
+				element = element.offsetParent;
+			}
+			pos = pos + document.body.offsetTop;
+			return pos;
+		},
+		
+		/** 
+		* 
+		* Get the precise left position of an element in relation to the left viewport.
+		*
+		* @method
+		* 
+		* ### getLeft
+		*
+		* syntax:
+		*
+		*  $(selector).getLeft();
+		*
+		* example:
+		*
+		*  $("#item").getLeft();
+		*  var button = $(".button");
+		*  var buttonTop = button.getLeft();
+		*
+		*/
+		getLeft : function(element) {
+			var element = this;
+			var pos = 0;
+			while (element.offsetParent) {
+				pos += element.offsetLeft;
+				element = element.offsetParent;
+			}
+			pos = pos + document.body.offsetLeft;
+			return pos;
+		},
+		
+		/** 
+		* 
+		* Add a CSS declaration directly to an element. If a boolean value that equates to true is passed as a second, optional argument, the method will replace whatever inline CSS values are presently existing on the element, otherwise it appends the CSS declaration to whatever is already there. This method is attached directly to the Element object.
+		*
+		* @method
+		* @param {String} The className to remove.
+		* @param {Boolean} A true value will cause any existing inline styles to be replace by the string of CSS styles. This is optional.
+		* 
+		* ### css
+		*
+		* syntax:
+		*
+		*  $(selector).css(style declaration, property, value);
 		*
 		* arguments:
 		*
-		* - element:element A valid DOM node whose style will be retrieved.
-		* - string:string A string defining a CSS property to query.
+		* - style declaration:string A string of valid CSS property/values enclosed in curly braces and quotes.
+		* - property:string A string defining a CSS property.
+		* - value:string A string defining a CSS property value to set on an element.
 		* 
-		* @return {style} Returns computed style of passed property owned by an element. 
+		* @return {Style Declaration} Returns CSS property value pairs as inline cssText. 
+		* @return {CSSStyleDeclaration} Returns the computed value of a CSS property.
 		* 
 		* example:
 		*
-		*  var kolor = $.getStyle($("#title"), "color");
+		*  $("#item").css("font", "bold 12pt/14pt Arial, Helvetica, Sans-serif");
+		*  console.log($("#item").css("font-size"));
+		*  $("#item").css("{font-size: 24px; color: blue; background-color: red;}");
 		*
 		*/
-		style : function ( element, property ) {
-			return document.defaultView.getComputedStyle(element, null).getPropertyValue(property.toLowerCase());
+		css : function ( property, value ) {
+			if (/{/.test(property) && /}/.test(property) && !value) {
+				// Remove curly braces from style declaration.
+				this.style.cssText += property.substring(1, property.length - 1);
+			}
+			if (!value) {
+				return document.defaultView.getComputedStyle(this, null).getPropertyValue(property.toLowerCase());
+			} else {
+				this.style.cssText += property + ":" + value + ";";
+				return this;
+			} 
 		}
     });
     
@@ -1103,42 +1178,7 @@ Redistributions in binary form must reproduce the above copyright notice, this l
     });
     
 	$.extend(HTMLElement.prototype, {
-		/** 
-		* 
-		* Add a CSS declaration directly to an element. If a boolean value that equates to true is passed as a second, optional argument, the method will replace whatever inline CSS values are presently existing on the element, otherwise it appends the CSS declaration to whatever is already there. This method is attached directly to the Element object.
-		*
-		* @method
-		* @param {String} The className to remove.
-		* @param {Boolean} A true value will cause any existing inline styles to be replace by the string of CSS styles. This is optional.
-		* 
-		* ### css
-		*
-		* syntax:
-		*
-		*  $(selector).css(style declaration, boolean);
-		*
-		* arguments:
-		*
-		* - style:string A valid CSS property/value declaration to add to an element.
-		* 
-		* @return {Style} Returns CSS property value pairs as inline cssText. 
-		* 
-		* example:
-		*
-		*  $("#item").css("font: bold 12pt/14pt Arial, Helvetica, Sans-serif;");
-		*  $("#item").css("background-color: red; true");
-		*
-		*/
-		css : function ( styles, replace ) {
-			if (replace) {
-				this.style.cssText = styles;
-				return this;
-			} else {
-				this.style.cssText += ";" + styles;
-				return this;
-			}
-		},
-	   
+		
 		/** 
 		* A method to attach events to elements.
 		*
@@ -1309,13 +1349,21 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 		*
 		*  $("#animate").bind("click", function() {
 			   this.anim({"-webkit-transform": "rotate3d(30, 150, 200, 180deg) scale(3) translate3d(-50%, -30%, 140%)", "opacity": .25, "-webkit-transform-style" : "preserve-3d", "-webkit-perspective": 500}, 2, "ease-in-out");
-		    });
+		});
 		* 
 		*/
 		anim : function ( options, duration, easing ) {
+			var onEnd = null;
 			var value = "-webkit-transition: all " + (duration + " " || ".5s ") + easing + ";" || "" + ";";
 			for (prop in options) {
-				value += prop + ":" + options[prop] + ";";
+				if (prop === "onend") {
+					onEnd = options[prop];
+					this.bind("webkitTransitionEnd", function() {
+						onEnd();
+					});
+				} else {
+					value += prop + ":" + options[prop] + ";";
+				}
 			}
 			this.css(value);
 		}
@@ -1502,6 +1550,24 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 		
 		/** 
 		* 
+		* Array of functions to execute when the document's DOM is ready for access.
+		*
+		*/
+		DOMReadyList : [],
+		
+		executeWhenDOMReady : function ( ) {
+			var listLen = $.DOMReadyList.length;
+			var i = 0;
+			while (i < listLen) {
+				$.DOMReadyList[i]();
+				i++;
+			}
+			$.DOMReadyList = null;
+			document.removeEventListener('DOMContentLoaded', $.executeWhenDOMReady, false);
+		},
+		
+		/** 
+		* 
 		* Method to determine when the DOM is ready for manipulation and thereupon fire a block of code contained in an anonymous function passed to it as an argument. This method is attached directly to the $ object.
 		*
 		* @method
@@ -1525,7 +1591,11 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 		*
 		*/
 		ready : function ( callback ) {
-			document.addEventListener("DOMContentLoaded", callback, false);
+			if ($.DOMReadyList.length == 0) {
+				document.addEventListener('DOMContentLoaded', $.executeWhenDOMReady, false);
+			}
+	
+			$.DOMReadyList.push(callback);
 		},
 		
 		/** 
@@ -1708,6 +1778,83 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 			options.successCallback = callback;
 			this.xhr(url, options);
 			return this;
+		},
+		
+		/** 
+		* 
+		* A method to get and set a dataset value on an element.
+		*
+		* @method
+		* @param {key} The dataset key to access.
+		* @param {value} The value to set the dataset to.
+		* 
+		* ### data
+		*
+		* syntax:
+		*
+		*  element.data(key);
+		*  element.data(key, value);
+		*
+		* arguments:
+		*
+		* - key:key A string defining the dataset key to access.
+		* - value:value A string defining the value to set the dataset key to.
+		* 
+		* example:
+		*
+		*  
+		*   var customer = $('#customer').data('customer-name'); 
+		*   $$(".customers").forEach(function(customer) {
+		        console.log(customer.data("customer-name"));
+		    }
+		*   $("#shirt).data("shirt-size", "XXL"); // outputs data-shirt-size="XXL" on #shirt
+		*
+		*/
+		data : function ( key, value ) {
+			if (!!document.documentElement.dataset) {
+				if (!value) {
+					return this.dataset[key];
+				} else {
+					this.dataset[key] = value;
+				}
+			// Fallback for earlier versions of Webkit:
+			} else {
+				if (!value) {
+					return this.getAttribute("data-" + key);
+				} else {
+					this.setAttribute("data-" + key, value);
+				}
+			}
+		},
+		
+		/** 
+		* 
+		* A method to remove a dataset from an element.
+		*
+		* @method
+		* 
+		* ### removeData
+		*
+		* syntax:
+		*
+		*  element.removeData(key);
+		*
+		* arguments:
+		*
+		* - key:key A string defining the dataset key to remove.
+		* 
+		* example:
+		*  
+		*   $("#shirt).removeData("shirt-size"); // removes data-shirt-size from #shirt
+		*
+		*/
+		removeData : function ( key ) {
+			if (!!document.documentElement.dataset) {
+				this.dataset[key] = null;
+			// Fallback for earlier versions of Webkit:
+			} else {
+				this.removeAttribute("data-" + key);
+			}
 		}
     });
 
@@ -1808,7 +1955,7 @@ Redistributions in binary form must reproduce the above copyright notice, this l
     * alias it as $$().
     *
     */
-    if ((!window.$) && (!window.$$)) {
+    if (window.$ === undefined) {
     	window.$ = $;
     	window.$$ = $.$$;
     } else {
