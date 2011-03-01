@@ -2,7 +2,7 @@
 * 
 ||======================================================================||        
 ||                                                            _         ||       cZ8D) 
-||   ___  _                   _        _          ___  _     (_)        ||      (O) /8\ 
+||   ___  _                   _        _           ___  _    (_)        ||      (O) /8\ 
 ||  / __|| |_   ___  ___  ___ | | __ _ | |_  ___  / __|| |_   _  ____   ||         /888\ 
 || | (__ | ' \ / _ \/ __|/ _ \| |/ _` ||  _|/ -_)| (__ | ' \ | ||  _ \  ||       /ZO88OZ\ 
 ||  \___||_||_|\___/\___|\___/|_|\__,_| \__|\___| \___||_||_||_|| .__/  ||     /$O88DD88O$\ 
@@ -15,7 +15,7 @@
 * 
 * LICENSE: BSD
 *
-* Version 1.0.4
+* Version: 1.0.5
 * 
 * Copyright (c) 2010, Robert Biggs
 * All rights reserved.
@@ -32,25 +32,24 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 (function() {
 	
     var $ = function ( selector ) {
+		return document.querySelector(selector);
+	};
 	
-        this.collectionToArray = function ( collection ) {
-            var array = [];
-            var i = 0, len = collection.length;
-            while ( i < len ) {
-                array[i] = collection[i];
-                i++;
-            }
-            return array;
-        };
-        var elem = this.collectionToArray(document.querySelectorAll(selector));
-        if (elem.length == 1) {
-            return elem[0];
-        } else { 
-            return this.collectionToArray(document.querySelectorAll(selector));
-        }
-    };
+	$.collectionToArray = function ( collection ) {
+		var array = [];
+		var i = 0, len = collection.length;
+		while ( i < len ) {
+			array[i] = collection[i];
+			i++;
+		}
+		return array;
+	};
     
-    $.version = "1.0.4";
+    $.version = "1.0.5";
+	
+	var $$ = function ( selector ) {
+        return $.collectionToArray(document.querySelectorAll(selector));
+    };
     
     Element.prototype.previous = function ( ) {
         return this.previousElementSibling;
@@ -135,7 +134,7 @@ Redistributions in binary form must reproduce the above copyright notice, this l
         if (this.parentNode.nodeName === "BODY") {
             return false;
         }
-        var element = this.clone(true);
+        var element = this.cloneNode(true);
         $.replace(element, this.parentNode);
     };
     
@@ -335,24 +334,6 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 	};
 	
     $.events = ['onmousedown', 'onmouseup', 'onmouseover', 'onmouseout', 'onclick', 'onmousemove', 'ondblclick', 'onerror', 'onresize', 'onscroll', 'onkeydown', 'onkeyup', 'onkeypress', 'onchange', 'onsubmit', 'onload', 'ontouchstart', 'ontouchmove', 'ontouchend', 'ontouchcancel', 'ongesturestart', 'ongesturechange', 'ongestureend', 'onorientationchange'];
-    
-    Element.prototype.delegate = function( selector, event, callback ) {
-		this.bind(event, function(e) {
-			var target = e.target;
-			var elem = $(selector);
-			if (!elem.length) {
-				if (elem.isEqualNode(target)) {
-					callback.call(this, {});
-				}
-			} else {
-				elem.forEach(function(p) {
-					if (p.isEqualNode(target)) {
-						callback.call(this, {});
-					} 
-				});
-			}
-		});
-	};
 	
 	$.loadEvent = function ( F ) {
 		var oldonload = window.onload;
@@ -456,7 +437,7 @@ Redistributions in binary form must reproduce the above copyright notice, this l
     	ipad : /ipad/i.test(navigator.userAgent),
     	ipod : /ipod/i.test(navigator.userAgent),
     	android : /android/i.test(navigator.userAgent),
-    	webos : /weblos/i.test(navigator.userAgent),
+    	webos : /webos/i.test(navigator.userAgent),
     	blackberry : /blackberry/i.test(navigator.userAgent),
     	online :  navigator.onLine,
     	standalone : navigator.standalone
@@ -466,32 +447,31 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 		if (window.orientation === 0 || window.orientation === 180) {
 				$("body").removeClass("landscape");
 				$("body").addClass("portrait");
-				console.log($("body").className);
 			$.hideURLbar();
 		} else {
 				$("body").removeClass("portrait");
 				$("body").addClass("landscape");
-				console.log($("body").className);
 			$.hideURLbar();
+			console.log($("body").className);
 		}
 	}, false);
     
-    // Make the ChocolateChip $() method available globally.
-    window.$ = $;
-    /* If, for whatever reason, you don't want to use $, you can define your own alias in the following manner:
-    window.bubba = $;
-    Then you can use it like this:
-    bubba.ready(function() {
-    	bubba("#anouncement").css("color: red");
-    	bubba("li").forEach(function(item) {
-    		item.bind("touchstart", function() {
-    			item.addClass("touched");
-    		});
-    	});
-    });
-    NOTE: ChocolateChip will continue to use $ internally, and any external scripts that use $ will still work with your alias. Be aware, if you do this, you will need to update this alias each time you change to a different version of the ChocolateChip.js file.
+    /**
+    *
+    * Make the ChocolateChip $() and $$() methods available globally.
+    * If there is already a $ and $$ variable in the global space, ChocolateChip
+    * aliases them as __$ and __$$. Then, you can assign whatever alias you
+    * want to these, such as:
+    *
+    * window.cc; = window.__$;
+    * window.CC = window__$$;
+    *
     */
-    // Backward compatibility for earlier versions of ChocolateChip.
-    // This method's functionality was merged into $();
-    window.$$ = $;
+    if ((!window.$) && (!window.$$)) {
+    	window.$ = $;
+    	window.$$ = $$;
+    } else {
+    	window.__$ = $;
+    	window.__$$ = $$;
+    }
 })(); 
