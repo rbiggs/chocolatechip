@@ -1,24 +1,23 @@
 /*        
-    pO)     
+    pO\     
    6  /\
-     /MM\
-   /MMMMMM\
-  /MMMMMMMM\
-(((MMMMMMMM)))
- \:~==++==~:/    
+     /OO\
+    /OOOO\
+  /OOOOOOOO\
+ ((OOOOOOOO))
+  \:~=++=~:/  
        
-ChocolateChip.js: tiny but delicious
-A JavaScript library for mobile Web app development, providing the functionality 
-necessary for creating professional HTML5/CSS3-based Web apps.
+ChocolateChip.js: It's tiny but delicious
+A JavaScript library for mobile Web app development.
 
-Copyright 2011 Robert Biggs: www.choclatechip-mobile.net
+Copyright 2011 Robert Biggs: www.choclatechip-ui.com
 License: BSD
-Version 1.1.1
+Version 1.1.2
 
 */
 
 (function() {
-	
+
     var $ = function ( selector, context ) {
     	if (!!context) {
     		if (typeof context === "string") {
@@ -31,24 +30,34 @@ Version 1.1.1
     	}
 		return document.querySelector(selector);
 	};
-	
-    $.extend = function(obj, properties) {
-		Object.keys(properties).forEach(function(prop) {
-       		if (properties.hasOwnProperty(prop)) {
-       			Object.defineProperty(obj, prop, {
-       				value: properties[prop],
-					writable: true,
-					enumerable: false,
-					configurable: true
-       			});
-       		}
-       	});
+
+    $.extend = function(obj, prop) {
+    	if (!Object.keys) {
+			if (!prop) {
+				prop = obj;
+				obj = this;
+			}
+			for (var i in prop) {
+				obj[i] = prop[i];
+			}
+			return obj;
+		} else {
+			Object.keys(prop).forEach(function(p) {
+				if (prop.hasOwnProperty(p)) {
+					Object.defineProperty(obj, p, {
+						value: prop[p],
+						writable: true,
+						enumerable: false,
+						configurable: true
+					});
+				}
+			});
+		}
 	};
 	
 	$.extend($, {
-		
-		version : "1.1.1",
-		
+
+		version : "1.1.2",
 		
 		collectionToArray : function ( collection ) {
 			var array = [];
@@ -70,16 +79,34 @@ Version 1.1.1
 			} else {
 				return $.collectionToArray(document.querySelectorAll(selector));
 			}
+		},
+		body : null,
+		
+		app : null,
+		
+		make : function ( HTMLString ) {
+			var nodes = [];
+			var temp = document.createElement("div");
+			temp.innerHTML = HTMLString;
+			var i = 0;
+			var len = temp.childNodes.length;
+			while (i < len) {
+				nodes[i] = temp.childNodes[i];
+				i++;
+			}
+			return nodes;
+		},
+		
+		replace : function ( newElem, oldElem ) {
+			 oldElem.parentNode.replaceChild(newElem, oldElem);
 		}
     });
-    
 	$.extend(HTMLElement.prototype, {
-		
+	
 		previous : function ( ) {
 			return this.previousElementSibling;
 		},
-		
-		
+	
 		next : function ( ) {
 			return this.nextElementSibling;
 		},
@@ -91,7 +118,7 @@ Version 1.1.1
 		last : function ( ) {
 			return this.lastElementChild;
 		},
-		
+	
 		ancestor : function( selector ) {
 			var idCheck = new RegExp("^#");
 			var classCheck = new RegExp("^.");
@@ -151,31 +178,7 @@ Version 1.1.1
 		
 		ancestorByPosition : function ( position ) {
 			return this.ancestor(position);
-		}
-    });
-    
-	$.extend($, {
-		
-		make : function ( HTMLString ) {
-			var nodes = [];
-			var temp = document.createElement("div");
-			temp.innerHTML = HTMLString;
-			var i = 0;
-			var len = temp.childNodes.length;
-			while (i < len) {
-				nodes[i] = temp.childNodes[i];
-				i++;
-			}
-			return nodes;
 		},
-		
-		replace : function ( newElem, oldElem ) {
-			 oldElem.parentNode.replaceChild(newElem, oldElem);
-		}
-    });
-    
-	$.extend(HTMLElement.prototype, {
-		
 		empty : function ( ) {
 			this.removeEvents();
 			this.textContent = "";
@@ -196,10 +199,7 @@ Version 1.1.1
 			tempNode.appendChild(whichClone);
 			this.after(tempNode, this);
 			this.remove(this); 
-		}
-    });
-    
-	$.extend(HTMLElement.prototype, {
+		},
 		
 		unwrap : function ( ) {
 			if (this.parentNode.nodeName === "BODY") {
@@ -317,6 +317,17 @@ Version 1.1.1
 			}
 		},
 		
+		disable : function ( ) {
+			this.addClass("disabled");
+			this.css("{cursor: default;}");
+			this.prevent
+		},
+		
+		enable : function ( ) {
+			this.removeClass("disabled");
+			this.css("{cursor: pointer;}");
+		},
+		
 		toggleClass : function ( firstClassName, secondClassName ) {
 		   if (!secondClassName) {
 			   if (!this.hasClass(firstClassName)) {
@@ -367,29 +378,7 @@ Version 1.1.1
 				this.style.cssText += property + ":" + value + ";";
 				return this;
 			} 
-		}
-    });
-    
-    $.extend(String.prototype, {
-    	
-		capitalize : function ( ) {
-			var str = this;
-			return str.charAt(0).toUpperCase() + str.substring(1).toLowerCase();
 		},
-		
-		capitalizeAll : function ( ) {
-			str = this.split(" ");
-			newstr = [];
-			str.forEach(function(item) {
-				newstr.push(item.capitalize());
-			});
-			return newstr.join(" ");
-		}
-    });
-    
-	$.extend(HTMLElement.prototype, {
-		
-		
 		bind : function( event, callback ) {
 			this.addEventListener(event, callback, false);
 		},
@@ -447,98 +436,7 @@ Version 1.1.1
 				}
 			}
 			this.css("{" + value + "}");
-		}
-	});
-	$.extend($, {
-		
-		delay : function ( fnc, time ) {
-			var argv = Array.prototype.slice.call(arguments, 2);
-    		return setTimeout(function() { 
-    			return fnc.apply(fnc, argv); 
-    		}, time);
 		},
-		
-		defer : function ( fnc ) {
-			return $.delay.apply($, [fnc, 1].concat(Array.prototype.slice.call(arguments, 1)));
-		},
-		
-		enclose : function(func, enclosure) {
-		  	return function() {
-				var args = [func].concat(Array.prototype.slice.call(arguments));
-				return enclosure.apply(enclosure, args);
-		  	};
-		},
-		
-		compose : function() {
-		  	var funcs = Array.prototype.slice.call(arguments);
-		  	return function() {
-				var args = Array.prototype.slice.call(arguments);
-				for (var i=funcs.length-1; i >= 0; i--) {
-			  		args = [funcs[i].apply(this, args)];
-				}
-				return args[0];
-		  	};
-		},
-		
-		events : ['onmousedown', 'onmouseup', 'onmouseover', 'onmouseout', 'onclick', 'onmousemove', 'ondblclick', 'onerror', 'onresize', 'onscroll', 'onkeydown', 'onkeyup', 'onkeypress', 'onchange', 'onsubmit', 'onload', 'ontouchstart', 'ontouchmove', 'ontouchend', 'ontouchcancel', 'ongesturestart', 'ongesturechange', 'ongestureend', 'onorientationchange'],
-		
-		loadEvent : function ( F ) {
-			var oldonload = window.onload;
-			if (typeof window.onload !== 'function') {
-			   window.onload = F;
-			} else {
-			   window.onload = function () {
-				  oldonload();
-				  F();
-			   };
-			}
-		},
-		
-		DOMReadyList : [],
-		
-		executeWhenDOMReady : function ( ) {
-			var listLen = $.DOMReadyList.length;
-			var i = 0;
-			while (i < listLen) {
-				$.DOMReadyList[i]();
-				i++;
-			}
-			$.DOMReadyList = null;
-			document.removeEventListener('DOMContentLoaded', $.executeWhenDOMReady, false);
-		},
-		
-		ready : function ( callback ) {
-			if ($.DOMReadyList.length == 0) {
-				document.addEventListener('DOMContentLoaded', $.executeWhenDOMReady, false);
-			}
-	
-			$.DOMReadyList.push(callback);
-		},
-		
-		UIHideURLbar : function() {
-			window.scrollTo(0, 1);
-		},
-		
-		importScript : function ( url ) {
-			var script = document.createElement("script");
-			script.setAttribute("type", "text/javascript");
-			script.setAttribute("src", url);
-			$("head").appendChild(script);
-		},
-    	
-    	iphone : /iphone/i.test(navigator.userAgent),
-    	ipad : /ipad/i.test(navigator.userAgent),
-    	ipod : /ipod/i.test(navigator.userAgent),
-    	android : /android/i.test(navigator.userAgent),
-    	webos : /webos/i.test(navigator.userAgent),
-    	blackberry : /blackberry/i.test(navigator.userAgent),
-    	touchEnabled : ($.iphone || $.ipod || $.ipad || $.android),
-    	online :  navigator.onLine,
-    	standalone : navigator.standalone
-    });
-    
-	$.extend(HTMLElement.prototype, {
-		
 		xhr : function ( url, options ) {
 			var o = options ? options : {};
 			if (!!options) {
@@ -624,15 +522,122 @@ Version 1.1.1
 			}
 		}
     });
-
-	$.extend($, {	
+	
+    $.extend(String.prototype, {
+    
+		capitalize : function ( ) {
+			var str = this;
+			return str.charAt(0).toUpperCase() + str.substring(1).toLowerCase();
+		},
 		
+		capitalizeAll : function ( ) {
+			str = this.split(" ");
+			newstr = [];
+			str.forEach(function(item) {
+				newstr.push(item.capitalize());
+			});
+			return newstr.join(" ");
+		}
+    });
+    
+    
+	$.extend($, {
+		
+		delay : function ( fnc, time ) {
+			var argv = Array.prototype.slice.call(arguments, 2);
+    		return setTimeout(function() { 
+    			return fnc.apply(fnc, argv); 
+    		}, time);
+		},
+		
+		defer : function ( fnc ) {
+			return $.delay.apply($, [fnc, 1].concat(Array.prototype.slice.call(arguments, 1)));
+		},
+		
+		enclose : function(func, enclosure) {
+		  	return function() {
+				var args = [func].concat(Array.prototype.slice.call(arguments));
+				return enclosure.apply(enclosure, args);
+		  	};
+		},
+		
+		compose : function() {
+		  	var funcs = Array.prototype.slice.call(arguments);
+		  	return function() {
+				var args = Array.prototype.slice.call(arguments);
+				for (var i=funcs.length-1; i >= 0; i--) {
+			  		args = [funcs[i].apply(this, args)];
+				}
+				return args[0];
+		  	};
+		},
+		
+		events : ['onmousedown', 'onmouseup', 'onmouseover', 'onmouseout', 'onclick', 'onmousemove', 'ondblclick', 'onerror', 'onresize', 'onscroll', 'onkeydown', 'onkeyup', 'onkeypress', 'onchange', 'onsubmit', 'onload', 'ontouchstart', 'ontouchmove', 'ontouchend', 'ontouchcancel', 'ongesturestart', 'ongesturechange', 'ongestureend', 'onorientationchange'],
+		
+		loadEvent : function ( F ) {
+			var oldonload = window.onload;
+			if (typeof window.onload !== 'function') {
+			   window.onload = F;
+			} else {
+			   window.onload = function () {
+				  oldonload();
+				  F();
+			   };
+			}
+		},
+		
+		DOMReadyList : [],
+		
+		executeWhenDOMReady : function ( ) {
+			var listLen = $.DOMReadyList.length;
+			var i = 0;
+			while (i < listLen) {
+				$.DOMReadyList[i]();
+				i++;
+			}
+			$.DOMReadyList = null;
+			document.removeEventListener('DOMContentLoaded', $.executeWhenDOMReady, false);
+		},
+		
+		ready : function ( callback ) {
+			if ($.DOMReadyList.length == 0) {
+				document.addEventListener('DOMContentLoaded', $.executeWhenDOMReady, false);
+			}
+	
+			$.DOMReadyList.push(callback);
+		},
+		
+		UIHideURLbar : function() {
+			window.scrollTo(0, 1);
+		},
+		
+		importScript : function ( url ) {
+			var script = document.createElement("script");
+			script.setAttribute("type", "text/javascript");
+			script.setAttribute("src", url);
+			$("head").appendChild(script);
+		},
+    
+    	iphone : /iphone/i.test(navigator.userAgent),
+    	ipad : /ipad/i.test(navigator.userAgent),
+    	ipod : /ipod/i.test(navigator.userAgent),
+    	android : /android/i.test(navigator.userAgent),
+    	webos : /webos/i.test(navigator.userAgent),
+    	blackberry : /blackberry/i.test(navigator.userAgent),
+    	touchEnabled : ("createTouch" in document),
+    	online :  navigator.onLine,
+    	standalone : navigator.standalone,
+    	
 		setLocalStorage : function ( key, value ) {
 			try {
 				localStorage.setItem(key, value);
-			} catch(e) {}
+			} catch(e) {
+				if (e === QUOTA_EXCEEDED_ERR) {
+	 	 	 		error.log('Quota exceeded for localStorage!');
+				}
+			} 
 		},
-			
+	
 		getLocalStorage : function ( key ) {
 			try {
 				localStorage.getItem(key);
@@ -680,36 +685,41 @@ Version 1.1.1
 })(); 
 $.ready(function() {
 
-	if (window.innerHeight > window.innerWidth) {
-		$("body").className="portrait";
-		$.UIHideURLbar();
-	} else {
-		$("body").className="landscape";
-		$.UIHideURLbar();
-	}
-	document.addEventListener("orientationchange", function() {
-		if (window.orientation === 0 || window.orientation === 180) {
-			$("body").removeClass("landscape");
-			$("body").addClass("portrait");
-			$.UIHideURLbar();
-		} else {
-			$("body").removeClass("portrait");
-			$("body").addClass("landscape");
-			$.UIHideURLbar();
+	$.body = $("body");
+	$.app = $("app");
+	
+	$.extend($, {
+		UIUpdateOrientationChange : function ( ) {
+			document.addEventListener("orientationchange", function() {
+				if (window.orientation === 0 || window.orientation === 180) {
+					$.body.removeClass("landscape");
+					$.body.addClass("portrait");
+					$.UIHideURLbar();
+				} else {
+					$.body.removeClass("portrait")
+					$.body.addClass("landscape");
+					$.UIHideURLbar();
+				}
+				$.UIHideURLbar();
+			}, false);		
+		},
+		UIListenForWindowResize : function ( ) {
+			window.addEventListener("resize", function() {
+				if (window.innerHeight > window.innerWidth) {
+					$.body.removeClass("landscape");
+					$.body.addClass("portrait");
+					$.UIHideURLbar();
+				} else {
+					$.body.removeClass("portrait");
+					$.body.addClass("landscape");
+					$.UIHideURLbar();
+				}
+			}, false);
 		}
-		$.UIHideURLbar();
-	}, false);
-	window.addEventListener("resize", function() {
-		if (window.innerHeight > window.innerWidth) {
-			$("body").removeClass("landscape");
-			$("body").addClass("portrait");
-			$.UIHideURLbar();
-		} else {
-			$("body").removeClass("portrait");
-			$("body").addClass("landscape");
-			$.UIHideURLbar();
-		}
-	}, false);
+	});
+	$.UIUpdateOrientationChange();
+	$.UIListenForWindowResize();
+
 });
 
 if (!Function.prototype.bind) {
@@ -720,3 +730,17 @@ if (!Function.prototype.bind) {
     	};
   	};
 }
+
+$.extend(HTMLElement.prototype, {
+	UICheckForOverflow : function (){
+   		var origOverflow = this.css("overflow");
+   		if ( !origOverflow || origOverflow === "visible" ) {
+      		this.style.overflow = "hidden";
+      	}
+		var overflow = this.clientWidth < this.scrollWidth || 
+		   this.clientHeight < this.scrollHeight;
+		this.css("overflow", origOverflow);
+
+   		return overflow;
+	}
+});
