@@ -4,9 +4,9 @@
 * A small, light JavaScript framework for mobile Web app development, providing the functionality necessary for creating professional HTML5/CSS3 based Web apps.
 * 
 * LICENSE: BSD
-*
-* Version: 1.0.0
 * 
+* Version 1.0.2
+*
 * Copyright (c) 2010, Robert Biggs
 * All rights reserved.
 
@@ -225,6 +225,24 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 			i++;
 		}
 	};
+	/** 
+	* 
+	* Replace element's childNodes with content. This method is attached directly to the Element object.
+	*
+	* @method
+	* @param {element} The element to insert.
+	* 
+	* ### fill
+	*
+	* syntax:
+	*
+	*  $(selector).fill(content);
+	* 
+	* example:
+	*
+	*  $("#item").fill(content);
+	*
+	*/
 	Element.prototype.fill = function ( content ) {
 		this.empty();
 		this.insert(content);
@@ -483,15 +501,14 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 	*
 	*/
 	Element.prototype.previous = function ( ) {
-	  /*	do {
+	  	do {
 		  	// Get the previous sibling.
-		  	element = this.previousSibling;
+		  	var element = this.previousSibling;
 	   	// Check the node type. If it is 3 (a text node), check to see
 	   	// if it contains anything other than \S (white space).
 	   	// If it is a text node with only white space, ignore it.
 	   	} while (element && (element.nodeType === 3 && !/\S/.test(element.nodeValue)));
-	   	return element; */
-	   	return this.previousElementSibling;
+	   	return element;
 	};
 	/** 
 	* 
@@ -513,15 +530,14 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 	*
 	*/
 	Element.prototype.next = function ( ) {
-		/*do {
+		do {
 			// Get the next sibling.
-		  	element = this.nextSibling;
+		  	var element = this.nextSibling;
 	   	// Check the node type. If it is 3 (a text node), check to see
 	   	// if it contains anything other than \S (white space).
 	   	// If it is a text node with only white space, ignore it.
 	   	} while (element && (element.nodeType === 3 && !/\S/.test(element.nodeValue)));
-	   	return element; */
-	   	return this.nextElementSibling;
+	   	return element;
 	};
 	/** 
 	* 
@@ -554,19 +570,79 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 		$.itemNumber = null;
 	*
 	*/
+	/** 
+	* 
+	* This method return the first ancestor to match the tag passed as an argument. This method is attached directly to the Element object.
+	*
+	* @method
+	* 
+	* ### ancestorTag
+	*
+	* syntax:
+	*
+	*  Element.ancestorTag(selector);
+	* 
+	* @return {Node} Returns matched ancestor node. 
+	* 
+	* example:
+	*
+	*  var ancestor = $("#item").ancestorTag("article");
+	*
+	*/
+	Element.prototype.ancestorTag = function ( selector ) {
+		var p = this.parentNode;
+		if (!p) {
+			return false;
+		}
+		if (p.tagName.toLowerCase() == selector) {
+			return p;
+		} else {
+			return p.ancestorTag(selector);
+		}
+	};
+	/** 
+	* 
+	* This method return the first ancestor to match the class passed as an argument. This method is attached directly to the Element object.
+	*
+	* @method
+	* 
+	* ### ancestorClass
+	*
+	* syntax:
+	*
+	*  Element.ancestorClass(selector);
+	* 
+	* @return {Node} Returns matched ancestor node. 
+	* 
+	* example:
+	*
+	*  var ancestor = $("#item").ancestorClass("generic class");
+	*
+	*/
+	Element.prototype.ancestorClass = function ( selector ) {
+		var p = this.parentNode;
+		if (!p) {
+			return false;
+		}
+		if (p.className == selector) {
+			return p;
+		} else {
+			return p.ancestorClass(selector);
+		}
+	};
 	Element.prototype.insert = function ( content, position ) {
 		if (position === 1 || (typeof position === "string" && position === "first")) {
 		   if (typeof content === "string") {
 			    var c = $.make(content);
 			    var i = 0, len = c.length;
 			    while (i < len) {
-			   		this.insertBefore(c[i], this.childNodes[0]);
+			   		this.insertBefore(c[i], this.children[0]);
 			   		i++;
 			   	}
 		   	} else {
 		   	    var i = 0, len = content.length;
 		   	    while (i < len) {
-		   	    	this.insertBefore(content[i], this.childNodes[0]);
+		   	    	this.insertBefore(content[i], this.children[0]);
 		   	    	i++;
 		   	    }
 		   	}
@@ -607,13 +683,13 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 					var c = $.make(content);
 					var i = 0, len = c.length;
 					while (i < len) {
-						this.insertBefore(c[i], this.childNodes[position - 1]);
+						this.insertBefore(c[i], this.children[position - 1]);
 						i++;
 					}
 				} else {
 					var i = 0, len = content.length;
 					while (i < len) {
-					    this.insertBefore(content[i], this.childNodes[position - 1]);
+					    this.insertBefore(content[i], this.children[position - 1]);
 						i++;
 					}
 				}
@@ -720,7 +796,7 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 			 	parent.appendChild(content);
 		  	// Otherwise we'll insert it before the element.
 		  	} else {
-			 	parent.insertBefore(content, this.nextSibling);
+			 	parent.insertBefore(content, this.next());
 		  	}
 	   	}
 	};
@@ -812,11 +888,310 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 	   	var element = this.clone(true);
 	   	this.replace(element, this.parentNode);
 	};
-	Element.prototype.value = function ( ) {
 	
+	/** 
+	* 
+	* A method to get the first child of an element while avoiding empty text nodes. This method is attached directly to the Element object.
+	*
+	* @method
+	* 
+	* ### first
+	*
+	* syntax:
+	*
+	*  element.first();
+	* 
+	* example:
+	*
+	*  $("#menu").first();
+	*
+	*/
+	Element.prototype.first = function() {
+        return this.children[0];
+    };
+    
+	/** 
+	* 
+	* A method to get the last child of an element, while avoiding empty text nodes. This method is attached directly to the Element object.
+	*
+	* @method
+	* 
+	* ### last
+	*
+	* syntax:
+	*
+	*  element.last();
+	* 
+	* example:
+	*
+	*  $("#menu").last();
+	*
+	*/
+    Element.prototype.last = function() {
+        return this.children[this.children.length -1];
+    };
+    
+	/** 
+	* 
+	* A method to get a specific child node of an element. This method is attached directly to the Element object.
+	*
+	* @method
+	* 
+	* ### child
+	*
+	* syntax:
+	*
+	*  element.child();
+	* 
+	* arguments:
+	*
+	* - integer:integer An integer representing which child node to get. For child nodes numbering starts at 1.
+	* 
+	* example:
+	*
+	*  $("#menu").child();
+	*
+	*/
+	Element.prototype.child = function ( position ) {
+		return this.children[position - 1];
 	};
-	Element.prototype.toggle = function ( arguments ) {
+	/** 
+	* 
+	* A method to toggle the state of an iPhone switch control or checkbox. This also sets the state of the control to either "checked" or "unchecked". This method is attached directly to the Element object.
+	*
+	* @method
+	* 
+	* ### toggleCheckbox
+	*
+	* syntax:
+	*
+	*  element.toggleCheckbox();
+	* 
+	* example:
+	*
+	*  $("#menu").toggleCheckbox();
+	*
+	*/
+	Element.prototype.toggleCheckbox = function() {
+		if (this.hasClass("checkbox")) {
+			if (this.getAttribute("checked") === "true") {
+				this.setAttribute("checked", "false");
+				this.toggleClass("checked", "unchecked");
+			} else {
+				this.setAttribute("checked", "true");
+				this.toggleClass("checked", "unchecked");
+			}
+		} else {
+			return false;
+		}
+	};
 	
+	/** 
+	* A method to attach events to elements.
+	*
+	* @method
+	* 
+	* ### bind
+	*
+	* syntax:
+	*
+	*  element.bind(event, function);
+	*
+	* arguments:
+	* 
+	*  - event: Event A string representing valid event handler, such as "click".
+	*  - function: Function A function, either named or anonymous. Note that a bound event that uses an anonymous function cannot be unbound. See last example below for how to avoid this.
+	* 
+	* example:
+	*
+	*  var doSomething = function() {
+	      console.log("I'm doing it now.");
+	   };
+	   $("#doIt").bind("click", doSomething);
+	* or:
+	   $(".stop").bind("touchend", function() {
+	      console.log("Time to put an end to this!");
+	      this.remove();
+	   });
+	*
+	*/
+	Element.prototype.bind = function( event, callback ) {
+		this.addEventListener(event, callback, false);
+	};
+	/** 
+	* A method to remove events from elements.
+	*
+	* @method
+	* 
+	* ### unbind
+	*
+	* syntax:
+	*
+	*  element.unbind(event, callback);
+	*
+	* arguments:
+	* 
+	*  - event: Event A string representing valid event handler, such as "click".
+	*  - function: Function A named function executed by the event handler.
+	* 
+	* example:
+	*
+	*  $("#"doIt").unbind("click", doSomething);
+	* 
+	*/
+	Element.prototype.unbind = function( event, callback ) {
+		this.removeEventListener( event, callback, false );
+	}
+	
+	/** 
+	* 
+	* A method to initialize a set of tabs using lozenge or segmented buttons to toggle data sets in a view. It takes one argument, a unique selector identifying the view or section where the tabs reside.
+	*
+	* @method
+	* 
+	* ### setupTabs
+	*
+	* syntax:
+	*
+	*  $.setupTabs(tabsSelector);
+	*
+	* arguments:
+	* 
+	*  - string: string A valid selector for the parent of the tab control.
+	* 
+	* example:
+	*
+	*  $.setupTabs("#buyerOptions");
+	*
+	*/
+	$.Tabs = function( viewSelector ) {
+		var tabsSelector = viewSelector + ".Tabs .tab";
+		var panelsSelector = viewSelector + ".TabPanels .tabPanel";
+		var tabs = $$(tabsSelector);
+		var panels = $$(panelsSelector);
+		
+		tabs.forEach(function(tab) {
+			tabs[0].addClass("selected");
+			panels[0].addClass("selected");
+			tab.bind("click", function() {
+				var i = 0, len = tabs.length;
+				var panelToHide = null;
+				while(i < len) {
+					tabs[i].removeClass("selected");
+					panels[i].removeClass("selected");
+					if (this == tabs[i]) {
+						panelToHide = i;
+					}
+					i++
+				}
+				this.addClass("selected");
+				panels[panelToHide].addClass("selected");
+			});
+			
+			tab.bind("touchstart", function() {
+				var i = 0, len = tabs.length;
+				var panelToHide = null;
+				while(i < len) {
+					tabs[i].removeClass("selected");
+					panels[i].removeClass("selected");
+					if (this == tabs[i]) {
+						panelToHide = i;
+					}
+					i++
+				}
+				this.addClass("selected");
+				panels[panelToHide].addClass("selected");
+			});
+		});
+	};
+
+	/** 
+	* 
+	* A method to initialize a list of radios buttons to present the user with a group of single choice options. It takes as the main argument, a unique selector identifying the view or section where the radio list resides.
+	*
+	* @method
+	* 
+	* ### RadioButtons
+	*
+	* syntax:
+	*
+	*  $.RadioButtons(selector);
+	*
+	* arguments:
+	* 
+	*  - string: string A valid selector for the parent of the tab control. By default the selector will target a class, id or tag of the radio list itself, so if you want to pass in a selector for a parent tag, such as an article, section or div tag, you'll need to make sure to put a trailing space on the end of the selector string.
+	*  - function: function A valid function as a callback. This is optional. The callback gets passed a reference to the clicked item, so you can access it in your callback function.
+	* 
+	* example:
+	*
+	*  $.RadioButtons("#buyerOptions");
+	*  $.RadioButtons("#buyerOptions", function(choice) {
+	       // Output the value of the radio button that was selected.
+	       // Since the actual radio button is the last item in a radio
+	       // button list, we can use the last() method to get its value.
+	       console.log(choice.last().value);
+	   };
+	*
+	*/
+	$.RadioButtons = function( viewSelector, callback ) {
+		var items = viewSelector + ".radioList li";
+		var radioButtons = $$(items);
+		radioButtons.forEach(function(item) {
+			item.bind("click", function() {
+				radioButtons.forEach(function(check) {
+					check.removeClass("selected");
+				});
+				this.addClass("selected");
+				this.last().checked = true; 
+				if (callback) {
+					callback(item);
+				}
+			});
+		});
+	};	
+	/** 
+	* 
+	* A method to update the height and width of article and sections tags after the mobile device's orientation has changed. This is necessary because the device's viewport is not the same as the browser window, so that 100% does not result in what you would think it would.
+	*
+	* @method
+	* 
+	* ### updateOrientation
+	*
+	* syntax:
+	*
+	*  $.updateOrientation();
+	* 
+	* example:
+	*
+	*  $.updateOrientation();
+	*
+	*/
+	$.updateOrientation = function() {
+		var iphone = /iphone/i.test(navigator.userAgent);
+		var ipad = /ipad/i.test(navigator.userAgent);
+		var android = /android/i.test(navigator.userAgent);
+		$$("article").forEach(function(article) {
+			article.css("width: " + window.innerWidth + "px;");
+		});
+		if (iphone || ipad || android) {
+			if (window.orientation === 0 || window.orientation === 180) {
+				$$("article").forEach(function(article) {
+					article.css("width: " + window.innerWidth + "px;");
+				});
+				$$("section").forEach(function(section) {
+					section.css("width: " + window.innerWidth + "px;");
+				});
+				$.hideURLbar();
+			} else {
+				$$("article").forEach(function(article) {
+					article.css("width: " + window.innerWidth + "px;");
+				});
+				$$("section").forEach(function(section) {
+					section.css("width: " + window.innerWidth + "px;");
+				});
+				$.hideURLbar();
+			} 
+		}
 	};
 	/** 
 	* 
@@ -861,7 +1236,7 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 	* ### $.onload
 	*
 	*/
-	$.onload = [],
+	$.onload = [];
 	/** 
 	* 
 	* A helper method to execute multiple functions at the same time. It is used by the $.ready method to execute multiple blocks of code when the document is ready for manipulation by scripts. This method is attached directly to the $ object.
@@ -887,7 +1262,7 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 			$.onload[i]();
 			i++;
 		}
-	},
+	};
 	/** 
 	* 
 	* Method to determine when the DOM is ready for manipulation and thereupon fire a block of code contained in an anonymous function passed to it as an argument. This method is attached directly to the $ object.
@@ -927,6 +1302,16 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 	*/
 	$.events = ['onmousedown', 'onmouseup', 'onmouseover', 'onmouseout', 'onclick', 'onmousemove', 'ondblclick', 'onerror', 'onresize', 'onscroll', 'onkeydown', 'onkeyup', 'onkeypress', 'onchange', 'onsubmit', 'onload', 'ontouchstart', 'ontouchmove', 'ontouchend', 'ontouchcancel', 'ongesturestart', 'ongesturechange', 'ongestureend', 'onorientationchange'];
 	
+	//////////////////////////////////////////////////////////
+	//
+	//  This module was inspired by work by Aaron Boodman: www.youngpup.net
+	//  I encapsulated it further and took some variables out of the
+	//  global namespace and bound them to the Drag object. I also
+	//  changed how the initial inline values were set up so that
+	//  it automatically gets the true position values defined
+	//  on the element by CSS, something the original didn't do correctly.
+	//
+	//////////////////////////////////////////////////////////
 	/** 
 	* 
 	* A method to insert content into a node using The XMLHttpRequest object. This method is attached directly to the Element object.
@@ -1019,6 +1404,34 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 		this.xhr(url, options);
 		return this;
 	};
+	
+
+	/** 
+	* 
+	* A method to hide the browser's address bar. This is used at page load time and when the user navigates to different views.
+	*
+	* @method
+	* 
+	* ### hideURLbar
+	*
+	* syntax:
+	*
+	*  $.hideURLbar();
+	*
+	* example:
+	*
+	*  $.hideURLbar();
+	*
+	*/
+
+	$.hideURLbar = function() {
+		window.scrollTo(0, 1);
+	}; 
+	/**
+	*
+	* Version of ChocolateChip.
+	*/
+	$.version = "1.0.1";
 	/** 
 	* 
 	* Attach objects to the global window object.
@@ -1030,3 +1443,32 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 	window.$ = $;
 	window.$$ = $$;
 })(); 
+
+/**
+* Initialization block for GUI components. ".button.back" implements automatic backwards navigation when the user clicks a back button. ".drilldown li" implements automatic forward navigation for drilling down into an application.
+*/
+
+$.ready(function() {
+ 	$$(".button.back").forEach(function(button) {
+		button.bind("click", function() {
+			var parent = navigation[navigation.length-1];
+			navigation.pop();
+			$(navigation[navigation.length-1]).addClass("current");
+			$(parent).removeClass("current");
+			$(navigation[navigation.length-1]).removeClass("reverse");
+			$.hideURLbar();
+		});
+	});
+	$$(".drilldown li").forEach(function(item) {
+		item.bind("click", function() {
+			$(navigation[navigation.length-1]).removeClass("current");
+			$(navigation[navigation.length-1]).addClass("reverse");
+			if (!$("#Home").hasClass("reverse")) {
+				$("#Home").addClass("reverse");
+			}
+			$(this.getAttribute("rel")).addClass("current");
+			navigation.push(this.getAttribute("rel"));
+			$.hideURLbar(); 
+		});
+	}); 
+ });
