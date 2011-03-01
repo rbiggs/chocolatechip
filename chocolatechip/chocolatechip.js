@@ -4,9 +4,9 @@
 * A small, light JavaScript framework for mobile Web app development, providing the functionality necessary for creating professional HTML5/CSS3 based Web apps.
 * 
 * LICENSE: BSD
-* 
-* Version 1.0.2
 *
+* Version: 1.0.3
+* 
 * Copyright (c) 2010, Robert Biggs
 * All rights reserved.
 
@@ -20,6 +20,105 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 */
 
 (function( ){
+	
+	/** 
+	* 
+	* This method returns the first instance of the selector passed as an argument. This will later be passed out as a global object.
+	*
+	* @method
+	* @param {String} A valid CSS selector.
+	* @return {Element} First element found in the document.
+	* 
+	* ### $
+	*
+	* syntax:
+	*
+	*  $(selector);
+	*
+	* arguments:
+	*
+	* - string:string A string defining a valid CSS selector.
+	* 
+	* @return {Node} Returns first instance of the node indicated by selector. 
+	* 
+	* example:
+	*
+	*  var item = $("#item");
+	*
+	*/
+	var $ = function ( selector ) {
+		return document.querySelector(selector);
+	};
+	
+	/** 
+	* 
+	* This is a function to convert an DOM node collection into an array. This is so you can use array extras like, forEach, map, slice, etc. The $$ method uses it. This method is attached directly to the $ object.
+	*
+	* @method
+	* @param {NodeList} The node collection to convert into an array.
+	* @return {Array} An array of nodes in an element collection.
+	* 
+	* ### collectionToArray
+	*
+	* syntax:
+	*
+	*  $.collectionToArray(NodeList);
+	*
+	* arguments:
+	*
+	* - NodeList:HTMLCollection A collection of nodes to convert into an array.
+	* 
+	* @return {Array} Returns array of nodes in an HTMLElement collection. 
+	* 
+	* example:
+	*
+	*  var p = document.getElementsByTagName("p");
+	*  var pArray = $.collectionToArray(p);
+	*
+	*/
+	
+	$.collectionToArray = function ( collection ) {
+		var array = [];
+		var i = 0, len = collection.length;
+		while ( i < len ) {
+			array[i] = collection[i];
+			i++;
+		}
+		return array;
+	};
+	
+	/** 
+	* 
+	* This method uses querySelectorAll to return a DOM collection as an array. It employs the method $.collectionToArray to convert the collection of nodes into an array. This will later be passed out as a global object.
+	*
+	* @method
+	* @param {String} A valid CSS selector.
+	* @return {Array} An array of nodes comprising an element collection.
+	* 
+	* ### $$
+	*
+	* syntax:
+	*
+	*  $$(selector);
+	*
+	* arguments:
+	*
+	* - string:string A string defining a valid CSS selector.
+	* 
+	* @return {Array} Returns array of nodes found by querySelectorAll. 
+	* 
+	* example:
+	*
+	*  var sections = $$("section");
+	*  $$("section > p").forEach(function(p) {
+			p.css("color: red; background-color: yellow; padding: 10px;");
+	   });
+	*
+	*/
+	var $$ = function ( selector ) {
+		return $.collectionToArray(document.querySelectorAll(selector));
+	};
+	
 	/** 
 	* 
 	* Check an element to see if it has a particular class. This method is attached directly to the Element object.
@@ -45,6 +144,7 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 	Element.prototype.hasClass = function ( className ) {
 		return new RegExp('(?:^|\\s+)' + className + '(?:\\s+|$)').test(this.className);
 	};
+	
 	/** 
 	* 
 	* Add a class to an element. This method is attached directly to the Element object.
@@ -74,6 +174,7 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 			this.className = [this.className, className].join(' ').replace(/^\s*|\s*$/g, "");
 		}
 	};
+	
 	/** 
 	* 
 	* Remove a class from an element. This method is attached directly to the Element object.
@@ -102,6 +203,7 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 			this.className = currentClasses.replace(new RegExp('(?:^|\\s+)' + className + '(?:\\s+|$)', 'g'), ' ').replace(/^\s*|\s*$/g, "");
 		}
 	};
+	
 	/** 
 	* 
 	* Toggle a class on and off an element, or toggle between two classes. This method is attached directly to the Element object.
@@ -156,6 +258,7 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 			}
 		}
 	};
+	
 	/** 
 	* 
 	* Remove an element from the document. This method is attached directly to the Element object.
@@ -177,6 +280,7 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 		this.removeEvents();
 		this.parentNode.removeChild(this);
 	};
+	
 	/** 
 	* 
 	* Remove all child nodes of an element. This method invokes the removeEvents method first to remove any attached events and thereby prevent memory leaks. This method is attached directly to the Element object.
@@ -196,10 +300,9 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 	*/
 	Element.prototype.empty = function ( ) {
 		this.removeEvents();
-		while (this.firstChild) {
-			this.removeChild(this.firstChild);
-		}
+		this.textContent = "";
 	};
+	
 	/** 
 	* 
 	* Remove events from an element. This method uses an array of events owned by the global $ object to know which events to remove. This method is invoked before removing any nodes from a document to prevent memory leaks. This method is attached directly to the Element object.
@@ -225,28 +328,34 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 			i++;
 		}
 	};
+	
 	/** 
 	* 
-	* Replace element's childNodes with content. This method is attached directly to the Element object.
+	* Method to replace the contents/childNodes of an element with new content. This method is attached directly to the Element object.
 	*
 	* @method
-	* @param {element} The element to insert.
+	* @param {String} The content to insert in the element.
 	* 
 	* ### fill
 	*
 	* syntax:
 	*
 	*  $(selector).fill(content);
+	*
+	* arguments:
+	*
+	* - content:string the content to be inserted.
 	* 
 	* example:
 	*
-	*  $("#item").fill(content);
+	*  $("#item").fill("New stuff here");
 	*
 	*/
 	Element.prototype.fill = function ( content ) {
 		this.empty();
 		this.insert(content);
 	};
+	
 	/** 
 	* 
 	* This method adds text to the target element, replacing whatever child nodes it might have. If no value is passed as an argument, the method returns the text value of all child nodes of the target element. This method is attached directly to the Element object.
@@ -283,100 +392,7 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 			return this.innerText;
 		}
 	};
-	/** 
-	* 
-	* This method returns the first instance of the selector passed as an argument. This will later be passed out as a global object.
-	*
-	* @method
-	* @param {String} A valid CSS selector.
-	* @return {Element} First element found in the document.
-	* 
-	* ### $
-	*
-	* syntax:
-	*
-	*  $(selector);
-	*
-	* arguments:
-	*
-	* - string:string A string defining a valid CSS selector.
-	* 
-	* @return {Node} Returns first instance of the node indicated by selector. 
-	* 
-	* example:
-	*
-	*  var item = $("#item");
-	*
-	*/
-	var $ = function ( selector ) {
-		return document.querySelector(selector);
-	};
-	/** 
-	* 
-	* This is a function to convert an DOM node collection into an array. This is so you can use array extras like, forEach, map, slice, etc. The $$ method uses it. This method is attached directly to the $ object.
-	*
-	* @method
-	* @param {NodeList} The node collection to convert into an array.
-	* @return {Array} An array of nodes in an element collection.
-	* 
-	* ### collectionToArray
-	*
-	* syntax:
-	*
-	*  $.collectionToArray(NodeList);
-	*
-	* arguments:
-	*
-	* - NodeList:HTMLCollection A collection of nodes to convert into an array.
-	* 
-	* @return {Array} Returns array of nodes in an HTMLElement collection. 
-	* 
-	* example:
-	*
-	*  var p = document.getElementsByTagName("p");
-	*  var pArray = $.collectionToArray(p);
-	*
-	*/
-	$.collectionToArray = function ( collection ) {
-		var array = [];
-		var i = 0, len = collection.length;
-		while ( i < len ) {
-			array[i] = collection[i];
-			i++;
-		}
-		return array;
-	};
-	/** 
-	* 
-	* This method uses querySelectorAll to return a DOM collection as an array. It employs the method $.collectionToArray to convert the collection of nodes into an array. This will later be passed out as a global object.
-	*
-	* @method
-	* @param {String} A valid CSS selector.
-	* @return {Array} An array of nodes comprising an element collection.
-	* 
-	* ### $$
-	*
-	* syntax:
-	*
-	*  $$(selector);
-	*
-	* arguments:
-	*
-	* - string:string A string defining a valid CSS selector.
-	* 
-	* @return {Array} Returns array of nodes found by querySelectorAll. 
-	* 
-	* example:
-	*
-	*  var sections = $$("section");
-	*  $$("section > p").forEach(function(p) {
-			p.css("color: red; background-color: yellow; padding: 10px;");
-	   });
-	*
-	*/
-	var $$ = function ( selector ) {
-		return $.collectionToArray(document.querySelectorAll(selector));
-	}
+	
 	/** 
 	* 
 	* This method creates nodes from a string of valid HTML passed as an argument. The result is an array of one or more nodes. By iterating this array you can insert them into a document. This method is attached directly to the $ object.
@@ -419,6 +435,7 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 		// Return the array of nodes.
 		return nodes;
 	};	
+	
 	/** 
 	* 
 	* Add a CSS declaration directly to an element. If a boolean value that equates to true is passed as a second, optional argument, the method will replace whatever inline CSS values are presently existing on the element, otherwise it appends the CSS declaration to whatever is already there. This method is attached directly to the Element object.
@@ -452,6 +469,7 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 			return this.style.cssText = style;
 		}
 	};
+	
 	/** 
 	* 
 	* Method to get the computed style of an element. This may be the inline style, or the style derived from stylesheet(s). This method is attached directly to the $ object.
@@ -481,6 +499,7 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 	$.getStyle = function ( element, property ) {
 		return document.defaultView.getComputedStyle(element, null).getPropertyValue(property.toLowerCase());
 	};
+	
 	/** 
 	* 
 	* This method return the previous sibling of the element upon which it executes. This method is attached directly to the Element object.
@@ -501,15 +520,9 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 	*
 	*/
 	Element.prototype.previous = function ( ) {
-	  	do {
-		  	// Get the previous sibling.
-		  	var element = this.previousSibling;
-	   	// Check the node type. If it is 3 (a text node), check to see
-	   	// if it contains anything other than \S (white space).
-	   	// If it is a text node with only white space, ignore it.
-	   	} while (element && (element.nodeType === 3 && !/\S/.test(element.nodeValue)));
-	   	return element;
+	   	return this.previousElementSibling;
 	};
+	
 	/** 
 	* 
 	* This method return the next sibling of the element upon which it executes. This method is attached directly to the Element object.
@@ -530,15 +543,71 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 	*
 	*/
 	Element.prototype.next = function ( ) {
-		do {
-			// Get the next sibling.
-		  	var element = this.nextSibling;
-	   	// Check the node type. If it is 3 (a text node), check to see
-	   	// if it contains anything other than \S (white space).
-	   	// If it is a text node with only white space, ignore it.
-	   	} while (element && (element.nodeType === 3 && !/\S/.test(element.nodeValue)));
-	   	return element;
+	   	return this.nextElementSibling;
 	};
+	
+	/** 
+	* 
+	* This method return the first ancestor to match the tag passed as an argument. This method is attached directly to the Element object.
+	*
+	* @method
+	* 
+	* ### ancestorTag
+	*
+	* syntax:
+	*
+	*  Element.ancestorTag(selector);
+	* 
+	* @return {Node} Returns matched ancestor node. 
+	* 
+	* example:
+	*
+	*  var ancestor = $("#item").ancestorTag("article");
+	*
+	*/
+	Element.prototype.ancestorTag = function ( selector ) {
+		var p = this.parentNode;
+		if (!p) {
+			return false;
+		}
+		if (p.tagName.toLowerCase() == selector) {
+			return p;
+		} else {
+			return p.ancestorTag(selector);
+		}
+	};
+	
+	/** 
+	* 
+	* This method return the first ancestor to match the class passed as an argument. This method is attached directly to the Element object.
+	*
+	* @method
+	* 
+	* ### ancestorClass
+	*
+	* syntax:
+	*
+	*  Element.ancestorClass(selector);
+	* 
+	* @return {Node} Returns matched ancestor node. 
+	* 
+	* example:
+	*
+	*  var ancestor = $("#item").ancestorClass("generic class");
+	*
+	*/
+	Element.prototype.ancestorClass = function ( selector ) {
+		var p = this.parentNode;
+		if (!p) {
+			return false;
+		}
+		if (p.className == selector) {
+			return p;
+		} else {
+			return p.ancestorClass(selector);
+		}
+	};
+	
 	/** 
 	* 
 	* A method to insert a node or nodes at nth position in the child node collection of the element on which the method is being called. This can be the first position, the last position, or anywhere in between these. If no position is passed as an argument it defaults to last position. If the parent element has no child nodes, the method inserts the new element as the first child of the parent element. This method is attached directly to the Element object.
@@ -570,79 +639,19 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 		$.itemNumber = null;
 	*
 	*/
-	/** 
-	* 
-	* This method return the first ancestor to match the tag passed as an argument. This method is attached directly to the Element object.
-	*
-	* @method
-	* 
-	* ### ancestorTag
-	*
-	* syntax:
-	*
-	*  Element.ancestorTag(selector);
-	* 
-	* @return {Node} Returns matched ancestor node. 
-	* 
-	* example:
-	*
-	*  var ancestor = $("#item").ancestorTag("article");
-	*
-	*/
-	Element.prototype.ancestorTag = function ( selector ) {
-		var p = this.parentNode;
-		if (!p) {
-			return false;
-		}
-		if (p.tagName.toLowerCase() == selector) {
-			return p;
-		} else {
-			return p.ancestorTag(selector);
-		}
-	};
-	/** 
-	* 
-	* This method return the first ancestor to match the class passed as an argument. This method is attached directly to the Element object.
-	*
-	* @method
-	* 
-	* ### ancestorClass
-	*
-	* syntax:
-	*
-	*  Element.ancestorClass(selector);
-	* 
-	* @return {Node} Returns matched ancestor node. 
-	* 
-	* example:
-	*
-	*  var ancestor = $("#item").ancestorClass("generic class");
-	*
-	*/
-	Element.prototype.ancestorClass = function ( selector ) {
-		var p = this.parentNode;
-		if (!p) {
-			return false;
-		}
-		if (p.className == selector) {
-			return p;
-		} else {
-			return p.ancestorClass(selector);
-		}
-	};
 	Element.prototype.insert = function ( content, position ) {
 		if (position === 1 || (typeof position === "string" && position === "first")) {
 		   if (typeof content === "string") {
 			    var c = $.make(content);
 			    var i = 0, len = c.length;
 			    while (i < len) {
-			   		this.insertBefore(c[i], this.children[0]);
+			   		this.insertBefore(c[i], this.firstElementChild);
 			   		i++;
 			   	}
 		   	} else {
 		   	    var i = 0, len = content.length;
 		   	    while (i < len) {
-		   	    	this.insertBefore(content[i], this.children[0]);
+		   	    	this.insertBefore(content[i], this.firstElementChild);
 		   	    	i++;
 		   	    }
 		   	}
@@ -697,6 +706,7 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 		}
 		return this;
 	};
+	
 	/** 
 	* 
 	* A method to insert content before the node upon which it operates. This method is attached directly to the Element object.
@@ -740,6 +750,7 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 		   this.parentNode.insertBefore(content, this);
 		}
     };
+    
 	/** 
 	* 
 	* A method to insert content consisting of a node or nodes before the node upon which it operates. This method is attached directly to the Element object.
@@ -800,6 +811,7 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 		  	}
 	   	}
 	};
+	
 	/** 
 	* 
 	* A method to clone a node. If a boolean value that evaluates to true is passed as an argument, the method will clone the node and all its child nodes, otherwise it clones only the node itself. This method is attached directly to the Element object.
@@ -831,6 +843,7 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 			return this.cloneNode(false);
 		}
 	};
+	
 	/** 
 	* 
 	* A method to wrap a node in markup. This method is attached directly to the Element object.
@@ -861,6 +874,7 @@ Redistributions in binary form must reproduce the above copyright notice, this l
         this.after(tempNode, this);
         this.remove(this); 
     };
+    
 	/** 
 	* 
 	* A method to unwrap a node by removing its parent node. This method is attached directly to the Element object.
@@ -907,7 +921,7 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 	*
 	*/
 	Element.prototype.first = function() {
-        return this.children[0];
+        return this.firstElementChild;
     };
     
 	/** 
@@ -928,7 +942,7 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 	*
 	*/
     Element.prototype.last = function() {
-        return this.children[this.children.length -1];
+        return this.lastElementChild;
     };
     
 	/** 
@@ -954,36 +968,6 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 	*/
 	Element.prototype.child = function ( position ) {
 		return this.children[position - 1];
-	};
-	/** 
-	* 
-	* A method to toggle the state of an iPhone switch control or checkbox. This also sets the state of the control to either "checked" or "unchecked". This method is attached directly to the Element object.
-	*
-	* @method
-	* 
-	* ### toggleCheckbox
-	*
-	* syntax:
-	*
-	*  element.toggleCheckbox();
-	* 
-	* example:
-	*
-	*  $("#menu").toggleCheckbox();
-	*
-	*/
-	Element.prototype.toggleCheckbox = function() {
-		if (this.hasClass("checkbox")) {
-			if (this.getAttribute("checked") === "true") {
-				this.setAttribute("checked", "false");
-				this.toggleClass("checked", "unchecked");
-			} else {
-				this.setAttribute("checked", "true");
-				this.toggleClass("checked", "unchecked");
-			}
-		} else {
-			return false;
-		}
 	};
 	
 	/** 
@@ -1018,6 +1002,7 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 	Element.prototype.bind = function( event, callback ) {
 		this.addEventListener(event, callback, false);
 	};
+	
 	/** 
 	* A method to remove events from elements.
 	*
@@ -1043,156 +1028,6 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 		this.removeEventListener( event, callback, false );
 	}
 	
-	/** 
-	* 
-	* A method to initialize a set of tabs using lozenge or segmented buttons to toggle data sets in a view. It takes one argument, a unique selector identifying the view or section where the tabs reside.
-	*
-	* @method
-	* 
-	* ### setupTabs
-	*
-	* syntax:
-	*
-	*  $.setupTabs(tabsSelector);
-	*
-	* arguments:
-	* 
-	*  - string: string A valid selector for the parent of the tab control.
-	* 
-	* example:
-	*
-	*  $.setupTabs("#buyerOptions");
-	*
-	*/
-	$.Tabs = function( viewSelector ) {
-		var tabsSelector = viewSelector + ".Tabs .tab";
-		var panelsSelector = viewSelector + ".TabPanels .tabPanel";
-		var tabs = $$(tabsSelector);
-		var panels = $$(panelsSelector);
-		
-		tabs.forEach(function(tab) {
-			tabs[0].addClass("selected");
-			panels[0].addClass("selected");
-			tab.bind("click", function() {
-				var i = 0, len = tabs.length;
-				var panelToHide = null;
-				while(i < len) {
-					tabs[i].removeClass("selected");
-					panels[i].removeClass("selected");
-					if (this == tabs[i]) {
-						panelToHide = i;
-					}
-					i++
-				}
-				this.addClass("selected");
-				panels[panelToHide].addClass("selected");
-			});
-			
-			tab.bind("touchstart", function() {
-				var i = 0, len = tabs.length;
-				var panelToHide = null;
-				while(i < len) {
-					tabs[i].removeClass("selected");
-					panels[i].removeClass("selected");
-					if (this == tabs[i]) {
-						panelToHide = i;
-					}
-					i++
-				}
-				this.addClass("selected");
-				panels[panelToHide].addClass("selected");
-			});
-		});
-	};
-
-	/** 
-	* 
-	* A method to initialize a list of radios buttons to present the user with a group of single choice options. It takes as the main argument, a unique selector identifying the view or section where the radio list resides.
-	*
-	* @method
-	* 
-	* ### RadioButtons
-	*
-	* syntax:
-	*
-	*  $.RadioButtons(selector);
-	*
-	* arguments:
-	* 
-	*  - string: string A valid selector for the parent of the tab control. By default the selector will target a class, id or tag of the radio list itself, so if you want to pass in a selector for a parent tag, such as an article, section or div tag, you'll need to make sure to put a trailing space on the end of the selector string.
-	*  - function: function A valid function as a callback. This is optional. The callback gets passed a reference to the clicked item, so you can access it in your callback function.
-	* 
-	* example:
-	*
-	*  $.RadioButtons("#buyerOptions");
-	*  $.RadioButtons("#buyerOptions", function(choice) {
-	       // Output the value of the radio button that was selected.
-	       // Since the actual radio button is the last item in a radio
-	       // button list, we can use the last() method to get its value.
-	       console.log(choice.last().value);
-	   };
-	*
-	*/
-	$.RadioButtons = function( viewSelector, callback ) {
-		var items = viewSelector + ".radioList li";
-		var radioButtons = $$(items);
-		radioButtons.forEach(function(item) {
-			item.bind("click", function() {
-				radioButtons.forEach(function(check) {
-					check.removeClass("selected");
-				});
-				this.addClass("selected");
-				this.last().checked = true; 
-				if (callback) {
-					callback(item);
-				}
-			});
-		});
-	};	
-	/** 
-	* 
-	* A method to update the height and width of article and sections tags after the mobile device's orientation has changed. This is necessary because the device's viewport is not the same as the browser window, so that 100% does not result in what you would think it would.
-	*
-	* @method
-	* 
-	* ### updateOrientation
-	*
-	* syntax:
-	*
-	*  $.updateOrientation();
-	* 
-	* example:
-	*
-	*  $.updateOrientation();
-	*
-	*/
-	$.updateOrientation = function() {
-		var iphone = /iphone/i.test(navigator.userAgent);
-		var ipad = /ipad/i.test(navigator.userAgent);
-		var android = /android/i.test(navigator.userAgent);
-		$$("article").forEach(function(article) {
-			article.css("width: " + window.innerWidth + "px;");
-		});
-		if (iphone || ipad || android) {
-			if (window.orientation === 0 || window.orientation === 180) {
-				$$("article").forEach(function(article) {
-					article.css("width: " + window.innerWidth + "px;");
-				});
-				$$("section").forEach(function(section) {
-					section.css("width: " + window.innerWidth + "px;");
-				});
-				$.hideURLbar();
-			} else {
-				$$("article").forEach(function(article) {
-					article.css("width: " + window.innerWidth + "px;");
-				});
-				$$("section").forEach(function(section) {
-					section.css("width: " + window.innerWidth + "px;");
-				});
-				$.hideURLbar();
-			} 
-		}
-	};
 	/** 
 	* 
 	* A method to chain load multiple functions to execute when the document finishes loading.
@@ -1229,6 +1064,7 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 		   };
 		}
 	};
+	
 	/** 
 	* 
 	* An array to hold blocks of code to execute. This will be used by the $.loadPage method, which will be used by the $.ready method for executing blocks of code when the document is ready for manipulation by scripts. This method is attached directly to the $ object.
@@ -1237,6 +1073,7 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 	*
 	*/
 	$.onload = [];
+	
 	/** 
 	* 
 	* A helper method to execute multiple functions at the same time. It is used by the $.ready method to execute multiple blocks of code when the document is ready for manipulation by scripts. This method is attached directly to the $ object.
@@ -1263,6 +1100,7 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 			i++;
 		}
 	};
+	
 	/** 
 	* 
 	* Method to determine when the DOM is ready for manipulation and thereupon fire a block of code contained in an anonymous function passed to it as an argument. This method is attached directly to the $ object.
@@ -1293,6 +1131,7 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 			document.addEventListener("DOMContentLoaded", this.loadPage, null);
 		}
 	};
+	
 	/** 
 	* 
 	* An array of events to be removed before a node is deleted from a document. This array is attached directly to the $ object.
@@ -1302,16 +1141,6 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 	*/
 	$.events = ['onmousedown', 'onmouseup', 'onmouseover', 'onmouseout', 'onclick', 'onmousemove', 'ondblclick', 'onerror', 'onresize', 'onscroll', 'onkeydown', 'onkeyup', 'onkeypress', 'onchange', 'onsubmit', 'onload', 'ontouchstart', 'ontouchmove', 'ontouchend', 'ontouchcancel', 'ongesturestart', 'ongesturechange', 'ongestureend', 'onorientationchange'];
 	
-	//////////////////////////////////////////////////////////
-	//
-	//  This module was inspired by work by Aaron Boodman: www.youngpup.net
-	//  I encapsulated it further and took some variables out of the
-	//  global namespace and bound them to the Drag object. I also
-	//  changed how the initial inline values were set up so that
-	//  it automatically gets the true position values defined
-	//  on the element by CSS, something the original didn't do correctly.
-	//
-	//////////////////////////////////////////////////////////
 	/** 
 	* 
 	* A method to insert content into a node using The XMLHttpRequest object. This method is attached directly to the Element object.
@@ -1358,6 +1187,7 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 		request.send(params);
 		return this;
 	};
+	
 	/** 
 	* 
 	* A method to insert content into a node using The XMLHttpRequest object. This method is attached directly to the Element object.
@@ -1404,7 +1234,6 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 		this.xhr(url, options);
 		return this;
 	};
-	
 
 	/** 
 	* 
@@ -1427,11 +1256,62 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 	$.hideURLbar = function() {
 		window.scrollTo(0, 1);
 	}; 
+	
+	$.importScript = function ( url ) {
+		$("body").insertAdjacentHTML("beforeEnd", "<script type='text/javascript' src='"+url+"'></script>");
+	};
+	
+	/** 
+	* 
+	* A method to update the height and width of article and sections tags after the mobile device's orientation has changed. This is necessary because the device's viewport is not the same as the browser window, so that 100% does not result in what you would think it would.
+	*
+	* @method
+	* 
+	* ### updateOrientation
+	*
+	* syntax:
+	*
+	*  $.updateOrientation();
+	* 
+	* example:
+	*
+	*  $.updateOrientation();
+	*
+	*/
+	$.updateOrientation = function() {
+		var iphone = /iphone/i.test(navigator.userAgent);
+		var ipad = /ipad/i.test(navigator.userAgent);
+		var android = /android/i.test(navigator.userAgent);
+		$$("article").forEach(function(article) {
+			article.css("width: " + window.innerWidth + "px;");
+		});
+		if (iphone || ipad || android) {
+			if (window.orientation === 0 || window.orientation === 180) {
+				$$("article").forEach(function(article) {
+					article.css("width: " + window.innerWidth + "px;");
+				});
+				$$("section").forEach(function(section) {
+					section.css("width: " + window.innerWidth + "px;");
+				});
+				$.hideURLbar();
+			} else {
+				$$("article").forEach(function(article) {
+					article.css("width: " + window.innerWidth + "px;");
+				});
+				$$("section").forEach(function(section) {
+					section.css("width: " + window.innerWidth + "px;");
+				});
+				$.hideURLbar();
+			} 
+		}
+	};
+	
 	/**
 	*
 	* Version of ChocolateChip.
 	*/
 	$.version = "1.0.1";
+	
 	/** 
 	* 
 	* Attach objects to the global window object.
