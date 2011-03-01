@@ -15,13 +15,13 @@
 * 
 * LICENSE: BSD
 *
-* Version: 1.0.8
+* Version: 1.0.9
 * 
 * Copyright (c) 2010, Robert Biggs
 * All rights reserved.
-
+*
 * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
-
+*
 * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
 Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
 * Neither the name of Robert Biggs nor the names of any of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
@@ -71,7 +71,6 @@ Redistributions in binary form must reproduce the above copyright notice, this l
     	} else {
     		return document.querySelector(selector);
     	}
-		return document.querySelector(selector);
 	};
 	
 	
@@ -127,7 +126,7 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 		/**
 		* The version of ChocolateChip
 		*/
-		version : "1.0.8",
+		version : "1.0.9",
 		
 		/** 
 		* 
@@ -1288,13 +1287,21 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 		* 
 		*/
 		delegate : function ( selector, event, callback ) {
-			this.bind(event, function(e) {
+			this.addEventListener(event, function(e) {
 				var target = e.target;
 				$$(selector).forEach(function(element) {
 					if (element.isEqualNode(target)) {
 						callback.call(this, target);
-					} 
-				});
+					} else {
+						try {
+						   while (!target.isEqualNode(element)) {
+							   target = target.parentNode;
+						   }
+						   e.stopPropagation();
+						   callback.call(this, target);
+						} catch(e) { }
+					}
+				},false);
 			});
 		},
 		
@@ -1365,7 +1372,7 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 					value += prop + ":" + options[prop] + ";";
 				}
 			}
-			this.css(value);
+			this.css("{" + value + "}");
 		}
 	});
 	$.extend($, {
