@@ -1,0 +1,1701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no, width=device-width">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<title>ChocolateChip.js Documentation</title>
+	<style type="text/css">
+	body {
+	background-color: #d8e8f4;
+	background-color: rgba(119,196,255,0.25);
+	font: normal 12pt/16pt Helvetica, Arial, Sans-serif;
+	color: #513428;
+	}
+		h1 {
+	font: normal 32px/21px Helvetica, Arial, Sans-serif;
+	margin-top: 0px;
+	padding-bottom: 8px;
+	border-bottom: solid 6px #a18e80;
+	}
+	h2 {
+	background: transparent url("../images/ccCookie.png") no-repeat left top;
+	margin: 0 0 16px;
+	padding: 2px 0 6px 0px;
+	border-bottom: solid 6px #a18e80;
+	font-weight: normal;
+	}
+	pre {
+	word-wrap: break-word;
+	white-space: pre-wrap;
+	background-color: #fdfce8;
+	background-color: #f8f3ef;
+	border: solid 1px #cccbba;
+	padding: 14px;
+	}
+	li {
+	margin: 0 0 0 8px;
+	padding: 0;
+	list-style-type: square;
+	}
+	a {
+	color: #0463b9;
+	text-decoration: underline;
+	}
+	a:hover {
+		color: #1c77c6;
+		text-decoration: none;
+	}
+	</style>
+</head>
+<body>
+<h1>ChocolateChip.js</h1>
+
+<pre><code>   pO\     
+  6  /\
+    /OO\
+   /OOOO\
+ /OOOOOOOO\
+((OOOOOOOO))
+ \:~=++=~:/ 
+
+ChocolateChip.js: It's tiny but delicious
+A JavaScript library for mobile Web app development.
+
+Copyright 2011 Robert Biggs: www.choclatechip-ui.com
+License: BSD
+Version 1.1.2
+</code></pre>
+
+<p>&nbsp;</p>
+
+<h2>Function: $</h2>
+
+<p>This method uses JavaScript's document.querySelector() method to get the designated node. It will always return the first match. To get more a collection of nodes, use the <a href="#$$">$$</a> method. A selector is required as the main argument. A second optional argument may be passed as a context for the selector. This is useful where you want to limit where ChococlateChip searches for a node, such as only as a descendant of a particular document node, avoiding possible matches outside that node.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>$(selector);
+$(selector, context);
+</code></pre>
+
+<p><strong>Parameters:</strong></p>
+
+<ul>
+<li>selector: A string defining a valid CSS selector.</li>
+<li>context: A string defining a valid CSS selector or an actual node.</li>
+</ul>
+
+<p><strong>Returns:</strong></p>
+
+<p>A valid document node.</p>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>var item = $("#item");
+var menuItems = $(".menu &gt; li"); // Will return the first list item only.
+$("section &gt; p:first-of-type").css("color: red; background-color: yellow; padding: 10px;");
+var list = $("ul", mainList);
+</code></pre>
+
+<p>&nbsp;</p>
+
+<h2>Function: $.extend</h2>
+
+<p>A method to extend the ChocolateChip's $ method. This uses EC5's Object.defineProperty to extend objects without polluting the object's prototype. For older browsers that don't support this feature of ECMAScript5, ChocolateChip uses a simpler method of object prototype chaining for compatibility.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>$.extend(object, {
+    // object literal here.
+});
+</code></pre>
+
+<p><strong>Parameters:</strong></p>
+
+<ul>
+<li>The object to extend. In most cases this will be $ or HTMLElement.prototype.</li>
+<li>An object literal of properties to add to the object. These can be variables, array or methods.</li>
+</ul>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>$.extend($, {
+    saySomething : function ( msg ) {
+        console.log("This is what I have to say: " + msg);
+    }
+});
+$.saySomething("This is a pretty cool feature!");
+
+$.extend(HTMLElement.prototype, {
+    sing : function ( lyrics ) {
+        console.log(msg);
+    }
+});
+$("p:first-of-type").sing("Even a paragraph can sing!");
+</code></pre>
+
+<p>&nbsp;</p>
+
+<h2>Variable: $.version</h2>
+
+<p>Version: 1.1.2</p>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>console.log("The version is: " + $.version);
+</code></pre>
+
+<p><a name="collectionToArray"></a></p>
+
+<p>&nbsp;</p>
+
+<h2>Function: $.collectionToArray</h2>
+
+<p>This is a function to convert an DOM node collection into an array. This is so you can use array extras like, forEach, map, slice, etc.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>$.collectionToArray(NodeList);
+</code></pre>
+
+<p><strong>Parameters:</strong></p>
+
+<ul>
+<li>The node collection to convert into an array.</li>
+</ul>
+
+<p><strong>Returns</strong></p>
+
+<p>An array of nodes in an HTMLElement collection.</p>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>var p = document.getElementsByTagName("p");
+var pArray = $.collectionToArray(p);
+
+var elem = $("#myList");
+var listitems = $.collectionToArray(elem.children);
+    listitems.forEach(function(item) {
+    // Process code here.
+}
+</code></pre>
+
+<p><strong>See Also:</strong></p>
+
+<p><a href="#$$">$.$$</a></p>
+
+<p><a name="$$"></a></p>
+
+<p>&nbsp;</p>
+
+<h2>Function: $.$$</h2>
+
+<p>This method uses document.querySelectorAll to return a DOM collection as an array. It employs the method $.collectionToArray to convert the collection of nodes into an array. This will later be passed out as a global object. It also uses the $.collectionToArray method to convert and HTMLCollection into an array. $.$$() gets aliased as window.$$() so that you can uses it as just $$() instead of $.$$(). A second optional argument may be passed as a context for the selector. This is useful where you want to limit where ChococlateChip searches for nodes, such as only as a descendant of a particular document node, avoiding possible matches outside that node.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>$$(selector);
+$$(selector, context);
+</code></pre>
+
+<p><strong>Parameters:</strong></p>
+
+<ul>
+<li>A string defining a valid CSS selector.</li>
+<li>Context: A string defining a valid CSS selector or an actual node.</li>
+</ul>
+
+<p><strong>Returns:</strong></p>
+
+<p>An array of nodes comprising an element collection.</p>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>var sections = $$("section");
+$$("section &gt; p").forEach(function(p) {
+    p.css("color: red; background-color: yellow; padding: 10px;");
+});
+</code></pre>
+
+<p><strong>See Also:</strong></p>
+
+<p>[$.collectionToArray #collectionToArray]</p>
+
+<p>&nbsp;</p>
+
+<h2>Variable: $.body</h2>
+
+<p>This variable holds a reference to the body tag. This is a shortcut for accessing the body tag so you don't have to waste processing time getting the body tag with <em>$.("body")</em>. See below.</p>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>$.body.toggleClass("portrait", "landscape");
+console.log($.body.className);
+</code></pre>
+
+<p>&nbsp;</p>
+
+<h2>Variable: $.app</h2>
+
+<p>This variable holds a reference to the app tag. It is a shortcut for accessing the app tag so you don't have to waste processing time getting the body tag with <em>$.("app")</em>. See below:</p>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>$.app.delegate("uibutton", "touchstart", executeMyFavFunc);
+</code></pre>
+
+<p>&nbsp;</p>
+
+<h2>Function: Element.previous</h2>
+
+<p>This method returns the previous sibling of the element upon which it executes. This method is attached directly to the Element object.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>Element.previous();
+</code></pre>
+
+<p><strong>Returns:</strong></p>
+
+<p>The previous sibling node.</p>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>var previousItem = $("#item").previous();
+</code></pre>
+
+<p>&nbsp;</p>
+
+<h2>Function: Element.next</h2>
+
+<p>This method returns the next sibling of the element upon which it executes. This method is attached directly to the Element object.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>Element.next();
+</code></pre>
+
+<p><strong>Returns:</strong></p>
+
+<p>The next sibling node.</p>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>var nextItem = $("#item").next();
+</code></pre>
+
+<p>&nbsp;</p>
+
+<h2>Function: Element.first</h2>
+
+<p>A method to get the first child of an element while avoiding empty text nodes. This method is attached directly to the Element object.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>Element.first();
+</code></pre>
+
+<p><strong>Example:</strong></p>
+
+<p>(start code)
+$("#menu").first();
+(end)</p>
+
+<p>&nbsp;</p>
+
+<h2>Function: Element.last</h2>
+
+<p>A method to get the last child of an element, while avoiding empty text nodes. This method is attached directly to the Element object.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>Element.last();
+</code></pre>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>$("#menu").last();
+</code></pre>
+
+<p><a name="elementAncestor"></a></p>
+
+<p>&nbsp;</p>
+
+<h2>Function: Element.ancestor</h2>
+
+<p>A method to retrieve an ancestor of a node. It can find an ancestor by numeric postion, tag, class or id. Besides class and id, no other attributes can be parsed and will throw an exception.</p>
+
+<p><strong>Parameters:</strong></p>
+
+<ul>
+<li>value: Either a number, a class, an id or a tag.</li>
+</ul>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>Element.ancestor(selector)
+</code></pre>
+
+<p><strong>Returns:</strong></p>
+
+<p>A matched ancestor node.</p>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>// Will return the third ancestor tag:
+var theAncestor = $("#someID").ancestor(3);
+// Will return the element with id of "#main" 
+// if it is an ancestor of "#someID":
+var theAncestor = $("#someID").ancestor("#main");
+// Will return an element with a class of ".myView" if
+// it is an ancestor of "#someID":
+var theAncestor = $("#someID").ancestor(".myView");
+// Will return a subview tag if it is an ancestor of "#someID":
+var theAncestor = $("#someID").ancestor("subview");
+</code></pre>
+
+<p>&nbsp;</p>
+
+<h2>Function: Element.ancestorByTag</h2>
+
+<p>This is an alias to Element.ancestor included for backwards compatibility with earlier versions of ChocolateChip (1.1.0 or less).</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>Element.ancestorByTag(selector);
+</code></pre>
+
+<p><strong>Returns:</strong></p>
+
+<p>A matched ancestor node.</p>
+
+<p><strong>Example:</strong></p>
+
+<p>(start code)
+var ancestor = $("#item").ancestorByTag("article");
+(end)</p>
+
+<p>See Also:</p>
+
+<p><a href="#elementAncestor">Element.ancestor</a></p>
+
+<p><a name="elementAncestor"</a></p>
+
+<p>&nbsp;</p>
+
+<h2>Function: Element.ancestorByClass</h2>
+
+<p>This is an alias to Element.ancestor included for backwards compatibility with earlier versions of ChocolateChip (1.1.0 or less).</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>Element.ancestorByClass(selector);
+</code></pre>
+
+<p><strong>Returns:</strong></p>
+
+<p>A matched ancestor node.</p>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>var ancestor = $("#item").ancestorByClass("generic class");
+</code></pre>
+
+<p><strong>See Also:</strong></p>
+
+<p><a href="#elementAncestor">Element.ancestor</a></p>
+
+<p>&nbsp;</p>
+
+<h2>Function: Element.ancestorByPosition</h2>
+
+<p>This is an alias to Element.ancestor included for backwards compatibility with earlier versions of ChocolateChip (1.1.0 or less).</p>
+
+<p><strong>Parameters:</strong></p>
+
+<p>An integer indicating the position of the ancestor to find.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>Element.ancestorByPosition(position);
+</code></pre>
+
+<p><strong>Returns:</strong></p>
+
+<p>A matched ancestor node.</p>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>// Returns the third ancestor
+var ancestor = $("#item").ancestorPosition(3);
+</code></pre>
+
+<p><strong>See Also:</strong></p>
+
+<p><a href="#elementAncestor">Element.ancestor</a></p>
+
+<p>&nbsp;</p>
+
+<h2>Function: $.make</h2>
+
+<p>This method creates nodes from a string of valid HTML passed as an argument. The result is an array of one or more nodes. By iterating this array you can insert them into a document. This method is attached directly to the $ object.</p>
+
+<p><strong>Parameters:</strong></p>
+
+<ul>
+<li>A string defining nodes to create.</li>
+<li>An array of valid nodes existing in memory.</li>
+</ul>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>$.make(string);
+</code></pre>
+
+<p><strong>Returns:</strong></p>
+
+<p>A collection of new nodes.</p>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>var paragraph = $.make("&lt;p&gt;This is a paragraph&lt;/p&gt;");
+</code></pre>
+
+<p>&nbsp;</p>
+
+<h2>Function: $.replace</h2>
+
+<p>A method to clone a node. If a boolean value that evaluates to true is passed as an argument, the method will clone the node and all its child nodes, otherwise it clones only the node itself. This method is attached directly to the Element object.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>$.replace(newNode, oldNode);
+</code></pre>
+
+<p><strong>Parameters:</strong></p>
+
+<ul>
+<li>newNode: A a node to with which to replace.</li>
+<li>oldNode: The node to be replaced.</li>
+</ul>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>var newNode = $.make("&lt;div&gt;A new div&lt;/div&gt;");
+$.replace(newNode, $("#menu"));
+</code></pre>
+
+<p>&nbsp;</p>
+
+<h2>Function: Element.empty</h2>
+
+<p>Remove all child nodes of an element. This method invokes the removeEvents method first to remove any attached events and thereby prevent memory leaks. This method is attached directly to the Element object.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>Element.empty();
+</code></pre>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>$("#item").empty();
+</code></pre>
+
+<p>&nbsp;</p>
+
+<h2>Function: Element.clone</h2>
+
+<p>A method to clone a node. If a boolean value that evaluates to true is passed as an argument, the method will clone the node and all its child nodes, otherwise it clones only the node itself. This method is attached directly to the Element object.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>Element.clone();
+</code></pre>
+
+<p><strong>Parameters:</strong></p>
+
+<ul>
+<li>Any boolean value.</li>
+</ul>
+
+<p><strong>Returns:</strong></p>
+
+<p>The clone of an element.</p>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>var menu = $("#menu").clone(true);
+</code></pre>
+
+<p>&nbsp;</p>
+
+<h2>Function: Element.wrap</h2>
+
+<p>A method to wrap a node in markup. This method is attached directly to the Element object.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>Element.wrap(string);
+</code></pre>
+
+<p><strong>Parameters:</strong></p>
+
+<ul>
+<li>string: A string of valid HTML markup in which to encase the element.</li>
+</ul>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>$("#menu").wrap("&lt;nav id='main'&gt;&lt;/nav&gt;");
+</code></pre>
+
+<p>&nbsp;</p>
+
+<h2>Function: Element.unwrap</h2>
+
+<p>A method to unwrap a node by removing its parent node. It has a failsafe to stop removing nodes when it reaches the body tag.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>Element.unwrap();
+</code></pre>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>$("#menu").unwrap();
+</code></pre>
+
+<p>&nbsp;</p>
+
+<h2>Function: Element.text</h2>
+
+<p>This method adds text to the target element, replacing whatever child nodes it might have. If no value is passed as an argument, the method returns the text value of all child nodes of the target element. This method is attached directly to the Element object.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>$(selector).text(string);
+$(selector).text(variable);
+$(selector).text();
+</code></pre>
+
+<p><strong>Parameters:</strong></p>
+
+<ul>
+<li>string: A string of text to add to an element.</li>
+<li>variable: A string of text to add to an element.</li>
+</ul>
+
+<p><strong>Returns:</strong></p>
+
+<p>The text nodes of the element.</p>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>$("#item").text("This is an example of added text.");
+var textValue = $("#item").text();
+</code></pre>
+
+<p>&nbsp;</p>
+
+<h2>Function: Element.fill</h2>
+
+<p>Replace element's childNodes with content. This method is attached directly to the Element object.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>Element.fill(content);
+</code></pre>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>$("#item").fill("Something to say here.");
+</code></pre>
+
+<p>&nbsp;</p>
+
+<h2>Function: Element.empty</h2>
+
+<p>Remove all child nodes of an element. This method invokes the removeEvents method first to remove any attached events and thereby prevent memory leaks. This method is attached directly to the Element object.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>Element.empty();
+</code></pre>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>$("#item").empty();
+</code></pre>
+
+<p>&nbsp;</p>
+
+<h2>Function: Element.remove</h2>
+
+<p>Remove an element from the document. This method is attached directly to the Element object.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>Element.remove();
+</code></pre>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>$("#item").remove();
+</code></pre>
+
+<p>&nbsp;</p>
+
+<h2>Function: Element.insert</h2>
+
+<p>A method to insert a node or nodes at nth position in the child node collection of the element on which the method is being called. This can be the first position, the last position, or anywhere in between these. If no position is passed as an argument it defaults to last position. If the parent element has no child nodes, the method inserts the new element as the first child of the parent element. This method is attached directly to the Element object.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>$.insert( content, position );
+</code></pre>
+
+<p><strong>Parameters:</strong></p>
+
+<ul>
+<li>A valid node to insert into the child node collection of another node.</li>
+<li>A string with a value for first or last position for insertion.</li>
+<li>An integer indicating the position in the target element's child node collection at which to insert.</li>
+</ul>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>$.itemNumber = 1;
+$$("p").forEach(function(item) { 
+    item.insert( $.make("&lt;span&gt;Introductory Matter: " + $.itemNumber + " .&lt;/span&gt;"), "first");
+    ++$.itemNumber;
+});
+$.itemNumber = null;
+</code></pre>
+
+<p>&nbsp;</p>
+
+<h2>Function: Element.before</h2>
+
+<p>A method to insert content before the node upon which it operates. This method is attached directly to the Element object.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>Element.before(node);
+</code></pre>
+
+<p><strong>Parameters:</strong></p>
+
+<ul>
+<li>node: A valid node to insert before another node.</li>
+</ul>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>$.itemNumber = 1;
+$$("p").forEach(function(item) { 
+    item.before( $.make("&lt;h1&gt;Title " + $.itemNumber + "&lt;/h1&gt;"));
+    ++$.itemNumber;
+});
+$.itemNumber = null;
+</code></pre>
+
+<p>&nbsp;</p>
+
+<h2>Function: Element.after</h2>
+
+<p>A method to insert content consisting of a node or nodes before the node upon which it operates. This method is attached directly to the Element object.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>Element.after(node);
+</code></pre>
+
+<p><strong>Parameters:</strong></p>
+
+<ul>
+<li>node: A valid node to insert before another node.</li>
+</ul>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>$.itemNumber = 1;
+$$("p").forEach(function(item) { 
+    item.after( $.make("&lt;p&gt;Addendum " + $.itemNumber + "&lt;/p&gt;"));
+    ++$.itemNumber;
+});
+$.itemNumber = null;
+</code></pre>
+
+<p>&nbsp;</p>
+
+<h2>Function: Element.hasClass</h2>
+
+<p>Check an element to see if it has a particular class. This method is attached directly to the Element object.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>Element.hasClass(className);
+</code></pre>
+
+<p><strong>Parameters:</strong></p>
+
+<ul>
+<li>className: The name of the CSS class to check for.</li>
+</ul>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>Element.hasClass("hover");
+</code></pre>
+
+<p>&nbsp;</p>
+
+<h2>Function: Element.addClass</h2>
+
+<p>Add a class to an element. This method is attached directly to the Element object.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>Element.addClass(className);
+</code></pre>
+
+<p><strong>Parameters:</strong></p>
+
+<ul>
+<li>className: The name of the CSS class to add.</li>
+</ul>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>$("#item").addClass("hover");
+</code></pre>
+
+<p>&nbsp;</p>
+
+<h2>Function: Element.removeClass</h2>
+
+<p>Remove a class from an element. This method is attached directly to the Element object.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code> Element.removeClass(className);
+</code></pre>
+
+<p><strong>Parameters:</strong></p>
+
+<ul>
+<li>className: The name of the CSS class to remove.</li>
+</ul>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>$("#item").removeClass("hover");
+</code></pre>
+
+<p>&nbsp;</p>
+
+<h2>Function: Element.disable</h2>
+
+<p>A method to disable an element by adding the "disable" class and preventing mouse or touch interaction.</p>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>$("#myItem").disabled();
+</code></pre>
+
+<p>&nbsp;</p>
+
+<h2>Function: Element.enable</h2>
+
+<p>A method to facilitate re-enabling an element that was disabled by removing the "disabled" class and allow mouse and touch interaction.</p>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>$("#myItem").enable();
+</code></pre>
+
+<p>&nbsp;</p>
+
+<h2>Function: Element.toggleClass</h2>
+
+<p>Toggle a class on and off an element, or toggle between two classes. This method is attached directly to the Element object.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>Element.toggleClass(className);
+Element.toggleClass(className, className);
+</code></pre>
+
+<p><strong>Parameters:</strong></p>
+
+<ul>
+<li>firstClassName: The name of the first class to toggle.</li>
+<li>secondClassName: The name of the second class to toggle.</li>
+</ul>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>$("#item").toggleClass("hover");
+$("#item").toggleClass("selected", "unselected");
+</code></pre>
+
+<p>&nbsp;</p>
+
+<h2>Function: Element.getTop</h2>
+
+<p>Get the precise top position of an element in relation to the top viewport.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>$(selector).getTop();
+</code></pre>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>$("#item").getTop();
+var button = $(".button");
+var buttonTop = button.getTop();
+</code></pre>
+
+<p>&nbsp;</p>
+
+<h2>Function: Element.getLeft</h2>
+
+<p>Get the precise left position of an element in relation to the left viewport.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>$(selector).getLeft();
+</code></pre>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>$("#item").getLeft();
+var button = $(".button");
+var buttonTop = button.getLeft();
+</code></pre>
+
+<p>&nbsp;</p>
+
+<h2>Function: Element.css</h2>
+
+<p>Add a CSS declaration directly to an element. If a boolean value that equates to true is passed as a second, optional argument, the method will replace whatever inline CSS values are presently existing on the element, otherwise it appends the CSS declaration to whatever is already there. This method is attached directly to the Element object.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>Element.css(style declaration, property, value);
+</code></pre>
+
+<p><strong>Parameters:</strong></p>
+
+<ul>
+<li>style declaration:string A string of valid CSS property/values enclosed in curly braces and quotes.</li>
+<li>property:string A string defining a CSS property.</li>
+<li>value:string A string defining a CSS property value to set on an element.</li>
+<li>A true value will cause any existing inline styles to be replace by the string of CSS styles. This is optional.</li>
+</ul>
+
+<p><strong>Returns:</strong></p>
+
+<p>CSS property value pairs as inline cssText or the computed value of a CSS property.</p>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>$("#item").css("font", "bold 12pt/14pt Arial, Helvetica, Sans-serif");
+console.log($("#item").css("font-size"));
+$("#item").css("{font-size: 24px; color: blue; background-color: red;}");
+</code></pre>
+
+<p>You can use Element.css to get the value of a CSS property by passing the quoted property as an argument. You simply pass in the normal CSS property. If it is a hyphenated property, pass it in like that.</p>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>var bkcolor = $("#item").css("background-color");
+console.log("This item's background color is: " + bkcolor);
+</code></pre>
+
+<p><strong>Note:</strong> Be aware that all values returned in this way are strings, even if they appear to be numerical values, such as height, margin, etc. So, if you need to do arithmetic with a returned value, you'll need to convert it from a string to a number. You can do this using parseInt:</p>
+
+<pre><code>var itemWidth = $("#item).css("width");
+itemWidth = parseInt(itemWidth);
+var leftPos = $.getLeft("#item");
+var distance = itemWidth + leftPos;
+console.log("The item has a total distance of: " + distance);
+</code></pre>
+
+<p>&nbsp;</p>
+
+<h2>Function: String.capitalize</h2>
+
+<p>Method to capitalize the first letter of a string. This method is attached directly to the $ object.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>$.capitalize(string);
+</code></pre>
+
+<p><strong>Parameters:</strong></p>
+
+<ul>
+<li>string: A string to capitalize.</li>
+</ul>
+
+<p><strong>Returns:</strong></p>
+
+<p>A string with the first word capitalized, if a single word then its first letter is capitalized.</p>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>var name = $.capitalize("robert"); // returns Robert
+</code></pre>
+
+<p>&nbsp;</p>
+
+<h2>Function: String.capitalizeAll</h2>
+
+<p>Method to capitalize the first letter of a words in a string. This method is attached directly to the $ object.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>$.capitalizeAll(string);
+</code></pre>
+
+<p><strong>Parameters:</strong></p>
+
+<ul>
+<li>string: A string to capitalize.</li>
+</ul>
+
+<p><strong>Returns:</strong></p>
+
+<p>A string with all words capitalized.</p>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>var name = $.capitalize("get out now"); // returns Get Out Now
+</code></pre>
+
+<p>&nbsp;</p>
+
+<h2>Function: Element.bind</h2>
+
+<p>A method to attach events to elements.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>Element.bind(event, function);
+</code></pre>
+
+<p><strong>Parameters:</strong></p>
+
+<ul>
+<li>event: A string representing valid event handler, such as "click".</li>
+<li>function: A function, either named or anonymous. Note that a bound event that uses an anonymous function cannot be unbound. See last example below for how to avoid this.</li>
+</ul>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>var doSomething = function() {
+    console.log("I'm doing it now.");
+};
+$("#doIt").bind("click", doSomething);
+// or:
+$(".stop").bind("touchend", function() {
+console.log("Time to put an end to this!");
+    this.remove();
+});
+</code></pre>
+
+<p>&nbsp;</p>
+
+<h2>Function: Element.unbind</h2>
+
+<p>A method to remove events from elements.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>Element.unbind(event, callback);
+</code></pre>
+
+<p><strong>Parameters:</strong></p>
+
+<ul>
+<li>event: Event A string representing valid event handler, such as "click".</li>
+<li>function: Function A named function executed by the event handler.</li>
+</ul>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>$("#doIt").unbind("click", doSomething);
+</code></pre>
+
+<p><a name="elementRemoveEvents"></a></p>
+
+<p>&nbsp;</p>
+
+<h2>Function: Element.removeEvents</h2>
+
+<p>Remove events from an element. This method uses an array of events owned by the global $ object to know which events to remove. This method is invoked before removing any nodes from a document to prevent memory leaks. This method is attached directly to the Element object.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>Element.removeEvents();
+</code></pre>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>$("#item").removeEvents();
+</code></pre>
+
+<p>&nbsp;</p>
+
+<h2>Function: Element.delegate</h2>
+
+<p>A method to create event delegation. It uses the Element.ancestor method to check the ancestors of the event target to determine whether to execute the event or not.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>Element.delegate(selector, event, callback);
+</code></pre>
+
+<p><strong>Parameters:</strong></p>
+
+<ul>
+<li>selector: A valid selector for the target element(s).</li>
+<li>event: An event to be fired on the element.</li>
+<li>function: A callback to be executed in relation to the target element.</li>
+</ul>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>$("body").delegate("p", "click", function(element) {
+    Element.css("background-color: yellow");
+});
+</code></pre>
+
+<p>To trap a tag with an attribute, you can use a conditional check inside your delegate assignment:</p>
+
+<pre><code>$("app").delegate("button", "touch", function(item) {
+    // Check for button with "ui-implements" attribute:
+    if (item.getAttribute("ui-implements") === "back") {
+        // Processing code goes here.
+    }
+});
+</code></pre>
+
+<p><strong>See Also:</strong></p>
+
+<p><a href="#elementAncestor">Element.ancestor</a></p>
+
+<p><a href="#$events">$.events</a></p>
+
+<p>&nbsp;</p>
+
+<h2>Function: Element.trigger</h2>
+
+<p>A method to fire events on elements.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>Element.trigger(event);
+</code></pre>
+
+<p><strong>Parameters:</strong></p>
+
+<ul>
+<li>event: An event to be fired on the element.</li>
+</ul>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>$("#importantButton").bind("click", function() {
+    $("#link").trigger("click");
+});
+</code></pre>
+
+<p>&nbsp;</p>
+
+<h2>Function: Element.anim</h2>
+
+<p>A method to implement CSS-based transition animations on elements.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>Element.anim(options, duration, easing);
+</code></pre>
+
+<p><strong>Parameters:</strong></p>
+
+<ul>
+<li>object literal: An object literal of key value pairs of CSS properties and values.</li>
+<li>time: integer or float A valid integer or float representing time.</li>
+<li>string: string A string defining an easing function for the animation.</li>
+</ul>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>$("#animate").bind("click", function() {
+    this.anim({"-webkit-transform": "rotate3d(30, 150, 200, 180deg) 
+       scale(3) translate3d(-50%, -30%, 140%)", "opacity": .25, 
+       "-webkit-transform-style" : "preserve-3d", "-webkit-perspective": 500}, 
+       2, "ease-in-out");
+});
+</code></pre>
+
+<p>&nbsp;</p>
+
+<h2>Function: $.delay</h2>
+
+<p>A method to delay the execution of a function.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>$.delay(function, time);
+</code></pre>
+
+<p><strong>Parameters:</strong></p>
+
+<ul>
+<li>function: A function to execute.</li>
+<li>time: integer or float A valid integer or float representing time in milliseconds for delay.</li>
+</ul>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>$.delay(function() {
+    console.log("This message is delayed by two seconds.");
+}, 2000);
+</code></pre>
+
+<p>&nbsp;</p>
+
+<h2>Function: $.defer</h2>
+
+<p>A method to postpone the execution of a function until the callstack is clear.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>$.defer(function);
+</code></pre>
+
+<p><strong>Parameters:</strong></p>
+
+<ul>
+<li>function: A function to execute.</li>
+</ul>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>$.defer(function() { 
+    console.log("This comes before Squawk!"); 
+});
+</code></pre>
+
+<p>&nbsp;</p>
+
+<h2>Function: $.enclose</h2>
+
+<p>Method to capitalize the first letter of a words in a string. This method is attached directly to the $ object.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>$.enclose(function, enclosure);
+</code></pre>
+
+<p><strong>Parameters:</strong></p>
+
+<ul>
+<li>function:function A function to enclose.</li>
+<li>function:function A function with which to enclose.</li>
+</ul>
+
+<p><strong>Returns:</strong></p>
+
+<p>The result of the enclosed function with output for the enclosing function.</p>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>var hello = function(name) { return "Hello, " + name + "!"; };
+hello = $.enclose(hello, function(func) {
+    return "Before I said, \"" + func("Stan") + "\" I thought about it for a while.";
+});
+</code></pre>
+
+<p>&nbsp;</p>
+
+<h2>Function: $.compose</h2>
+
+<p>Method to return the composition of several functions, where each function consumes the return value of the function that follows. This method is attached directly to the $ object.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>$.capitalize(string);
+</code></pre>
+
+<p><strong>Parameters:</strong></p>
+
+<ul>
+<li>function:function A function to pass as an argument.</li>
+</ul>
+
+<p><strong>Returns:</strong></p>
+
+<p>The result of the execution of each function passed as an argument.</p>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>var greet = function(name) { return "Hi there, " + name; };
+var exclaim  = function(statement) { return statement + "!"; };
+var remark = function(remark) { return remark + " You know I'm glad to see you."; };
+var welcome = $.compose(remark, greet, exclaim);
+console.log(welcome('Jeff')); // =&gt; Hi there, Jeff! You know I'm glad to see you.
+</code></pre>
+
+<p><a name="$events"></a></p>
+
+<p>&nbsp;</p>
+
+<h2>Array: $.events</h2>
+
+<p>An array of events to be removed before a node is deleted from a document. This array is attached directly to the $ object.</p>
+
+<p><strong>See Also:</strong></p>
+
+<p><a href="#elementRemoveEvents">Element.removeEvents</a></p>
+
+<p>&nbsp;</p>
+
+<h2>Function: $.loadEvent</h2>
+
+<p>A method to chain load multiple functions to execute when the document finishes loading.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>$.loadEvent(callback);
+</code></pre>
+
+<p><strong>Parameters:</strong></p>
+
+<ul>
+<li>function:function A valid function to run when the document finishes loading.</li>
+</ul>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>var myFunction = function () {
+    return true;
+};
+$.loadEvent(myFunction());
+</code></pre>
+
+<p><a name="$DOMReadyList"></a></p>
+
+<p>&nbsp;</p>
+
+<h2>Array: $.DOMReadyList</h2>
+
+<p>An array of functions to execute when the document's DOM is ready for access. This is used by $.executeWhenDOMReady.</p>
+
+<p><strong>See Also:</strong></p>
+
+<p><a href="#$executeWhenDOMReady">$.executeWhenDOMReady</a></p>
+
+<p><a href="#$ready">$.ready</a></p>
+
+<p><a name="$executeWhenDOMReady"></a></p>
+
+<p>&nbsp;</p>
+
+<h2>Function: $.executeWhenDOMReady</h2>
+
+<p>A method to executing methods stored in $.DOMReadyList. This method is called by the $.ready method for executing chained blocks of code when the document fires the DOMContentLoaded event signaling that the document's DOM is ready for access. It readys the $.DOMReadyList array to see what code is stored there and executes it item by item. There is never a need for the user to execute this method as it is an auxilliary method for the $.ready() function.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>$.executeWhenDOMReady();
+</code></pre>
+
+<p><strong>See Also:</strong></p>
+
+<p><a href="#$DOMReadyList">$.DOMReadyList</a></p>
+
+<p><a href="#$ready">$.ready</a></p>
+
+<p><a name="$ready"></a></p>
+
+<p>&nbsp;</p>
+
+<h2>Function: $.ready</h2>
+
+<p>Method to determine when the DOM is ready for manipulation and thereupon fire a block of code contained in an anonymous function passed to it as an argument. This method is attached directly to the $ object. If there are mulitple instances of this method, it's arguments will be chained and called sequentially with one registration of the DOMContentLoaded event.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>$.ready(function);
+</code></pre>
+
+<p><strong>Parameters:</strong></p>
+
+<ul>
+<li>function:function An anonymous function or block of code to execute.</li>
+</ul>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>$.ready(function() { 
+    console.log("The document is ready for action!"); 
+});
+</code></pre>
+
+<p><strong>See Also:</strong></p>
+
+<p><a href="#$DOMReadyList">$.DOMReadyList</a></p>
+
+<p><a href="#$executeWhenDOMReady">$.executeWhenDOMReady</a></p>
+
+<p>&nbsp;</p>
+
+<h2>Function: $.UIHideURLbar</h2>
+
+<p>A method to hide the browser's address bar. This is used at page load time and when the user navigates to different views. This is for use when a Web app is running in the mobile browser with an address bar. It's not necessary for Web apps installed on the mobile device's home screen.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>$.UIHideURLbar();
+</code></pre>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>$.UIHideURLbar();
+</code></pre>
+
+<p>&nbsp;</p>
+
+<h2>Function: $.importScript</h2>
+
+<p>A method to import external scripts into the document. This method is attached directly to the $ object.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>$.importScript(URI);
+</code></pre>
+
+<p><strong>Parameters:</strong></p>
+
+<ul>
+<li>URI: A valid URI of the script to import into the document.</li>
+</ul>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>$.importScript("https://bozo.com/scripts/myScript.js");
+</code></pre>
+
+<p><strong>Variables: iphone, ipad, ipod, android, webos, blackberry, touchEndabled, online, standalone</strong></p>
+
+<p>Properties to determine device platform, network connection and standalone status.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>$.standalone // returns true or false
+</code></pre>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>if (!$.standalone) {
+    alert("Please install this app before using.");
+}
+if($.iphone) {
+    // Code for iPhone here
+} else if ($.ipad) {
+    // Code for iPad here
+}
+</code></pre>
+
+<p>&nbsp;</p>
+
+<h2>Function: Element.xhr</h2>
+
+<p>A method to insert content into a node using The XMLHttpRequest object. This method is attached directly to the Element object.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>Element.xhr(URI);
+</code></pre>
+
+<p><strong>Parameters:</strong></p>
+
+<ul>
+<li>URI: A valid URI to import into the document and fill an element.</li>
+<li>Callback: A function to execute when the HTTPRequest is successful.</li>
+</ul>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>$('#content').xhr('/data/customers.html');
+</code></pre>
+
+<p>&nbsp;</p>
+
+<h2>Function: Element.xhrjson</h2>
+
+<p>A method to insert content into a node using The XMLHttpRequest object. This method is attached directly to the Element object.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>Element.xhrjson(URI);
+</code></pre>
+
+<p><strong>Parameters:</strong></p>
+
+<ul>
+<li>URI: A valid URI to import into the document and fill an element.</li>
+<li>options: An object literal mapping elements to json data.</li>
+</ul>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>$('#content').xhrjson('/data/customers.js');
+</code></pre>
+
+<p>&nbsp;</p>
+
+<h2>Function: Element.data</h2>
+
+<p>A method to get and set a dataset value on an element.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>Element.data(key);
+Element.data(key, value);
+</code></pre>
+
+<p><strong>Parameters:</strong></p>
+
+<ul>
+<li>key: A string defining the dataset key to access.</li>
+<li>value: A string defining the value to set the dataset key to.</li>
+</ul>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>var customer = $('#customer').data('customer-name'); 
+$$(".customers").forEach(function(customer) {
+    console.log(customer.data("customer-name"));
+}
+$("#shirt).data("shirt-size", "XXL"); // outputs data-shirt-size="XXL" on #shirt
+</code></pre>
+
+<p>&nbsp;</p>
+
+<h2>Function: Element.removeData</h2>
+
+<p>A method to remove a dataset from an element.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>Element.removeData(key);
+</code></pre>
+
+<p><strong>Parameters:</strong></p>
+
+<ul>
+<li>key: A string defining the dataset key to remove.</li>
+</ul>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>$("#shirt).removeData("shirt-size"); // removes data-shirt-size from #shirt
+</code></pre>
+
+<p>&nbsp;</p>
+
+<h2>Function: $.setLocalStorage</h2>
+
+<p>Set a key/value pair to the browser's localstorage.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>$.setLocalStorage(key, value)
+</code></pre>
+
+<p><strong>Parameters:</strong></p>
+
+<ul>
+<li>key: A key to add to the browser's localStorage.</li>
+<li>value: A value to set to the key of the browser's localStorage.</li>
+</ul>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>$.setLocalStorage("clientFirstName", "Robert");
+</code></pre>
+
+<p>&nbsp;</p>
+
+<h2>Function: $.getLocalStorage</h2>
+
+<p>Get the value of a key in the browser's localstorage.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>$.getLocalStorage(key)
+</code></pre>
+
+<p><strong>Parameters:</strong></p>
+
+<ul>
+<li>key: The key to retrieve from the browser's localStorage.</li>
+</ul>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>var clientFirstName = $.getLocalStorage("clientFirstName");
+</code></pre>
+
+<p>&nbsp;</p>
+
+<h2>Function: $.deleteLocalStorage</h2>
+
+<p>Set a key/value pair to the browser's localstorage.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>$.deleteLocalStorage(key)
+</code></pre>
+
+<p><strong>Parameters:</strong></p>
+
+<ul>
+<li>key: The key to remove from the browser's localStorage.</li>
+</ul>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>$.deleteLocalStorage("clientFirstName");
+</code></pre>
+
+<p><a name="$jsmtCached"></a></p>
+
+<p>&nbsp;</p>
+
+<h2>Variable: $.jsmtCached</h2>
+
+<p>A cache for templates to be used later. This is used by $.template</p>
+
+<p>See Also:</p>
+
+<p><a href="#$template">$.template</a></p>
+
+<p><a name="$template"></a></p>
+
+<p>&nbsp;</p>
+
+<h2>Function: $.template</h2>
+
+<p>A method to parse a JavaScript Micro Template and populate it with JSON data. This is based on John Residg's JavaScript micro template: <a href="http://ejohn.org/">ejohn.org</a></p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>$.template(str, data);
+</code></pre>
+
+<p><strong>Parameters:</strong></p>
+
+<ul>
+<li>string: A string defining the template to use.</li>
+<li>data: JSON data to be mapped to elements in the template.</li>
+</ul>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>var result = $.template("tpl_1", data);
+$.ready(function() {
+    $("#tpl_1_output").insert(result);
+});
+</code></pre>
+
+<p>See Also:</p>
+
+<p><a href="#$jsmtCached">$.jsmtCached</a></p>
+
+<p>&nbsp;</p>
+
+<h2>Function: $.UIUpdateOrientationChange</h2>
+
+<p>A method for outputting a class on the body tag to identify the orientation of the mobile device when the device's orientation changes. In landscape mode it puts the class "landscape" on the body tag and in portrait mode it puts the "portrait" on the body tag. There can only be one or the other on the body tag at any given time. This class is to enable the use of styles based on the orientation of the device. You can create styles using these class as in the example below.</p>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>body.portrait app &gt; view {
+    background-color: green;
+}
+body.landscape app &gt; view {
+    background-color: orange;
+}
+</code></pre>
+
+<p>&nbsp;</p>
+
+<h2>Function: $.UIListenForWindowResize</h2>
+
+<p>A method for outputting a class on the body tag to identify the orientation of the mobile device when the window is resized. If in window is wider than it is tall, it outputs the class "landscape" on the body tag, and when it is taller than it is wide, it outputs "portrait" on to the body tag. This allows you to testing for orientation change on the desktop for landscape and portrait modes.</p>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>body.portrait &gt; view {
+    background-color: green;
+}
+body.landscape &gt; view {
+    background-color: red;
+}
+</code></pre>
+
+<p>&nbsp;</p>
+
+<h2>Function: Function.bind</h2>
+
+<p>Add bind capability to the Function object for versions of Webkit that don't support it.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>Function.bind(function, object);
+</code></pre>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>var greeter = {
+    name: "greeter object",
+    speaks: function() {
+    contructGreeting = function(greeting) {
+        console.log(greeting + " " + this.name);
+    }.bind(this) // Bound to "greeter"
+        contructGreeting("hello");
+    }
+};
+greeter.speaks("hello");
+</code></pre>
+
+<p>&nbsp;</p>
+
+<h2>Function: Element.UICheckForOverflow</h2>
+
+<p>Determines whether an element has content overflowing its bounds or not.</p>
+
+<p><strong>Syntax:</strong>
+    Element.UICheckForOverflow();</p>
+
+<p><strong>Returns:</strong></p>
+
+<p>A boolean true or false.</p>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>if($("tableview:first-of-type").UICheckForOverflow();) {
+    // Handle scrolling.
+}
+</code></pre>
+
+</body>
+</html>
