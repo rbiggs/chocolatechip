@@ -1511,58 +1511,40 @@ $("#shirt).data("shirt-size", "XXL"); // outputs data-shirt-size="XXL" on #shirt
 
 <p>&nbsp;</p>
 
-<h2>Function: $.setLocalStorage</h2>
+<h2>Function: $.localItem</h2>
 
-<p>Set a key/value pair to the browser's localstorage.</p>
-
-<p><strong>Syntax:</strong></p>
-
-<pre><code>$.setLocalStorage(key, value)
-</code></pre>
-
-<p><strong>Parameters:</strong></p>
-
-<ul>
-<li>key: A key to add to the browser's localStorage.</li>
-<li>value: A value to set to the key of the browser's localStorage.</li>
-</ul>
-
-<p><strong>Example:</strong></p>
-
-<pre><code>$.setLocalStorage("clientFirstName", "Robert");
-</code></pre>
-
-<p>&nbsp;</p>
-
-<h2>Function: $.getLocalStorage</h2>
-
-<p>Get the value of a key in the browser's localstorage.</p>
+<p>Set a key/value pair to the browser's localStorage, or retrieve a key value. If you pass only a key, it returns the key's value if that key is present in localStorage. Otherwise, passing a key and a value will set these on localStorage.</p>
 
 <p><strong>Syntax:</strong></p>
 
-<pre><code>$.getLocalStorage(key)
+<pre><code>$.localItem(key, value)
+$.localItem(key)
 </code></pre>
 
 <p><strong>Parameters:</strong></p>
 
 <ul>
 <li>key: The key to retrieve from the browser's localStorage.</li>
+<li>key: A key to add to the browser's localStorage.</li>
+<li>value: A value to set to the key of the browser's localStorage.</li>
 </ul>
 
 <p><strong>Example:</strong></p>
 
-<pre><code>var clientFirstName = $.getLocalStorage("clientFirstName");
+<pre><code>$.localItem("clientFirstName", "Robert");
+var clientFirstName = $.localItem("clientFirstName");
+console.log("The client's name is: " + clientFirstName");
 </code></pre>
 
 <p>&nbsp;</p>
 
-<h2>Function: $.deleteLocalStorage</h2>
+<h2>Function: $.deleteLocalItem</h2>
 
 <p>Set a key/value pair to the browser's localstorage.</p>
 
 <p><strong>Syntax:</strong></p>
 
-<pre><code>$.deleteLocalStorage(key)
+<pre><code>$.deleteLocalItem(key)
 </code></pre>
 
 <p><strong>Parameters:</strong></p>
@@ -1573,7 +1555,18 @@ $("#shirt).data("shirt-size", "XXL"); // outputs data-shirt-size="XXL" on #shirt
 
 <p><strong>Example:</strong></p>
 
-<pre><code>$.deleteLocalStorage("clientFirstName");
+<pre><code>$.deleteLocalItem("clientFirstName");
+</code></pre>
+
+<p>&nbsp;</p>
+
+<h2>Function: $.clearLocalItem</h2>
+
+<p>A method to delete the localStorage. This requires no parameters and will completely remove the browser's localStorage for that domain. A new one can be create again at any time.</p>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>$.clearLocalItem();
 </code></pre>
 
 <p><a name="$jsmtCached"></a></p>
@@ -1696,6 +1689,7 @@ greeter.speaks("hello");
     // Handle scrolling.
 }
 </code></pre>
+
 
 </body>
 </html>
