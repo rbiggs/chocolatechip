@@ -1,54 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no, width=device-width">
-	<meta name="apple-mobile-web-app-capable" content="yes">
-	<title>ChocolateChip.js Documentation</title>
-	<style type="text/css">
-	body {
-	background-color: #d8e8f4;
-	background-color: rgba(119,196,255,0.25);
-	font: normal 12pt/16pt Helvetica, Arial, Sans-serif;
-	color: #513428;
-	}
-		h1 {
-	font: normal 32px/21px Helvetica, Arial, Sans-serif;
-	margin-top: 0px;
-	padding-bottom: 8px;
-	border-bottom: solid 6px #a18e80;
-	}
-	h2 {
-	background: transparent url("../images/ccCookie.png") no-repeat left top;
-	margin: 0 0 16px;
-	padding: 2px 0 6px 0px;
-	border-bottom: solid 6px #a18e80;
-	font-weight: normal;
-	}
-	pre {
-	word-wrap: break-word;
-	white-space: pre-wrap;
-	background-color: #fdfce8;
-	background-color: #f8f3ef;
-	border: solid 1px #cccbba;
-	padding: 14px;
-	}
-	li {
-	margin: 0 0 0 8px;
-	padding: 0;
-	list-style-type: square;
-	}
-	a {
-	color: #0463b9;
-	text-decoration: underline;
-	}
-	a:hover {
-		color: #1c77c6;
-		text-decoration: none;
-	}
-	</style>
-</head>
-<body>
 <h1>ChocolateChip.js</h1>
 
 <pre><code>   pO\     
@@ -1415,6 +1364,8 @@ if($.iphone) {
 
 <p>&nbsp;</p>
 
+<p><a name="xhr"></a></p>
+
 <h2>Function: Element.xhr</h2>
 
 <p>A method to insert content into a node using The XMLHttpRequest object. This method is attached directly to the Element object.</p>
@@ -1435,6 +1386,16 @@ if($.iphone) {
 
 <pre><code>$('#content').xhr('/data/customers.html');
 </code></pre>
+
+<p><strong>See Also:</strong></p>
+
+<p><a href="#processJSON">$.processJSON</a></p>
+
+<p><a href="#template">$.template</a></p>
+
+<p><a href="#templates">$.templates</a></p>
+
+<p><a href="#templateCache">$.templateCache</a></p>
 
 <p>&nbsp;</p>
 
@@ -1457,6 +1418,47 @@ if($.iphone) {
 <p><strong>Example:</strong></p>
 
 <pre><code>$('#content').xhrjson('/data/customers.js');
+</code></pre>
+
+<p>$nbsp;</p>
+
+<p><a name="processJSON"></a></p>
+
+<h2>Function: $.processJSON</h2>
+
+<p>A method to process the result of an Ajax call for a JSON file. Because an Ajax call always returns a string, this method creates a script tag, inserts the returned JSON data into it and then inserts the script into the document's head tag, forcing the browser to evaluate the string as JavaScript. From then on the JSON data will be available to your scripts. Because of this injection method, any script that need to access the returned JSON data need to be chained in execution by putting them in a separate ready block after the one in which the Ajax call was made. See below.</p>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>$.ready(function() {
+    // Make an Ajax request for JSON data.
+    var data = null;
+    $.app.xhr("customers.json", {
+        successCallback: function() {
+            data = $.responseText;
+            $.processJSON(data);
+        }
+    });
+    // Define the template "customers and store it in $.templates:
+    $.templates.customers = 
+    "&lt;% for (var i = 0; i &lt; customers.length; i++) { %&gt;\
+        &lt;tablecell&gt;\
+            &lt;celltitle&gt;&lt;%= customers[i].firstName %&gt; &lt;%= customers[i].lastName %&gt;&lt;/celltitle&gt;\
+            &lt;cellsubtitle&gt;&lt;%= customers[i].address  %&gt;&lt;/cellsubtitle&gt;\
+            &lt;celldetail&gt;&lt;%= customers[i].description %&gt;&lt;/celldetail&gt;\
+        &lt;/tablecell&gt;\
+    &lt;%  } %&gt;";
+});
+/*
+    The following block is necessary to allow the XHR request to complete and inject the JSON file into the document's head. This act causes the browser to parse the JSON object into memory as a readable JSON object, otherwise it would remain a string and we would not be able to parse it for data.
+*/
+$.ready(function() {
+    // Process the template of $.template.customers" with JSON data in the variable "data".
+    // This is read from an Ajax call to an external JSON object in json.json.
+    $.templateCache.customers = $.template("customers", data);
+    // insert the results of the parsed template into the tableview."
+    $("view#main tableview:first-of-type").insert($.templateCache.customers);
+});
 </code></pre>
 
 <p>&nbsp;</p>
@@ -1560,7 +1562,7 @@ console.log("The client's name is: " + clientFirstName");
 
 <p>&nbsp;</p>
 
-<h2>Function: $.clearLocalItem</h2>
+<h2>Function: $.clearLocalItems</h2>
 
 <p>A method to delete the localStorage. This requires no parameters and will completely remove the browser's localStorage for that domain. A new one can be create again at any time.</p>
 
@@ -1569,13 +1571,69 @@ console.log("The client's name is: " + clientFirstName");
 <pre><code>$.clearLocalItem();
 </code></pre>
 
-<p><a name="$jsmtCached"></a></p>
+<p>&nbsp;</p>
+
+<p><a name="templates"></a></p>
+
+<h2>Variable: $.templates</h2>
+
+<p>A cache for unprocessed template for use later. At app load time you can define templates to use or read them from localStorage and store them here to process when you need them. You can use back slashes to create new lines so that you can visually format your template to make it easier to see how they will render when output.</p>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>$.templates.customers = 
+"&lt;% for (var i = 0; i &lt; customers.length; i++) { %&gt;\
+    &lt;tablecell&gt;\
+        &lt;celltitle&gt;&lt;%= customers[i].firstName %&gt; &lt;%= customers[i].lastName %&gt;&lt;/celltitle&gt;\
+        &lt;cellsubtitle&gt;&lt;%= customers[i].address  %&gt;&lt;/cellsubtitle&gt;\
+        &lt;celldetail&gt;&lt;%= customers[i].description %&gt;&lt;/celldetail&gt;\
+    &lt;/tablecell&gt;\
+&lt;%  } %&gt;";
+$.templates.recipes = 
+"&lt;% for (var i = 0; i &lt; recipes.length; i++) { %&gt;\
+    &lt;tablecell&gt;\
+        &lt;celltitle&gt;&lt;%= recipes[i].recipeName %&gt; &lt;%= users[i].lastName %&gt;&lt;/celltitle&gt;\
+        &lt;cellsubtitle&gt;&lt;%= recipes[i].recipeDescription  %&gt;&lt;/cellsubtitle&gt;\
+        &lt;celldetail&gt;&lt;%= recipes[i].recipeIngredients %&gt;
+            &lt;ul&gt;
+                &lt;% for (var k = 0, rLen = recipes[i].ingredients; k &lt; rlen; k++) { %&gt;
+                    &lt;li&gt;&lt;%= recipes[i].indredients[k] %&gt;&lt;/li&gt;
+                %&gt;
+            &lt;/ul&gt;
+        &lt;/celldetail&gt;\
+    &lt;/tablecell&gt;\
+&lt;%  } %&gt;";
+</code></pre>
+
+<p>Having defined and stored the above templates, you can use them to process the result of a JSON Ajax request as follows.</p>
+
+<p><strong>Example:</strong>
+<pre><code>
+$.ready(function() {
+    // Make an Ajax request for JSON data.
+    var data = null;
+    $.app.xhr("customers.json", {
+        successCallback: function() {
+            data = $.responseText;
+            $.processJSON(data);
+        }
+    });
+});
+$.ready(function() {
+    // Process the template of $.template.customers" with JSON data in the variable "data".
+    // This is read from an Ajax call to an external JSON object in json.json.
+    $.templateCache.customers = $.template("customers", data);
+    // insert the results of the parsed template into the tableview."
+    $("#main tableview:first-of-type").insert($.templateCache.customers);
+});</code></pre>
 
 <p>&nbsp;</p>
 
-<h2>Variable: $.jsmtCached</h2>
+<p><a name="templateCache"></a></p>
 
-<p>A cache for templates to be used later. This is used by $.template</p>
+<h2>Variable: $.templateCache</h2>
+
+<p>A cache for processed templates which can be used later to save processing time.</p>
 
 <p>See Also:</p>
 
@@ -1587,7 +1645,7 @@ console.log("The client's name is: " + clientFirstName");
 
 <h2>Function: $.template</h2>
 
-<p>A method to parse a JavaScript Micro Template and populate it with JSON data. This is based on John Residg's JavaScript micro template: <a href="http://ejohn.org/">ejohn.org</a></p>
+<p>A method to parse a JavaScript Micro Template and populate it with JSON data. This is based on John Resig's JavaScript micro template: <a href="http://ejohn.org/">ejohn.org</a></p>
 
 <p><strong>Syntax:</strong></p>
 
@@ -1597,21 +1655,25 @@ console.log("The client's name is: " + clientFirstName");
 <p><strong>Parameters:</strong></p>
 
 <ul>
-<li>string: A string defining the template to use.</li>
+<li>string: A string defining the template to use. (You could also pass a string defining a template cached in the $.templates object.)</li>
 <li>data: JSON data to be mapped to elements in the template.</li>
 </ul>
 
 <p><strong>Example:</strong></p>
 
-<pre><code>var result = $.template("tpl_1", data);
+<pre><code>var result = $.template("foodTemplate", data);
 $.ready(function() {
-    $("#tpl_1_output").insert(result);
+    $("#foodTableview").insert(result);
 });
 </code></pre>
 
-<p>See Also:</p>
+<p><strong>See Also:</strong></p>
 
-<p><a href="#$jsmtCached">$.jsmtCached</a></p>
+<p><a href="#templates">$.templates</a></p>
+
+<p><a href="#templateCache">$.templateCache</a></p>
+
+<p><a href="#xhr">Element.xhr</a></p>
 
 <p>&nbsp;</p>
 
@@ -1689,7 +1751,3 @@ greeter.speaks("hello");
     // Handle scrolling.
 }
 </code></pre>
-
-
-</body>
-</html>
