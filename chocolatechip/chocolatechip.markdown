@@ -21,17 +21,19 @@
 
 ##Function: $
 
-This method uses JavaScript's document.querySelector() method to get the designated node. It will always return the first match. To get more a collection of nodes, use the [$$](#$$) method. A selector is required as the main argument. A second optional argument may be passed as a context for the selector. This is useful where you want to limit where ChococlateChip searches for a node, such as only as a descendant of a particular document node, avoiding possible matches outside that node.
+This method uses JavaScript's document.querySelector() method to get the designated node. It will always return the first match. To get more a collection of nodes, use the [$$](#$$) method. A selector is required as the main argument. A second optional argument may be passed as a context for the selector. This is useful where you want to limit where ChococlateChip searches for a node, such as only as a descendant of a particular document node, avoiding possible matches outside that node. Besides these, you can pass an anonymous function of code to execute as with the $.ready method. This is just a short cut for $.ready. If you create several execution blocks with this technique they will be executed consecutively exactly as $.ready does.
 
 **Syntax:**
 
     $(selector);
     $(selector, context);
+    $(function() {});
 
 **Parameters:**
 
 - selector: A string defining a valid CSS selector.
 - context: A string defining a valid CSS selector or an actual node.
+- function: A anonymous function holding code for execution when the DOMContentLoaded event fires.
 
 **Returns:** 
 
@@ -43,7 +45,18 @@ A valid document node.
     var menuItems = $(".menu > li"); // Will return the first list item only.
     $("section > p:first-of-type").css("color: red; background-color: yellow; padding: 10px;");
     var list = $("ul", mainList);
+    $(function() {
+        var menu = $("#menu");
+        ["Cat", "Dog", "Bird", "Fish", "Monkey", "Frog"].forEach(function(item) {
+        	menu.insert("<li>" + item + "</li>");
+        });
+    });
 
+**See Also:**
+
+[$.$$](#$$)
+
+[$.ready](#$ready)
 
 
 
@@ -133,10 +146,11 @@ An array of nodes in an HTMLElement collection.
 
 
 
-<a name="$$"></a> 
-
 
 &nbsp;
+
+
+<a name="$$"></a> 
 
 ##Function: $.$$ 
 

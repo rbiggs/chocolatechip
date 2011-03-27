@@ -20,12 +20,13 @@ Version 1.1.2
 
 <h2>Function: $</h2>
 
-<p>This method uses JavaScript's document.querySelector() method to get the designated node. It will always return the first match. To get more a collection of nodes, use the <a href="#$$">$$</a> method. A selector is required as the main argument. A second optional argument may be passed as a context for the selector. This is useful where you want to limit where ChococlateChip searches for a node, such as only as a descendant of a particular document node, avoiding possible matches outside that node.</p>
+<p>This method uses JavaScript's document.querySelector() method to get the designated node. It will always return the first match. To get more a collection of nodes, use the <a href="#$$">$$</a> method. A selector is required as the main argument. A second optional argument may be passed as a context for the selector. This is useful where you want to limit where ChococlateChip searches for a node, such as only as a descendant of a particular document node, avoiding possible matches outside that node. Besides these, you can pass an anonymous function of code to execute as with the $.ready method. This is just a short cut for $.ready. If you create several execution blocks with this technique they will be executed consecutively exactly as $.ready does.</p>
 
 <p><strong>Syntax:</strong></p>
 
 <pre><code>$(selector);
 $(selector, context);
+$(function() {});
 </code></pre>
 
 <p><strong>Parameters:</strong></p>
@@ -33,6 +34,7 @@ $(selector, context);
 <ul>
 <li>selector: A string defining a valid CSS selector.</li>
 <li>context: A string defining a valid CSS selector or an actual node.</li>
+<li>function: A anonymous function holding code for execution when the DOMContentLoaded event fires.</li>
 </ul>
 
 <p><strong>Returns:</strong></p>
@@ -45,7 +47,19 @@ $(selector, context);
 var menuItems = $(".menu &gt; li"); // Will return the first list item only.
 $("section &gt; p:first-of-type").css("color: red; background-color: yellow; padding: 10px;");
 var list = $("ul", mainList);
+$(function() {
+    var menu = $("#menu");
+    ["Cat", "Dog", "Bird", "Fish", "Monkey", "Frog"].forEach(function(item) {
+        menu.insert("&lt;li&gt;" + item + "&lt;/li&gt;");
+    });
+});
 </code></pre>
+
+<p><strong>See Also:</strong></p>
+
+<p><a href="#$$">$.$$</a></p>
+
+<p><a href="#$ready">$.ready</a></p>
 
 <p>&nbsp;</p>
 
@@ -134,9 +148,9 @@ var listitems = $.collectionToArray(elem.children);
 
 <p><a href="#$$">$.$$</a></p>
 
-<p><a name="$$"></a></p>
-
 <p>&nbsp;</p>
+
+<p><a name="$$"></a></p>
 
 <h2>Function: $.$$</h2>
 
