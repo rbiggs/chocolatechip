@@ -1,19 +1,19 @@
 #ChocolateChip.js
     
-	   pO\     
-	  6  /\
-		/OO\
-	   /OOOO\
-	 /OOOOOOOO\
-	((OOOOOOOO))
-	 \:~=++=~:/ 
-    
+        pO\     
+       6  /\
+         /OO\
+        /OOOO\
+      /OOOOOOOO\
+     ((OOOOOOOO))
+      \:~=++=~:/  
+           
     ChocolateChip.js: It's tiny but delicious
     A JavaScript library for mobile Web app development.
     
     Copyright 2011 Robert Biggs: www.choclatechip-ui.com
     License: BSD
-    Version 1.1.2
+    Version 1.1.5
 
 
 
@@ -21,19 +21,17 @@
 
 ##Function: $
 
-This method uses JavaScript's document.querySelector() method to get the designated node. It will always return the first match. To get more a collection of nodes, use the [$$](#$$) method. A selector is required as the main argument. A second optional argument may be passed as a context for the selector. This is useful where you want to limit where ChococlateChip searches for a node, such as only as a descendant of a particular document node, avoiding possible matches outside that node. Besides these, you can pass an anonymous function of code to execute as with the $.ready method. This is just a short cut for $.ready. If you create several execution blocks with this technique they will be executed consecutively exactly as $.ready does.
+This method uses JavaScript's document.querySelector() method to get the designated node. It will always return the first match. To get more a collection of nodes, use the [$$](#$$) method. A selector is required as the main argument. A second optional argument may be passed as a context for the selector. This is useful where you want to limit where ChococlateChip searches for a node, such as only as a descendant of a particular document node, avoiding possible matches outside that node.
 
 **Syntax:**
 
     $(selector);
     $(selector, context);
-    $(function() {});
 
 **Parameters:**
 
 - selector: A string defining a valid CSS selector.
 - context: A string defining a valid CSS selector or an actual node.
-- function: A anonymous function holding code for execution when the DOMContentLoaded event fires.
 
 **Returns:** 
 
@@ -45,18 +43,7 @@ A valid document node.
     var menuItems = $(".menu > li"); // Will return the first list item only.
     $("section > p:first-of-type").css("color: red; background-color: yellow; padding: 10px;");
     var list = $("ul", mainList);
-    $(function() {
-        var menu = $("#menu");
-        ["Cat", "Dog", "Bird", "Fish", "Monkey", "Frog"].forEach(function(item) {
-        	menu.insert("<li>" + item + "</li>");
-        });
-    });
 
-**See Also:**
-
-[$.$$](#$$)
-
-[$.ready](#$ready)
 
 
 
@@ -146,11 +133,10 @@ An array of nodes in an HTMLElement collection.
 
 
 
+<a name="$$"></a> 
+
 
 &nbsp;
-
-
-<a name="$$"></a> 
 
 ##Function: $.$$ 
 
@@ -160,7 +146,7 @@ This method uses document.querySelectorAll to return a DOM collection as an arra
 
     $$(selector);
     $$(selector, context);
-	
+    
 **Parameters:**
 
 - A string defining a valid CSS selector.
@@ -299,48 +285,22 @@ A matched ancestor node.
 
 ##Function: Element.ancestorByTag
 
-This is an alias to Element.ancestor included for backwards compatibility with earlier versions of ChocolateChip (1.1.0 or less).
+Support for this method has been dropped. Instead use Element.ancestor().
 
-**Syntax:**
-
-    Element.ancestorByTag(selector);
-
-**Returns:**
-
-A matched ancestor node. 
-
-**Example:**
-
-(start code)
-var ancestor = $("#item").ancestorByTag("article");
-(end)
-
-See Also:
+**See Also:**
 
 [Element.ancestor](#elementAncestor)
 
 
 
 <a name="elementAncestor"</a>
-	
+    
 
 &nbsp;
 
 ##Function: Element.ancestorByClass
 
-This is an alias to Element.ancestor included for backwards compatibility with earlier versions of ChocolateChip (1.1.0 or less).
-
-**Syntax:**
-
-    Element.ancestorByClass(selector);
-
-**Returns:**
-
-A matched ancestor node. 
-
-**Example:**
-
-    var ancestor = $("#item").ancestorByClass("generic class");
+Support for this method has been dropped. Instead use Element.ancestor().
 
 **See Also:**
 
@@ -353,31 +313,14 @@ A matched ancestor node.
 
 ##Function: Element.ancestorByPosition
 
-This is an alias to Element.ancestor included for backwards compatibility with earlier versions of ChocolateChip (1.1.0 or less).
-
-**Parameters:** 
-
-An integer indicating the position of the ancestor to find.
-
-**Syntax:**
-
-    Element.ancestorByPosition(position);
-
-**Returns:**
-
-A matched ancestor node. 
-
-**Example:**
-
-    // Returns the third ancestor
-    var ancestor = $("#item").ancestorPosition(3);
+Support for this method has been dropped. Instead use Element.ancestor().
 
 **See Also:**
 
 [Element.ancestor](#elementAncestor)
-	
-			
-			 
+    
+            
+             
 
 &nbsp;
 
@@ -424,9 +367,9 @@ A method to clone a node. If a boolean value that evaluates to true is passed as
 
     var newNode = $.make("<div>A new div</div>");
     $.replace(newNode, $("#menu"));
-	
-				
-					 
+    
+                
+                     
 
 &nbsp;
 
@@ -488,8 +431,8 @@ A method to wrap a node in markup. This method is attached directly to the Eleme
 
     $("#menu").wrap("<nav id='main'></nav>");
 
-							
-							 
+                            
+                             
 
 &nbsp;
 
@@ -728,8 +671,8 @@ Remove a class from an element. This method is attached directly to the Element 
 
     $("#item").removeClass("hover");
 
-									
-									
+                                    
+                                    
 
 &nbsp;
 
@@ -848,7 +791,7 @@ CSS property value pairs as inline cssText or the computed value of a CSS proper
 You can use Element.css to get the value of a CSS property by passing the quoted property as an argument. You simply pass in the normal CSS property. If it is a hyphenated property, pass it in like that. 
 
 **Example:**
-	
+    
     var bkcolor = $("#item").css("background-color");
     console.log("This item's background color is: " + bkcolor);
     
@@ -1339,8 +1282,8 @@ Properties to determine device platform, network connection and standalone statu
     } else if ($.ipad) {
         // Code for iPad here
     }
-											
-					
+                                            
+                    
 
 
 &nbsp;
@@ -1432,8 +1375,8 @@ A method to remove a dataset from an element.
 
     $("#shirt).removeData("shirt-size"); // removes data-shirt-size from #shirt
 
-													
-													
+                                                    
+                                                    
 
 &nbsp;
 
@@ -1486,18 +1429,119 @@ A method to delete the localStorage. This requires no parameters and will comple
 
 **Example:**
 
-	$.clearLocalItem();
+    $.clearLocalItem();
 
 
-<a name="$jsmtCached"></a>
+<a name="$templates"></a>
 
 
 &nbsp;
 
-##Variable: $.jsmtCached
+##Variable: $.templates
 
-A cache for templates to be used later. This is used by $.template
+A cache for templates to be used later. This is used by $.template. ChocolateChip-UI provides three ways of writing templates: jsp/asp style tags, mustache (curly braces) and square brackets. The tags allow you to mix in HTML markup with JavaScript to create dynamic templates for processing JSON data. Each style has two types of tags: one for executing JavaScript code and one for outputting the rendered value of a variable. The sets look like this:
 
+**Example:**
+
+In the example below, ingredients is an array in a JSON object. We're going to output the array items as list items in our template.
+
+**JSP style tags:**
+
+The delimiters for this are "<%" and "%>". You can include any JavaScript code you want to execute in the template inside these delimiters. To output the value of a variable, use "<%=" and "%>".
+
+    var templates.ingredients =
+        "<% /* Check if this recipe has ingredients: */ %>\
+        <% if (!!recipe.ingredients) { %>\
+            <ol class='ingredients'>\
+                <% recipe.ingredients.forEach(function(ingredient) { %>\
+                    <li><%= ingredient %></li>\
+                <% }); %>\
+            </ol>\
+        <% } %>";
+
+**Mustache style tags:**
+
+The delimiters for this are "{{" and "}}". You can include any JavaScript code you want to execute in the template inside these delimiters. To output the value of a variable, use "${" and "}".
+
+    var templates.ingredients =
+        "{{ /* Check if this recipe has ingredients: */ }}\
+        {{ if (!!recipe.ingredients) { }}\
+            <ol class='ingredients'>\
+                {{ recipe.ingredients.forEach(function(ingredient) { }}\
+                    <li>${ ingredient }</li>\
+                {{ }); }}\
+            </ol>\
+        {{ } }}";
+
+**Square bracket style tags:**
+
+The delimiters for this are "[[" and "]]". You can include any JavaScript code you want to execute in the template inside these delimiters. To output the value of a variable, use "$[" and "]".
+
+    var templates.ingredients =
+        "[[ /* Check if this recipe has ingredients: */ ]]\
+        [[ if (!!recipe.ingredients) { ]]\
+            <ol class='ingredients'>\
+                [[ recipe.ingredients.forEach(function(ingredient) { ]]\
+                    <li>$[ ingredient ]</li>\
+                [[ }); ]]\
+            </ol>\
+        [[ } ]]";
+
+**Nesting Templates:**
+
+You can break down complex templates into manageable modules which you can nest. This allows you to update the nested templates separately from the parent, or the other way around. It's probably a good idea to name nested templates so that their name reflects their relation to the parent template they belong to. Here's how to do it. Just define the sub-templates the same way you would define a normal template, as a value on $.templates. Then, when building out the string for the parent template you concatenate the sub-template's variable. This would be something like this:
+
+    $.templates.parent_child = 
+    "<ol>\
+    [[ ancestry.parent.child.forEach(function(child) { ]]\
+        <li>$[ ancestry.parent.child.name ]</li>\
+    [[ }); ]]\
+    </ol>";
+    
+    $.templates.parent = 
+    "<div>
+        <p>$[ ancestry.parent.firstName ] $[ ancestry.parent.lastName ] </p>"
+        + $templates.parent_child + 
+    "</div>";
+
+As you can see above, the parent_child template gets concatenated in the parent template. In the more complex example below, notice that I'm doing a conditional check to make sure the values that the nested templates depend on exist before outputting them in the parent template. Or you could put that conditional check in the nested template itself. Your call to make.
+
+    /* The next two templates will be nested in $.templates.recipes: */
+    $.templates.recipes_ingredients = 
+        "<cellsubtitle>\
+            <div>Ingredients</div>\
+            <ul>\
+                [[ recipe.ingredients.forEach(function(ingredient) { ]]\
+                    <li>$[ ingredient ]</li>\
+                [[ }); ]]\
+            </ul>\
+        </cellsubtitle>";
+    $.templates.recipes_directions = 
+        "<celldetail>\
+            <div>Directions</div>\
+            <ol>\
+                [[ recipe.directions.forEach(function(direction) { ]]\
+                    <li>$[ direction ]</li>\
+                [[ }); ]]\
+            </ol>\
+        </celldetail>";
+    /* The above two templates are nested in this template: */
+    /* Before inserting the nested templates, we do a conditional check to make sure the current iteration of the JSON object has an ingredients and directions array: */
+    $.templates.recipes = 
+        "[[ recipes.forEach(function(recipe) { ]]\
+            <tablecell class='ui-no-hover'>\
+                <celltitle>$[ recipe.title ]</celltitle>\
+                [[ /* A conditional check for recipe ingredients: */ ]]\
+                [[ if (!!recipe.ingredients) { ]]"
+                     + $.templates.recipes_ingredients +
+                "[[ } ]]\
+                [[ /* A conditional check for recipe directions: */ ]]\
+                [[ if (!!recipe.directions) { ]]"
+                    + $.templates.recipes_directions +
+                "[[ } ]]\
+            </tablecell>\
+        [[ }); ]]";
+            
 See Also:
 
 [$.template](#$template)
@@ -1510,7 +1554,7 @@ See Also:
 
 ##Function: $.template
 
-A method to parse a JavaScript Micro Template and populate it with JSON data. This is based on John Residg's JavaScript micro template: [ejohn.org](http://ejohn.org/)
+A method to parse a JavaScript Micro Template and populate it with JSON data. This is inspired by John Resig's JavaScript micro template: [ejohn.org](http://ejohn.org/). John's method depends on script tags with special mime types to define the templates. My approach uses a string. The advantage is that my templates can be created at any time and stored in localStorage, client-side database or whatever you see fit. His reside in the DOM structure, mine reside in the browser's memory as a variable. I believe my approach is cleaner and more versatile.
 
 **Syntax:**
 
@@ -1523,14 +1567,17 @@ A method to parse a JavaScript Micro Template and populate it with JSON data. Th
 
 **Example:**
 
-    var result = $.template("tpl_1", data);
+    var result = $.template("ingredients", data);
     $.ready(function() {
-        $("#tpl_1_output").insert(result);
+        $("#recipe").insert(result);
     });
+
+
+One thing I want to point out in the above example, when you define a template with $.templates, such as $.templates.ingredients = "..." when you go to use the template in the $.template method, you don't need to use $.templates.ingredients, you can just give the name of the template, "ingredients" in this case. The $.template method already knows to retrieve the template from the $.templates object.
 
 See Also:
 
-[$.jsmtCached](#$jsmtCached)
+[$.templates](#$templates)
 
 
 &nbsp;
@@ -1558,13 +1605,120 @@ A method for outputting a class on the body tag to identify the orientation of t
 **Example:**
 
     body.portrait > view {
-    	background-color: green;
+        background-color: green;
     }
     body.landscape > view {
-    	background-color: red;
+        background-color: red;
     }
-								
-																
+    
+&nbsp;
+                            
+##Function: $.kvo
+
+A method for set up key value observers for basic data binding. This allows you to register observers on UI elements to watch for a change in a value. This value could be that of some input or control or of an object. When the observed values change, the observers capture that change and update themselves automatically. In respect to MVC (model, view, controller) practice his allows you to decouple your models from your UI (views). This is especially useful for complex and interactive user interfaces. 
+
+In the case of the following HTML we can put together an example in which we want the label to be aware of the value of the text input field:
+
+**Example:**
+
+    <input id="textinput" type="text">
+    <br>
+    <label id="labeltext">Doh!</label>
+    <script>
+    
+    $(function() {
+        var input = $("#textinput");
+        var label = $("#labeltext");
+        kvo.registerObserver(label, "text");
+        //var currentValue = "Bozo;
+        label.keyWillUpdate = function(object, key, currentValue, newValue) {
+            if (newValue) {
+                this.innerText = input.value;
+            } else {
+                this.innerText = currentValue;
+            }
+        };
+        input.onkeyup = function() {
+            kvo.set("text", this.value);
+        };
+    });
+    </script>
+
+
+&nbsp;
+
+##Function: $.form2JSON
+
+A method that converts form values to a JSON object. This can be converted to a string for sending to the server with a GET or POST request, or stored on the client side in localStorage or the client side SQLite database.
+
+**Syntax:**
+
+    $.form2JSON(selector, delimiter);
+    
+**Paramters:**
+
+- selector: a valid selector for the form to be processed.
+- delimiter: a character to use as a delimiter for the marking of JSON member relations in the form element's name values (see example below). This defaults to ".", but you can use any other character that suits your purposes.
+
+For this method to work properly you must name all form elements that you want to retrieve so that they match the structure of the resulting JSON object you would like. You use "." to indicate the sub objects of the JSON object. For example, if your form was for signing up a user, you might have inputs with names such as 
+
+    <form id="newUser"> 
+        <input type="text" name="newUser.name.first"></input>
+        <input type="text" name="newUser.name.last"></input>
+        <input type="text" name="newUser.address.street"></input>
+        <input type="text" name="newUser.address.city"></input>
+        <input type="text" name="newUser.address.state"></input>
+        <input type="text" name="newUser.address.zip"></input>
+        <input type="text" name="newUser.phone"></input>
+        <input type="text" name="newUser.email"></input>
+    </form>
+    <script>
+        $("#main > navbar > uibutton[ui-implements=done]").bind("click", function() {
+            var formData = $.form2JSON('#personalInfo');
+            formData = JSON.stringify(formData);
+            window.location = "ajax/template.html?" + formData;
+        });
+    </script>
+
+This would result in a JSON object like this:
+
+    {"newUser":
+        {"name": 
+            {"first": "someValueHere"},
+            {"last": "someValueHere"}
+        },
+        {"address":
+            {"street": "someValueHere"},
+            {"city": "someValueHere"},
+            {"state": "someValueHere"},
+            {"zip": "someValueHere"}
+        },
+        {"phone": "someValueHere" },
+        {"email": "someValueHere"}
+    }
+    
+Disabled form elements or ones which have no value will be ignored.
+
+If you need to create an array from something like a set of choices, you'll need to marke the name with brackets "[]" to indicate that it's an array:
+
+    <div>Favorite food</div>
+    <p>
+        <label>Salad:</label>
+        <input type="checkbox" name="user.favoriteFood[]" value="salad">
+    </p>
+    <p>
+        <label>Pizza:</label>
+        <input type="checkbox" name="user.favoriteFood[]" value="pizza">
+    </p>
+    <p>
+        <label>Chicken:</label>
+        <input type="checkbox" name="user.favoriteFood[]" value="chicken">
+    </p>
+
+If the user checks all three, this would produce:
+    {"user": 
+        {"favoriteFood":["salad","pizza","chicken"]}
+    }
 
 &nbsp;
 
@@ -1581,10 +1735,10 @@ Add bind capability to the Function object for versions of Webkit that don't sup
     var greeter = {
         name: "greeter object",
         speaks: function() {
-        contructGreeting = function(greeting) {
+        constructGreeting = function(greeting) {
             console.log(greeting + " " + this.name);
         }.bind(this) // Bound to "greeter"
-            contructGreeting("hello");
+            constructGreeting("hello");
         }
     };
     greeter.speaks("hello");
@@ -1606,7 +1760,7 @@ Determines whether an element has content overflowing its bounds or not.
 A boolean true or false.
 
 **Example:**
-																        
+                                                                        
     if($("tableview:first-of-type").UICheckForOverflow();) {
         // Handle scrolling.
     }
