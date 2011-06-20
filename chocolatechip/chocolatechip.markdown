@@ -812,7 +812,7 @@ Method to capitalize the first letter of a string. This method is attached direc
 
 **Syntax:**
 
-    $.capitalize(string);
+    String.capitalize();
 
 **Parameters:**
 
@@ -823,11 +823,10 @@ Method to capitalize the first letter of a string. This method is attached direc
 A string with the first word capitalized, if a single word then its first letter is capitalized. 
 
 **Example:**
+    
+    var name = "robert";
+    name.capitalize(); // returns Robert
 
-    var name = $.capitalize("robert"); // returns Robert
-
-
- 
 
 &nbsp;
 
@@ -850,6 +849,45 @@ A string with all words capitalized.
 **Example:**
 
     var name = $.capitalize("get out now"); // returns Get Out Now
+
+
+&nbsp;
+
+##Function: String.camelize
+
+This takes a string of hyphenated values, removes the hyphens and capitalizes the first left of each section except the first.
+
+**Syntax:**
+
+    String.camelize();
+    
+**Returns:**
+
+A string with hyphens removed and the First letter of each section capitalized.
+
+**Example:**
+
+    var recipe = "recipes-cake-name";
+    recipe.camelize() // Returns recipesCakeName
+
+
+&nbsp;
+
+##Function: String.deCamelize
+ 
+**Syntax:**
+
+    String.deCamelize();
+
+**Returns:**
+
+A string with hyphens replacing the camel case notation.
+
+**Example:** 
+
+    var recipe = "recipesCakeName";
+    recipe.deCamelize(); //Returns recipes-cake-name
+
 
 
  
@@ -1439,7 +1477,7 @@ A method to delete the localStorage. This requires no parameters and will comple
 
 ##Variable: $.templates
 
-A cache for templates to be used later. This is used by $.template. ChocolateChip-UI provides three ways of writing templates: jsp/asp style tags, mustache (curly braces) and square brackets. The tags allow you to mix in HTML markup with JavaScript to create dynamic templates for processing JSON data. Each style has two types of tags: one for executing JavaScript code and one for outputting the rendered value of a variable. The sets look like this:
+An object that stores the templates you define. This is used by $.template. ChocolateChip-UI provides three ways of writing templates: JSP/ASP style tags, Mustache style (curly braces) and square brackets like Smarty. You can use whichever style you prefer, but the styles cannot be mixed up in the same template. However, different templates used in an app can have differ markup without a conflict. The tags allow you to mix in HTML markup with JavaScript to create dynamic templates for processing JSON data. Each style has two types of tags: one for executing JavaScript code and one for outputting the rendered value of a variable. The sets look like this:
 
 **Example:**
 
@@ -1554,7 +1592,7 @@ See Also:
 
 ##Function: $.template
 
-A method to parse a JavaScript Micro Template and populate it with JSON data. This is inspired by John Resig's JavaScript micro template: [ejohn.org](http://ejohn.org/). John's method depends on script tags with special mime types to define the templates. My approach uses a string. The advantage is that my templates can be created at any time and stored in localStorage, client-side database or whatever you see fit. His reside in the DOM structure, mine reside in the browser's memory as a variable. I believe my approach is cleaner and more versatile.
+A method to parse a JavaScript template and populate it with JSON data. You define the template as a string (see [$.templates](#$templates) above) consisting of markup along with JavaScript enclosed in special delimiters. The $.template method parses the JSON object and passes it to the template, after which you can insert it where you wish.
 
 **Syntax:**
 

@@ -1,4 +1,4 @@
-<h1>ChocolateChip.js</h1>
+<h1 id="chocolatechipjs">ChocolateChip.js</h1>
 
 <pre><code>    pO\     
    6  /\
@@ -18,9 +18,9 @@ Version 1.1.5
 
 <p>&nbsp;</p>
 
-<h2>Function: $</h2>
+<h2 id="function_">Function: $</h2>
 
-<p>This method uses JavaScript's document.querySelector() method to get the designated node. It will always return the first match. To get more a collection of nodes, use the <a href="#$$">$$</a> method. A selector is required as the main argument. A second optional argument may be passed as a context for the selector. This is useful where you want to limit where ChococlateChip searches for a node, such as only as a descendant of a particular document node, avoiding possible matches outside that node.</p>
+<p>This method uses JavaScript&#8217;s document.querySelector() method to get the designated node. It will always return the first match. To get more a collection of nodes, use the <a href="#$$">$$</a> method. A selector is required as the main argument. A second optional argument may be passed as a context for the selector. This is useful where you want to limit where ChococlateChip searches for a node, such as only as a descendant of a particular document node, avoiding possible matches outside that node.</p>
 
 <p><strong>Syntax:</strong></p>
 
@@ -35,7 +35,7 @@ $(selector, context);
 <li>context: A string defining a valid CSS selector or an actual node.</li>
 </ul>
 
-<p><strong>Returns:</strong></p>
+<p><strong>Returns:</strong> </p>
 
 <p>A valid document node.</p>
 
@@ -49,9 +49,9 @@ var list = $("ul", mainList);
 
 <p>&nbsp;</p>
 
-<h2>Function: $.extend</h2>
+<h2 id="function_extend">Function: $.extend</h2>
 
-<p>A method to extend the ChocolateChip's $ method. This uses EC5's Object.defineProperty to extend objects without polluting the object's prototype. For older browsers that don't support this feature of ECMAScript5, ChocolateChip uses a simpler method of object prototype chaining for compatibility.</p>
+<p>A method to extend the ChocolateChip&#8217;s $ method. This uses EC5&#8217;s Object.defineProperty to extend objects without polluting the object&#8217;s prototype. For older browsers that don&#8217;t support this feature of ECMAScript5, ChocolateChip uses a simpler method of object prototype chaining for compatibility.</p>
 
 <p><strong>Syntax:</strong></p>
 
@@ -86,7 +86,7 @@ $("p:first-of-type").sing("Even a paragraph can sing!");
 
 <p>&nbsp;</p>
 
-<h2>Variable: $.version</h2>
+<h2 id="variable_version">Variable: $.version</h2>
 
 <p>Version: 1.1.2</p>
 
@@ -99,7 +99,7 @@ $("p:first-of-type").sing("Even a paragraph can sing!");
 
 <p>&nbsp;</p>
 
-<h2>Function: $.collectionToArray</h2>
+<h2 id="function_collectiontoarray">Function: $.collectionToArray</h2>
 
 <p>This is a function to convert an DOM node collection into an array. This is so you can use array extras like, forEach, map, slice, etc.</p>
 
@@ -116,7 +116,7 @@ $("p:first-of-type").sing("Even a paragraph can sing!");
 
 <p><strong>Returns</strong></p>
 
-<p>An array of nodes in an HTMLElement collection.</p>
+<p>An array of nodes in an HTMLElement collection. </p>
 
 <p><strong>Example:</strong></p>
 
@@ -134,11 +134,11 @@ var listitems = $.collectionToArray(elem.children);
 
 <p><a href="#$$">$.$$</a></p>
 
-<p><a name="$$"></a></p>
+<p><a name="$$"></a> </p>
 
 <p>&nbsp;</p>
 
-<h2>Function: $.$$</h2>
+<h2 id="function_">Function: $.$$</h2>
 
 <p>This method uses document.querySelectorAll to return a DOM collection as an array. It employs the method $.collectionToArray to convert the collection of nodes into an array. This will later be passed out as a global object. It also uses the $.collectionToArray method to convert and HTMLCollection into an array. $.$$() gets aliased as window.$$() so that you can uses it as just $$() instead of $.$$(). A second optional argument may be passed as a context for the selector. This is useful where you want to limit where ChococlateChip searches for nodes, such as only as a descendant of a particular document node, avoiding possible matches outside that node.</p>
 
@@ -173,7 +173,7 @@ $$("section &gt; p").forEach(function(p) {
 
 <p>&nbsp;</p>
 
-<h2>Function: Element.previous</h2>
+<h2 id="function_elementprevious">Function: Element.previous</h2>
 
 <p>This method returns the previous sibling of the element upon which it executes. This method is attached directly to the Element object.</p>
 
@@ -184,7 +184,7 @@ $$("section &gt; p").forEach(function(p) {
 
 <p><strong>Returns:</strong></p>
 
-<p>The previous sibling node.</p>
+<p>The previous sibling node. </p>
 
 <p><strong>Example:</strong></p>
 
@@ -193,7 +193,7 @@ $$("section &gt; p").forEach(function(p) {
 
 <p>&nbsp;</p>
 
-<h2>Function: Element.next</h2>
+<h2 id="function_elementnext">Function: Element.next</h2>
 
 <p>This method returns the next sibling of the element upon which it executes. This method is attached directly to the Element object.</p>
 
@@ -204,7 +204,7 @@ $$("section &gt; p").forEach(function(p) {
 
 <p><strong>Returns:</strong></p>
 
-<p>The next sibling node.</p>
+<p>The next sibling node. </p>
 
 <p><strong>Example:</strong></p>
 
@@ -213,7 +213,7 @@ $$("section &gt; p").forEach(function(p) {
 
 <p>&nbsp;</p>
 
-<h2>Function: Element.first</h2>
+<h2 id="function_elementfirst">Function: Element.first</h2>
 
 <p>A method to get the first child of an element while avoiding empty text nodes. This method is attached directly to the Element object.</p>
 
@@ -225,12 +225,12 @@ $$("section &gt; p").forEach(function(p) {
 <p><strong>Example:</strong></p>
 
 <p>(start code)
-$("#menu").first();
+$(&#8220;#menu&#8221;).first();
 (end)</p>
 
 <p>&nbsp;</p>
 
-<h2>Function: Element.last</h2>
+<h2 id="function_elementlast">Function: Element.last</h2>
 
 <p>A method to get the last child of an element, while avoiding empty text nodes. This method is attached directly to the Element object.</p>
 
@@ -248,7 +248,7 @@ $("#menu").first();
 
 <p>&nbsp;</p>
 
-<h2>Function: Element.ancestor</h2>
+<h2 id="function_elementancestor">Function: Element.ancestor</h2>
 
 <p>A method to retrieve an ancestor of a node. It can find an ancestor by numeric postion, tag, class or id. Besides class and id, no other attributes can be parsed and will throw an exception.</p>
 
@@ -258,14 +258,14 @@ $("#menu").first();
 <li>value: Either a number, a class, an id or a tag.</li>
 </ul>
 
-<p><strong>Syntax:</strong></p>
+<p><strong>Syntax:</strong> </p>
 
 <pre><code>Element.ancestor(selector)
 </code></pre>
 
 <p><strong>Returns:</strong></p>
 
-<p>A matched ancestor node.</p>
+<p>A matched ancestor node. </p>
 
 <p><strong>Example:</strong></p>
 
@@ -283,7 +283,7 @@ var theAncestor = $("#someID").ancestor("subview");
 
 <p>&nbsp;</p>
 
-<h2>Function: Element.ancestorByTag</h2>
+<h2 id="function_elementancestorbytag">Function: Element.ancestorByTag</h2>
 
 <p>Support for this method has been dropped. Instead use Element.ancestor().</p>
 
@@ -295,7 +295,7 @@ var theAncestor = $("#someID").ancestor("subview");
 
 <p>&nbsp;</p>
 
-<h2>Function: Element.ancestorByClass</h2>
+<h2 id="function_elementancestorbyclass">Function: Element.ancestorByClass</h2>
 
 <p>Support for this method has been dropped. Instead use Element.ancestor().</p>
 
@@ -305,7 +305,7 @@ var theAncestor = $("#someID").ancestor("subview");
 
 <p>&nbsp;</p>
 
-<h2>Function: Element.ancestorByPosition</h2>
+<h2 id="function_elementancestorbyposition">Function: Element.ancestorByPosition</h2>
 
 <p>Support for this method has been dropped. Instead use Element.ancestor().</p>
 
@@ -315,7 +315,7 @@ var theAncestor = $("#someID").ancestor("subview");
 
 <p>&nbsp;</p>
 
-<h2>Function: $.make</h2>
+<h2 id="function_make">Function: $.make</h2>
 
 <p>This method creates nodes from a string of valid HTML passed as an argument. The result is an array of one or more nodes. By iterating this array you can insert them into a document. This method is attached directly to the $ object.</p>
 
@@ -333,7 +333,7 @@ var theAncestor = $("#someID").ancestor("subview");
 
 <p><strong>Returns:</strong></p>
 
-<p>A collection of new nodes.</p>
+<p>A collection of new nodes. </p>
 
 <p><strong>Example:</strong></p>
 
@@ -342,7 +342,7 @@ var theAncestor = $("#someID").ancestor("subview");
 
 <p>&nbsp;</p>
 
-<h2>Function: $.replace</h2>
+<h2 id="function_replace">Function: $.replace</h2>
 
 <p>A method to clone a node. If a boolean value that evaluates to true is passed as an argument, the method will clone the node and all its child nodes, otherwise it clones only the node itself. This method is attached directly to the Element object.</p>
 
@@ -366,7 +366,7 @@ $.replace(newNode, $("#menu"));
 
 <p>&nbsp;</p>
 
-<h2>Function: Element.empty</h2>
+<h2 id="function_elementempty">Function: Element.empty</h2>
 
 <p>Remove all child nodes of an element. This method invokes the removeEvents method first to remove any attached events and thereby prevent memory leaks. This method is attached directly to the Element object.</p>
 
@@ -382,7 +382,7 @@ $.replace(newNode, $("#menu"));
 
 <p>&nbsp;</p>
 
-<h2>Function: Element.clone</h2>
+<h2 id="function_elementclone">Function: Element.clone</h2>
 
 <p>A method to clone a node. If a boolean value that evaluates to true is passed as an argument, the method will clone the node and all its child nodes, otherwise it clones only the node itself. This method is attached directly to the Element object.</p>
 
@@ -397,9 +397,9 @@ $.replace(newNode, $("#menu"));
 <li>Any boolean value.</li>
 </ul>
 
-<p><strong>Returns:</strong></p>
+<p><strong>Returns:</strong> </p>
 
-<p>The clone of an element.</p>
+<p>The clone of an element. </p>
 
 <p><strong>Example:</strong></p>
 
@@ -408,7 +408,7 @@ $.replace(newNode, $("#menu"));
 
 <p>&nbsp;</p>
 
-<h2>Function: Element.wrap</h2>
+<h2 id="function_elementwrap">Function: Element.wrap</h2>
 
 <p>A method to wrap a node in markup. This method is attached directly to the Element object.</p>
 
@@ -430,7 +430,7 @@ $.replace(newNode, $("#menu"));
 
 <p>&nbsp;</p>
 
-<h2>Function: Element.unwrap</h2>
+<h2 id="function_elementunwrap">Function: Element.unwrap</h2>
 
 <p>A method to unwrap a node by removing its parent node. It has a failsafe to stop removing nodes when it reaches the body tag.</p>
 
@@ -446,7 +446,7 @@ $.replace(newNode, $("#menu"));
 
 <p>&nbsp;</p>
 
-<h2>Function: Element.text</h2>
+<h2 id="function_elementtext">Function: Element.text</h2>
 
 <p>This method adds text to the target element, replacing whatever child nodes it might have. If no value is passed as an argument, the method returns the text value of all child nodes of the target element. This method is attached directly to the Element object.</p>
 
@@ -466,7 +466,7 @@ $(selector).text();
 
 <p><strong>Returns:</strong></p>
 
-<p>The text nodes of the element.</p>
+<p>The text nodes of the element. </p>
 
 <p><strong>Example:</strong></p>
 
@@ -476,7 +476,7 @@ var textValue = $("#item").text();
 
 <p>&nbsp;</p>
 
-<h2>Function: Element.fill</h2>
+<h2 id="function_elementfill">Function: Element.fill</h2>
 
 <p>Replace element's childNodes with content. This method is attached directly to the Element object.</p>
 
@@ -492,7 +492,7 @@ var textValue = $("#item").text();
 
 <p>&nbsp;</p>
 
-<h2>Function: Element.empty</h2>
+<h2 id="function_elementempty">Function: Element.empty</h2>
 
 <p>Remove all child nodes of an element. This method invokes the removeEvents method first to remove any attached events and thereby prevent memory leaks. This method is attached directly to the Element object.</p>
 
@@ -508,7 +508,7 @@ var textValue = $("#item").text();
 
 <p>&nbsp;</p>
 
-<h2>Function: Element.remove</h2>
+<h2 id="function_elementremove">Function: Element.remove</h2>
 
 <p>Remove an element from the document. This method is attached directly to the Element object.</p>
 
@@ -524,7 +524,7 @@ var textValue = $("#item").text();
 
 <p>&nbsp;</p>
 
-<h2>Function: Element.insert</h2>
+<h2 id="function_elementinsert">Function: Element.insert</h2>
 
 <p>A method to insert a node or nodes at nth position in the child node collection of the element on which the method is being called. This can be the first position, the last position, or anywhere in between these. If no position is passed as an argument it defaults to last position. If the parent element has no child nodes, the method inserts the new element as the first child of the parent element. This method is attached directly to the Element object.</p>
 
@@ -553,7 +553,7 @@ $.itemNumber = null;
 
 <p>&nbsp;</p>
 
-<h2>Function: Element.before</h2>
+<h2 id="function_elementbefore">Function: Element.before</h2>
 
 <p>A method to insert content before the node upon which it operates. This method is attached directly to the Element object.</p>
 
@@ -580,7 +580,7 @@ $.itemNumber = null;
 
 <p>&nbsp;</p>
 
-<h2>Function: Element.after</h2>
+<h2 id="function_elementafter">Function: Element.after</h2>
 
 <p>A method to insert content consisting of a node or nodes before the node upon which it operates. This method is attached directly to the Element object.</p>
 
@@ -607,7 +607,7 @@ $.itemNumber = null;
 
 <p>&nbsp;</p>
 
-<h2>Function: Element.hasClass</h2>
+<h2 id="function_elementhasclass">Function: Element.hasClass</h2>
 
 <p>Check an element to see if it has a particular class. This method is attached directly to the Element object.</p>
 
@@ -629,7 +629,7 @@ $.itemNumber = null;
 
 <p>&nbsp;</p>
 
-<h2>Function: Element.addClass</h2>
+<h2 id="function_elementaddclass">Function: Element.addClass</h2>
 
 <p>Add a class to an element. This method is attached directly to the Element object.</p>
 
@@ -651,7 +651,7 @@ $.itemNumber = null;
 
 <p>&nbsp;</p>
 
-<h2>Function: Element.removeClass</h2>
+<h2 id="function_elementremoveclass">Function: Element.removeClass</h2>
 
 <p>Remove a class from an element. This method is attached directly to the Element object.</p>
 
@@ -673,7 +673,7 @@ $.itemNumber = null;
 
 <p>&nbsp;</p>
 
-<h2>Function: Element.disable</h2>
+<h2 id="function_elementdisable">Function: Element.disable</h2>
 
 <p>A method to disable an element by adding the "disable" class and preventing mouse or touch interaction.</p>
 
@@ -684,7 +684,7 @@ $.itemNumber = null;
 
 <p>&nbsp;</p>
 
-<h2>Function: Element.enable</h2>
+<h2 id="function_elementenable">Function: Element.enable</h2>
 
 <p>A method to facilitate re-enabling an element that was disabled by removing the "disabled" class and allow mouse and touch interaction.</p>
 
@@ -695,7 +695,7 @@ $.itemNumber = null;
 
 <p>&nbsp;</p>
 
-<h2>Function: Element.toggleClass</h2>
+<h2 id="function_elementtoggleclass">Function: Element.toggleClass</h2>
 
 <p>Toggle a class on and off an element, or toggle between two classes. This method is attached directly to the Element object.</p>
 
@@ -720,7 +720,7 @@ $("#item").toggleClass("selected", "unselected");
 
 <p>&nbsp;</p>
 
-<h2>Function: Element.getTop</h2>
+<h2 id="function_elementgettop">Function: Element.getTop</h2>
 
 <p>Get the precise top position of an element in relation to the top viewport.</p>
 
@@ -738,7 +738,7 @@ var buttonTop = button.getTop();
 
 <p>&nbsp;</p>
 
-<h2>Function: Element.getLeft</h2>
+<h2 id="function_elementgetleft">Function: Element.getLeft</h2>
 
 <p>Get the precise left position of an element in relation to the left viewport.</p>
 
@@ -756,7 +756,7 @@ var buttonTop = button.getLeft();
 
 <p>&nbsp;</p>
 
-<h2>Function: Element.css</h2>
+<h2 id="function_elementcss">Function: Element.css</h2>
 
 <p>Add a CSS declaration directly to an element. If a boolean value that equates to true is passed as a second, optional argument, the method will replace whatever inline CSS values are presently existing on the element, otherwise it appends the CSS declaration to whatever is already there. This method is attached directly to the Element object.</p>
 
@@ -785,7 +785,7 @@ console.log($("#item").css("font-size"));
 $("#item").css("{font-size: 24px; color: blue; background-color: red;}");
 </code></pre>
 
-<p>You can use Element.css to get the value of a CSS property by passing the quoted property as an argument. You simply pass in the normal CSS property. If it is a hyphenated property, pass it in like that.</p>
+<p>You can use Element.css to get the value of a CSS property by passing the quoted property as an argument. You simply pass in the normal CSS property. If it is a hyphenated property, pass it in like that. </p>
 
 <p><strong>Example:</strong></p>
 
@@ -804,13 +804,13 @@ console.log("The item has a total distance of: " + distance);
 
 <p>&nbsp;</p>
 
-<h2>Function: String.capitalize</h2>
+<h2 id="function_stringcapitalize">Function: String.capitalize</h2>
 
 <p>Method to capitalize the first letter of a string. This method is attached directly to the $ object.</p>
 
 <p><strong>Syntax:</strong></p>
 
-<pre><code>$.capitalize(string);
+<pre><code>String.capitalize();
 </code></pre>
 
 <p><strong>Parameters:</strong></p>
@@ -821,16 +821,17 @@ console.log("The item has a total distance of: " + distance);
 
 <p><strong>Returns:</strong></p>
 
-<p>A string with the first word capitalized, if a single word then its first letter is capitalized.</p>
+<p>A string with the first word capitalized, if a single word then its first letter is capitalized. </p>
 
 <p><strong>Example:</strong></p>
 
-<pre><code>var name = $.capitalize("robert"); // returns Robert
+<pre><code>var name = "robert";
+name.capitalize(); // returns Robert
 </code></pre>
 
 <p>&nbsp;</p>
 
-<h2>Function: String.capitalizeAll</h2>
+<h2 id="function_stringcapitalizeall">Function: String.capitalizeAll</h2>
 
 <p>Method to capitalize the first letter of a words in a string. This method is attached directly to the $ object.</p>
 
@@ -847,7 +848,7 @@ console.log("The item has a total distance of: " + distance);
 
 <p><strong>Returns:</strong></p>
 
-<p>A string with all words capitalized.</p>
+<p>A string with all words capitalized. </p>
 
 <p><strong>Example:</strong></p>
 
@@ -856,7 +857,47 @@ console.log("The item has a total distance of: " + distance);
 
 <p>&nbsp;</p>
 
-<h2>Function: Element.bind</h2>
+<h2 id="function_stringcamelize">Function: String.camelize</h2>
+
+<p>This takes a string of hyphenated values, removes the hyphens and capitalizes the first left of each section except the first.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>String.camelize();
+</code></pre>
+
+<p><strong>Returns:</strong></p>
+
+<p>A string with hyphens removed and the First letter of each section capitalized.</p>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>var recipe = "recipes-cake-name";
+recipe.camelize() // Returns recipesCakeName
+</code></pre>
+
+<p>&nbsp;</p>
+
+<h2 id="function_stringdecamelize">Function: String.deCamelize</h2>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>String.deCamelize();
+</code></pre>
+
+<p><strong>Returns:</strong></p>
+
+<p>A string with hyphens replacing the camel case notation.</p>
+
+<p><strong>Example:</strong> </p>
+
+<pre><code>var recipe = "recipesCakeName";
+recipe.deCamelize(); //Returns recipes-cake-name
+</code></pre>
+
+<p>&nbsp;</p>
+
+<h2 id="function_elementbind">Function: Element.bind</h2>
 
 <p>A method to attach events to elements.</p>
 
@@ -887,7 +928,7 @@ console.log("Time to put an end to this!");
 
 <p>&nbsp;</p>
 
-<h2>Function: Element.unbind</h2>
+<h2 id="function_elementunbind">Function: Element.unbind</h2>
 
 <p>A method to remove events from elements.</p>
 
@@ -912,7 +953,7 @@ console.log("Time to put an end to this!");
 
 <p>&nbsp;</p>
 
-<h2>Function: Element.removeEvents</h2>
+<h2 id="function_elementremoveevents">Function: Element.removeEvents</h2>
 
 <p>Remove events from an element. This method uses an array of events owned by the global $ object to know which events to remove. This method is invoked before removing any nodes from a document to prevent memory leaks. This method is attached directly to the Element object.</p>
 
@@ -928,7 +969,7 @@ console.log("Time to put an end to this!");
 
 <p>&nbsp;</p>
 
-<h2>Function: Element.delegate</h2>
+<h2 id="function_elementdelegate">Function: Element.delegate</h2>
 
 <p>A method to create event delegation. It uses the Element.ancestor method to check the ancestors of the event target to determine whether to execute the event or not.</p>
 
@@ -970,7 +1011,7 @@ console.log("Time to put an end to this!");
 
 <p>&nbsp;</p>
 
-<h2>Function: Element.trigger</h2>
+<h2 id="function_elementtrigger">Function: Element.trigger</h2>
 
 <p>A method to fire events on elements.</p>
 
@@ -994,7 +1035,7 @@ console.log("Time to put an end to this!");
 
 <p>&nbsp;</p>
 
-<h2>Function: Element.anim</h2>
+<h2 id="function_elementanim">Function: Element.anim</h2>
 
 <p>A method to implement CSS-based transition animations on elements.</p>
 
@@ -1023,7 +1064,7 @@ console.log("Time to put an end to this!");
 
 <p>&nbsp;</p>
 
-<h2>Function: $.delay</h2>
+<h2 id="function_delay">Function: $.delay</h2>
 
 <p>A method to delay the execution of a function.</p>
 
@@ -1048,7 +1089,7 @@ console.log("Time to put an end to this!");
 
 <p>&nbsp;</p>
 
-<h2>Function: $.defer</h2>
+<h2 id="function_defer">Function: $.defer</h2>
 
 <p>A method to postpone the execution of a function until the callstack is clear.</p>
 
@@ -1072,7 +1113,7 @@ console.log("Time to put an end to this!");
 
 <p>&nbsp;</p>
 
-<h2>Function: $.enclose</h2>
+<h2 id="function_enclose">Function: $.enclose</h2>
 
 <p>Method to capitalize the first letter of a words in a string. This method is attached directly to the $ object.</p>
 
@@ -1090,7 +1131,7 @@ console.log("Time to put an end to this!");
 
 <p><strong>Returns:</strong></p>
 
-<p>The result of the enclosed function with output for the enclosing function.</p>
+<p>The result of the enclosed function with output for the enclosing function. </p>
 
 <p><strong>Example:</strong></p>
 
@@ -1102,7 +1143,7 @@ hello = $.enclose(hello, function(func) {
 
 <p>&nbsp;</p>
 
-<h2>Function: $.compose</h2>
+<h2 id="function_compose">Function: $.compose</h2>
 
 <p>Method to return the composition of several functions, where each function consumes the return value of the function that follows. This method is attached directly to the $ object.</p>
 
@@ -1119,7 +1160,7 @@ hello = $.enclose(hello, function(func) {
 
 <p><strong>Returns:</strong></p>
 
-<p>The result of the execution of each function passed as an argument.</p>
+<p>The result of the execution of each function passed as an argument. </p>
 
 <p><strong>Example:</strong></p>
 
@@ -1134,7 +1175,7 @@ console.log(welcome('Jeff')); // =&gt; Hi there, Jeff! You know I'm glad to see 
 
 <p>&nbsp;</p>
 
-<h2>Array: $.events</h2>
+<h2 id="array_events">Array: $.events</h2>
 
 <p>An array of events to be removed before a node is deleted from a document. This array is attached directly to the $ object.</p>
 
@@ -1144,7 +1185,7 @@ console.log(welcome('Jeff')); // =&gt; Hi there, Jeff! You know I'm glad to see 
 
 <p>&nbsp;</p>
 
-<h2>Function: $.loadEvent</h2>
+<h2 id="function_loadevent">Function: $.loadEvent</h2>
 
 <p>A method to chain load multiple functions to execute when the document finishes loading.</p>
 
@@ -1171,7 +1212,7 @@ $.loadEvent(myFunction());
 
 <p>&nbsp;</p>
 
-<h2>Array: $.DOMReadyList</h2>
+<h2 id="array_domreadylist">Array: $.DOMReadyList</h2>
 
 <p>An array of functions to execute when the document's DOM is ready for access. This is used by $.executeWhenDOMReady.</p>
 
@@ -1185,7 +1226,7 @@ $.loadEvent(myFunction());
 
 <p>&nbsp;</p>
 
-<h2>Function: $.executeWhenDOMReady</h2>
+<h2 id="function_executewhendomready">Function: $.executeWhenDOMReady</h2>
 
 <p>A method to executing methods stored in $.DOMReadyList. This method is called by the $.ready method for executing chained blocks of code when the document fires the DOMContentLoaded event signaling that the document's DOM is ready for access. It readys the $.DOMReadyList array to see what code is stored there and executes it item by item. There is never a need for the user to execute this method as it is an auxilliary method for the $.ready() function.</p>
 
@@ -1204,7 +1245,7 @@ $.loadEvent(myFunction());
 
 <p>&nbsp;</p>
 
-<h2>Function: $.ready</h2>
+<h2 id="function_ready">Function: $.ready</h2>
 
 <p>Method to determine when the DOM is ready for manipulation and thereupon fire a block of code contained in an anonymous function passed to it as an argument. This method is attached directly to the $ object. If there are mulitple instances of this method, it's arguments will be chained and called sequentially with one registration of the DOMContentLoaded event.</p>
 
@@ -1234,7 +1275,7 @@ $.loadEvent(myFunction());
 
 <p>&nbsp;</p>
 
-<h2>Function: $.UIHideURLbar</h2>
+<h2 id="function_uihideurlbar">Function: $.UIHideURLbar</h2>
 
 <p>A method to hide the browser's address bar. This is used at page load time and when the user navigates to different views. This is for use when a Web app is running in the mobile browser with an address bar. It's not necessary for Web apps installed on the mobile device's home screen.</p>
 
@@ -1250,7 +1291,7 @@ $.loadEvent(myFunction());
 
 <p>&nbsp;</p>
 
-<h2>Function: $.importScript</h2>
+<h2 id="function_importscript">Function: $.importScript</h2>
 
 <p>A method to import external scripts into the document. This method is attached directly to the $ object.</p>
 
@@ -1293,7 +1334,7 @@ if($.iphone) {
 
 <p>&nbsp;</p>
 
-<h2>Function: Element.xhr</h2>
+<h2 id="function_elementxhr">Function: Element.xhr</h2>
 
 <p>A method to insert content into a node using The XMLHttpRequest object. This method is attached directly to the Element object.</p>
 
@@ -1316,7 +1357,7 @@ if($.iphone) {
 
 <p>&nbsp;</p>
 
-<h2>Function: Element.xhrjson</h2>
+<h2 id="function_elementxhrjson">Function: Element.xhrjson</h2>
 
 <p>A method to insert content into a node using The XMLHttpRequest object. This method is attached directly to the Element object.</p>
 
@@ -1339,7 +1380,7 @@ if($.iphone) {
 
 <p>&nbsp;</p>
 
-<h2>Function: Element.data</h2>
+<h2 id="function_elementdata">Function: Element.data</h2>
 
 <p>A method to get and set a dataset value on an element.</p>
 
@@ -1367,7 +1408,7 @@ $("#shirt).data("shirt-size", "XXL"); // outputs data-shirt-size="XXL" on #shirt
 
 <p>&nbsp;</p>
 
-<h2>Function: Element.removeData</h2>
+<h2 id="function_elementremovedata">Function: Element.removeData</h2>
 
 <p>A method to remove a dataset from an element.</p>
 
@@ -1389,7 +1430,7 @@ $("#shirt).data("shirt-size", "XXL"); // outputs data-shirt-size="XXL" on #shirt
 
 <p>&nbsp;</p>
 
-<h2>Function: $.localItem</h2>
+<h2 id="function_localitem">Function: $.localItem</h2>
 
 <p>Set a key/value pair to the browser's localStorage, or retrieve a key value. If you pass only a key, it returns the key's value if that key is present in localStorage. Otherwise, passing a key and a value will set these on localStorage.</p>
 
@@ -1416,7 +1457,7 @@ console.log("The client's name is: " + clientFirstName");
 
 <p>&nbsp;</p>
 
-<h2>Function: $.deleteLocalItem</h2>
+<h2 id="function_deletelocalitem">Function: $.deleteLocalItem</h2>
 
 <p>Set a key/value pair to the browser's localstorage.</p>
 
@@ -1438,7 +1479,7 @@ console.log("The client's name is: " + clientFirstName");
 
 <p>&nbsp;</p>
 
-<h2>Function: $.clearLocalItems</h2>
+<h2 id="function_clearlocalitems">Function: $.clearLocalItems</h2>
 
 <p>A method to delete the localStorage. This requires no parameters and will completely remove the browser's localStorage for that domain. A new one can be create again at any time.</p>
 
@@ -1451,9 +1492,9 @@ console.log("The client's name is: " + clientFirstName");
 
 <p>&nbsp;</p>
 
-<h2>Variable: $.templates</h2>
+<h2 id="variable_templates">Variable: $.templates</h2>
 
-<p>A cache for templates to be used later. This is used by $.template. ChocolateChip-UI provides three ways of writing templates: jsp/asp style tags, mustache (curly braces) and square brackets. The tags allow you to mix in HTML markup with JavaScript to create dynamic templates for processing JSON data. Each style has two types of tags: one for executing JavaScript code and one for outputting the rendered value of a variable. The sets look like this:</p>
+<p>An object that stores the templates you define. This is used by $.template. ChocolateChip-UI provides three ways of writing templates: JSP/ASP style tags, Mustache style (curly braces) and square brackets like Smarty. You can use whichever style you prefer, but the styles cannot be mixed up in the same template. However, different templates used in an app can have differ markup without a conflict. The tags allow you to mix in HTML markup with JavaScript to create dynamic templates for processing JSON data. Each style has two types of tags: one for executing JavaScript code and one for outputting the rendered value of a variable. The sets look like this:</p>
 
 <p><strong>Example:</strong></p>
 
@@ -1461,7 +1502,7 @@ console.log("The client's name is: " + clientFirstName");
 
 <p><strong>JSP style tags:</strong></p>
 
-<p>The delimiters for this are "<%" and "%>". You can include any JavaScript code you want to execute in the template inside these delimiters. To output the value of a variable, use "<%=" and "%>".</p>
+<p>The delimiters for this are "&lt;%" and "%>". You can include any JavaScript code you want to execute in the template inside these delimiters. To output the value of a variable, use "&lt;%=" and "%>".</p>
 
 <pre><code>var templates.ingredients =
     "&lt;% /* Check if this recipe has ingredients: */ %&gt;\
@@ -1476,7 +1517,7 @@ console.log("The client's name is: " + clientFirstName");
 
 <p><strong>Mustache style tags:</strong></p>
 
-<p>The delimiters for this are "{{" and "}}". You can include any JavaScript code you want to execute in the template inside these delimiters. To output the value of a variable, use "${" and "}".</p>
+<p>The delimiters for this are &#8220;{{&#8221; and &#8220;}}&#8221;. You can include any JavaScript code you want to execute in the template inside these delimiters. To output the value of a variable, use &#8220;${&#8221; and &#8220;}&#8221;.</p>
 
 <pre><code>var templates.ingredients =
     "{{ /* Check if this recipe has ingredients: */ }}\
@@ -1491,7 +1532,7 @@ console.log("The client's name is: " + clientFirstName");
 
 <p><strong>Square bracket style tags:</strong></p>
 
-<p>The delimiters for this are "[[" and "]]". You can include any JavaScript code you want to execute in the template inside these delimiters. To output the value of a variable, use "$[" and "]".</p>
+<p>The delimiters for this are &#8220;[[&#8221; and &#8220;]]&#8221;. You can include any JavaScript code you want to execute in the template inside these delimiters. To output the value of a variable, use &#8220;$[&#8221; and &#8220;]&#8221;.</p>
 
 <pre><code>var templates.ingredients =
     "[[ /* Check if this recipe has ingredients: */ ]]\
@@ -1506,7 +1547,7 @@ console.log("The client's name is: " + clientFirstName");
 
 <p><strong>Nesting Templates:</strong></p>
 
-<p>You can break down complex templates into manageable modules which you can nest. This allows you to update the nested templates separately from the parent, or the other way around. It's probably a good idea to name nested templates so that their name reflects their relation to the parent template they belong to. Here's how to do it. Just define the sub-templates the same way you would define a normal template, as a value on $.templates. Then, when building out the string for the parent template you concatenate the sub-template's variable. This would be something like this:</p>
+<p>You can break down complex templates into manageable modules which you can nest. This allows you to update the nested templates separately from the parent, or the other way around. It&#8217;s probably a good idea to name nested templates so that their name reflects their relation to the parent template they belong to. Here&#8217;s how to do it. Just define the sub-templates the same way you would define a normal template, as a value on $.templates. Then, when building out the string for the parent template you concatenate the sub-template&#8217;s variable. This would be something like this:</p>
 
 <pre><code>$.templates.parent_child = 
 "&lt;ol&gt;\
@@ -1522,7 +1563,7 @@ $.templates.parent =
 "&lt;/div&gt;";
 </code></pre>
 
-<p>As you can see above, the parent_child template gets concatenated in the parent template. In the more complex example below, notice that I'm doing a conditional check to make sure the values that the nested templates depend on exist before outputting them in the parent template. Or you could put that conditional check in the nested template itself. Your call to make.</p>
+<p>As you can see above, the parent_child template gets concatenated in the parent template. In the more complex example below, notice that I&#8217;m doing a conditional check to make sure the values that the nested templates depend on exist before outputting them in the parent template. Or you could put that conditional check in the nested template itself. Your call to make.</p>
 
 <pre><code>/* The next two templates will be nested in $.templates.recipes: */
 $.templates.recipes_ingredients = 
@@ -1569,9 +1610,9 @@ $.templates.recipes =
 
 <p>&nbsp;</p>
 
-<h2>Function: $.template</h2>
+<h2 id="function_template">Function: $.template</h2>
 
-<p>A method to parse a JavaScript Micro Template and populate it with JSON data. This is inspired by John Resig's JavaScript micro template: <a href="http://ejohn.org/">ejohn.org</a>. John's method depends on script tags with special mime types to define the templates. My approach uses a string. The advantage is that my templates can be created at any time and stored in localStorage, client-side database or whatever you see fit. His reside in the DOM structure, mine reside in the browser's memory as a variable. I believe my approach is cleaner and more versatile.</p>
+<p>A method to parse a JavaScript template and populate it with JSON data. You define the template as a string (see <a href="#$templates">$.templates</a> above) consisting of markup along with JavaScript enclosed in special delimiters. The $.template method parses the JSON object and passes it to the template, after which you can insert it where you wish.</p>
 
 <p><strong>Syntax:</strong></p>
 
@@ -1593,7 +1634,7 @@ $.ready(function() {
 });
 </code></pre>
 
-<p>One thing I want to point out in the above example, when you define a template with $.templates, such as $.templates.ingredients = "..." when you go to use the template in the $.template method, you don't need to use $.templates.ingredients, you can just give the name of the template, "ingredients" in this case. The $.template method already knows to retrieve the template from the $.templates object.</p>
+<p>One thing I want to point out in the above example, when you define a template with $.templates, such as $.templates.ingredients = &#8220;&#8230;&#8221; when you go to use the template in the $.template method, you don&#8217;t need to use $.templates.ingredients, you can just give the name of the template, &#8220;ingredients&#8221; in this case. The $.template method already knows to retrieve the template from the $.templates object.</p>
 
 <p>See Also:</p>
 
@@ -1601,9 +1642,9 @@ $.ready(function() {
 
 <p>&nbsp;</p>
 
-<h2>Function: $.UIUpdateOrientationChange</h2>
+<h2 id="function_uiupdateorientationchange">Function: $.UIUpdateOrientationChange</h2>
 
-<p>A method for outputting a class on the body tag to identify the orientation of the mobile device when the device's orientation changes. In landscape mode it puts the class "landscape" on the body tag and in portrait mode it puts the "portrait" on the body tag. There can only be one or the other on the body tag at any given time. This class is to enable the use of styles based on the orientation of the device. You can create styles using these class as in the example below.</p>
+<p>A method for outputting a class on the body tag to identify the orientation of the mobile device when the device&#8217;s orientation changes. In landscape mode it puts the class &#8220;landscape&#8221; on the body tag and in portrait mode it puts the &#8220;portrait&#8221; on the body tag. There can only be one or the other on the body tag at any given time. This class is to enable the use of styles based on the orientation of the device. You can create styles using these class as in the example below.</p>
 
 <p><strong>Example:</strong></p>
 
@@ -1617,9 +1658,9 @@ body.landscape app &gt; view {
 
 <p>&nbsp;</p>
 
-<h2>Function: $.UIListenForWindowResize</h2>
+<h2 id="function_uilistenforwindowresize">Function: $.UIListenForWindowResize</h2>
 
-<p>A method for outputting a class on the body tag to identify the orientation of the mobile device when the window is resized. If in window is wider than it is tall, it outputs the class "landscape" on the body tag, and when it is taller than it is wide, it outputs "portrait" on to the body tag. This allows you to testing for orientation change on the desktop for landscape and portrait modes.</p>
+<p>A method for outputting a class on the body tag to identify the orientation of the mobile device when the window is resized. If in window is wider than it is tall, it outputs the class &#8220;landscape&#8221; on the body tag, and when it is taller than it is wide, it outputs &#8220;portrait&#8221; on to the body tag. This allows you to testing for orientation change on the desktop for landscape and portrait modes.</p>
 
 <p><strong>Example:</strong></p>
 
@@ -1633,9 +1674,9 @@ body.landscape &gt; view {
 
 <p>&nbsp;</p>
 
-<h2>Function: $.kvo</h2>
+<h2 id="function_kvo">Function: $.kvo</h2>
 
-<p>A method for set up key value observers for basic data binding. This allows you to register observers on UI elements to watch for a change in a value. This value could be that of some input or control or of an object. When the observed values change, the observers capture that change and update themselves automatically. In respect to MVC (model, view, controller) practice his allows you to decouple your models from your UI (views). This is especially useful for complex and interactive user interfaces.</p>
+<p>A method for set up key value observers for basic data binding. This allows you to register observers on UI elements to watch for a change in a value. This value could be that of some input or control or of an object. When the observed values change, the observers capture that change and update themselves automatically. In respect to MVC (model, view, controller) practice his allows you to decouple your models from your UI (views). This is especially useful for complex and interactive user interfaces. </p>
 
 <p>In the case of the following HTML we can put together an example in which we want the label to be aware of the value of the text input field:</p>
 
@@ -1667,7 +1708,7 @@ $(function() {
 
 <p>&nbsp;</p>
 
-<h2>Function: $.form2JSON</h2>
+<h2 id="function_form2json">Function: $.form2JSON</h2>
 
 <p>A method that converts form values to a JSON object. This can be converted to a string for sending to the server with a GET or POST request, or stored on the client side in localStorage or the client side SQLite database.</p>
 
@@ -1680,10 +1721,10 @@ $(function() {
 
 <ul>
 <li>selector: a valid selector for the form to be processed.</li>
-<li>delimiter: a character to use as a delimiter for the marking of JSON member relations in the form element's name values (see example below). This defaults to ".", but you can use any other character that suits your purposes.</li>
+<li>delimiter: a character to use as a delimiter for the marking of JSON member relations in the form element&#8217;s name values (see example below). This defaults to &#8220;.&#8221;, but you can use any other character that suits your purposes.</li>
 </ul>
 
-<p>For this method to work properly you must name all form elements that you want to retrieve so that they match the structure of the resulting JSON object you would like. You use "." to indicate the sub objects of the JSON object. For example, if your form was for signing up a user, you might have inputs with names such as</p>
+<p>For this method to work properly you must name all form elements that you want to retrieve so that they match the structure of the resulting JSON object you would like. You use &#8220;.&#8221; to indicate the sub objects of the JSON object. For example, if your form was for signing up a user, you might have inputs with names such as </p>
 
 <pre><code>&lt;form id="newUser"&gt; 
     &lt;input type="text" name="newUser.name.first"&gt;&lt;/input&gt;
@@ -1724,7 +1765,7 @@ $(function() {
 
 <p>Disabled form elements or ones which have no value will be ignored.</p>
 
-<p>If you need to create an array from something like a set of choices, you'll need to marke the name with brackets "[]" to indicate that it's an array:</p>
+<p>If you need to create an array from something like a set of choices, you&#8217;ll need to marke the name with brackets &#8220;[]&#8221; to indicate that it&#8217;s an array:</p>
 
 <pre><code>&lt;div&gt;Favorite food&lt;/div&gt;
 &lt;p&gt;
@@ -1742,15 +1783,15 @@ $(function() {
 </code></pre>
 
 <p>If the user checks all three, this would produce:
-    {"user": 
-        {"favoriteFood":["salad","pizza","chicken"]}
+    {&#8220;user&#8221;: 
+        {&#8220;favoriteFood&#8221;:[&#8220;salad&#8221;,&#8221;pizza&#8221;,&#8221;chicken&#8221;]}
     }</p>
 
 <p>&nbsp;</p>
 
-<h2>Function: Function.bind</h2>
+<h2 id="function_functionbind">Function: Function.bind</h2>
 
-<p>Add bind capability to the Function object for versions of Webkit that don't support it.</p>
+<p>Add bind capability to the Function object for versions of Webkit that don&#8217;t support it.</p>
 
 <p><strong>Syntax:</strong></p>
 
@@ -1773,7 +1814,7 @@ greeter.speaks("hello");
 
 <p>&nbsp;</p>
 
-<h2>Function: Element.UICheckForOverflow</h2>
+<h2 id="function_elementuicheckforoverflow">Function: Element.UICheckForOverflow</h2>
 
 <p>Determines whether an element has content overflowing its bounds or not.</p>
 
