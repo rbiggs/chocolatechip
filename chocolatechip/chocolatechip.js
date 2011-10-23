@@ -949,12 +949,12 @@ Version 1.2.0
 			return result;
 		}		
 	});
+	
+	window.$chocolatechip = $;
+	window.$$chocolatechip = $.$$;
 	if (window.$ === undefined) {
 		window.$chocolatechip = window.$ = $;
 		window.$$chocolatechip = window.$$ = $.$$;
-	} else if (window.$ && window.$.libraryName !== "ChocolateChip"){
-		window.$chocolatechip = $;
-		window.$$chocolatechip = $.$$;
 	}
 })(); 
 $.ready(function() {
