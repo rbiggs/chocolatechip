@@ -1,19 +1,19 @@
 <h1 id="chocolatechipjs">ChocolateChip.js</h1>
 
-<pre><code>    pO\     
-   6  /\
-     /OO\
-    /OOOO\
-  /OOOOOOOO\
- ((OOOOOOOO))
-  \:~=++=~:/  
+<pre><code>   pO\     
+  6  /\
+    /OO\
+   /OOOO\
+ /OOOOOOOO\
+((OOOOOOOO))
+ \:~=++=~:/  
 
 ChocolateChip.js: It's tiny but delicious
 A JavaScript library for mobile Web app development.
 
 Copyright 2011 Robert Biggs: www.choclatechip-ui.com
 License: BSD
-Version 1.1.5
+Version 1.2.0
 </code></pre>
 
 <p>&nbsp;</p>
@@ -88,11 +88,25 @@ $("p:first-of-type").sing("Even a paragraph can sing!");
 
 <h2 id="variable_version">Variable: $.version</h2>
 
-<p>Version: 1.1.2</p>
+<p>Version: 1.2.0</p>
 
 <p><strong>Example:</strong></p>
 
 <pre><code>console.log("The version is: " + $.version);
+</code></pre>
+
+<p>&nbsp;</p>
+
+<h2 id="variable_libraryname">Variable: libraryName</h2>
+
+<p>A variable holding the name of this library: &#8220;ChocolateChip&#8221;.</p>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>if ($.libraryName !== "ChocolateChip") {
+    console.log("You are using some other library than ChocolateChip.");
+    return;
+}
 </code></pre>
 
 <p><a name="collectionToArray"></a></p>
@@ -170,6 +184,54 @@ $$("section &gt; p").forEach(function(p) {
 <p><strong>See Also:</strong></p>
 
 <p>[$.collectionToArray #collectionToArray]</p>
+
+<p>&nbsp;</p>
+
+<h2 id="function_elementfind">Function: Element.find</h2>
+
+<p>A method to get a node as the descendant of the element find is executed on. This will return the first match for the selector provided.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>var element = Element.find(selector);
+</code></pre>
+
+<p><strong>Returns:</strong> 
+    A single node.</p>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>var main = $("#main");
+var menu = main.find(".menu"); // Get the first menu.
+var menu3 = main.find(".menu:nth-of-typ(3)"); // Get the third menu.
+var menuLast = main.find(".menu.last-of-type"); // Get the last menu.
+</code></pre>
+
+<p>&nbsp;</p>
+
+<h2 id="function_elementfindall">Function: Element.findAll</h2>
+
+<p>A method to get a collection of nodes that are descendants of the element on which findAll is executed and which match the selector provided.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>var elements = Element.findAll(selector);
+</code></pre>
+
+<p><strong>Returns:</strong></p>
+
+<pre><code>An array of nodes.
+</code></pre>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>var main = $("#main");
+var menus = main.find(".menu"); // Get all menus.
+// Or operate directly on the returned results:
+main.find(".menu").forEach(function(menu)) { 
+    menu.css("display", "none");
+});
+</code></pre>
 
 <p>&nbsp;</p>
 
@@ -280,38 +342,6 @@ var theAncestor = $("#someID").ancestor(".myView");
 // Will return a subview tag if it is an ancestor of "#someID":
 var theAncestor = $("#someID").ancestor("subview");
 </code></pre>
-
-<p>&nbsp;</p>
-
-<h2 id="function_elementancestorbytag">Function: Element.ancestorByTag</h2>
-
-<p>Support for this method has been dropped. Instead use Element.ancestor().</p>
-
-<p><strong>See Also:</strong></p>
-
-<p><a href="#elementAncestor">Element.ancestor</a></p>
-
-<p><a name="elementAncestor"</a></p>
-
-<p>&nbsp;</p>
-
-<h2 id="function_elementancestorbyclass">Function: Element.ancestorByClass</h2>
-
-<p>Support for this method has been dropped. Instead use Element.ancestor().</p>
-
-<p><strong>See Also:</strong></p>
-
-<p><a href="#elementAncestor">Element.ancestor</a></p>
-
-<p>&nbsp;</p>
-
-<h2 id="function_elementancestorbyposition">Function: Element.ancestorByPosition</h2>
-
-<p>Support for this method has been dropped. Instead use Element.ancestor().</p>
-
-<p><strong>See Also:</strong></p>
-
-<p><a href="#elementAncestor">Element.ancestor</a></p>
 
 <p>&nbsp;</p>
 
@@ -478,7 +508,7 @@ var textValue = $("#item").text();
 
 <h2 id="function_elementfill">Function: Element.fill</h2>
 
-<p>Replace element's childNodes with content. This method is attached directly to the Element object.</p>
+<p>Replace element&#8217;s childNodes with content. This method is attached directly to the Element object.</p>
 
 <p><strong>Syntax:</strong></p>
 
@@ -538,7 +568,7 @@ var textValue = $("#item").text();
 <ul>
 <li>A valid node to insert into the child node collection of another node.</li>
 <li>A string with a value for first or last position for insertion.</li>
-<li>An integer indicating the position in the target element's child node collection at which to insert.</li>
+<li>An integer indicating the position in the target element&#8217;s child node collection at which to insert.</li>
 </ul>
 
 <p><strong>Example:</strong></p>
@@ -603,6 +633,50 @@ $$("p").forEach(function(item) {
     ++$.itemNumber;
 });
 $.itemNumber = null;
+</code></pre>
+
+<p>&nbsp;</p>
+
+<h2 id="function_elementprepend">Function: Element.prepend</h2>
+
+<p>A method to insert content at the beginning of an element&#8217;s child nodes. This is different from the result of Element.before, which places the content before the element. Prepend creates a new child node inside its element.</p>
+
+<p><strong>Syntax:</strong> </p>
+
+<pre><code>Element.prepend(node);
+</code></pre>
+
+<p><strong>Parameters:</strong></p>
+
+<ul>
+<li>node: A valid node to insert as the first child of the parent.</li>
+</ul>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>var mainContent = $("#main .content");
+mainContent.prepend("&lt;h2&gt;This is important!&lt;/h2&gt;");
+</code></pre>
+
+<p>&nbsp;</p>
+
+<h2 id="function_elementappend">Function: Element.append</h2>
+
+<p><strong>Syntax:</strong></p>
+
+<pre><code>Elemnt.append(node);
+</code></pre>
+
+<p><strong>Parameters:</strong></p>
+
+<ul>
+<li>node: A valid node to insert as the last child of the parent.</li>
+</ul>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>var mainContent = $("#main .content");
+mainContent.append("&lt;p class='finalNote'&gt;Before you start downloading this file, make sure you have all the windows in your house open and that you have a quick and secure escape route available.&lt;/p&gt;");
 </code></pre>
 
 <p>&nbsp;</p>
@@ -675,7 +749,7 @@ $.itemNumber = null;
 
 <h2 id="function_elementdisable">Function: Element.disable</h2>
 
-<p>A method to disable an element by adding the "disable" class and preventing mouse or touch interaction.</p>
+<p>A method to disable an element by adding the &#8220;disable&#8221; class and preventing mouse or touch interaction.</p>
 
 <p><strong>Example:</strong></p>
 
@@ -686,7 +760,7 @@ $.itemNumber = null;
 
 <h2 id="function_elementenable">Function: Element.enable</h2>
 
-<p>A method to facilitate re-enabling an element that was disabled by removing the "disabled" class and allow mouse and touch interaction.</p>
+<p>A method to facilitate re-enabling an element that was disabled by removing the &#8220;disabled&#8221; class and allow mouse and touch interaction.</p>
 
 <p><strong>Example:</strong></p>
 
@@ -762,16 +836,19 @@ var buttonTop = button.getLeft();
 
 <p><strong>Syntax:</strong></p>
 
-<pre><code>Element.css(style declaration, property, value);
+<pre><code>Element.css(property);
+Element.css(property, value);
+Element.css(string of properties/values);
+Element.css(object literal of properties/values);
 </code></pre>
 
 <p><strong>Parameters:</strong></p>
 
 <ul>
-<li>style declaration:string A string of valid CSS property/values enclosed in curly braces and quotes.</li>
-<li>property:string A string defining a CSS property.</li>
-<li>value:string A string defining a CSS property value to set on an element.</li>
-<li>A true value will cause any existing inline styles to be replace by the string of CSS styles. This is optional.</li>
+<li>style declaration: A string of valid CSS property/values enclosed in quotes.</li>
+<li>property: A string defining a CSS property.</li>
+<li>value: A string defining a CSS property value to set on an element.</li>
+<li>an object literal of valid CSS property value pairs. (Hyphenated properties must be quoted, otherwise properties which are single words do not require quotes. Values that are not simple integers must be quoted.)</li>
 </ul>
 
 <p><strong>Returns:</strong></p>
@@ -782,7 +859,8 @@ var buttonTop = button.getLeft();
 
 <pre><code>$("#item").css("font", "bold 12pt/14pt Arial, Helvetica, Sans-serif");
 console.log($("#item").css("font-size"));
-$("#item").css("{font-size: 24px; color: blue; background-color: red;}");
+$("#item").css("font-size: 24px; color: blue; background-color: red;");
+$("#item").css({"font-size":"24px", color:"blue", "background-color":"red"});
 </code></pre>
 
 <p>You can use Element.css to get the value of a CSS property by passing the quoted property as an argument. You simply pass in the normal CSS property. If it is a hyphenated property, pass it in like that. </p>
@@ -793,7 +871,7 @@ $("#item").css("{font-size: 24px; color: blue; background-color: red;}");
 console.log("This item's background color is: " + bkcolor);
 </code></pre>
 
-<p><strong>Note:</strong> Be aware that all values returned in this way are strings, even if they appear to be numerical values, such as height, margin, etc. So, if you need to do arithmetic with a returned value, you'll need to convert it from a string to a number. You can do this using parseInt:</p>
+<p><strong>Note:</strong> Be aware that all values returned in this way are strings, even if they appear to be numerical values, such as height, margin, etc. So, if you need to do arithmetic with a returned value, you&#8217;ll need to convert it from a string to a number. You can do this using parseInt:</p>
 
 <pre><code>var itemWidth = $("#item).css("width");
 itemWidth = parseInt(itemWidth);
@@ -909,7 +987,7 @@ recipe.deCamelize(); //Returns recipes-cake-name
 <p><strong>Parameters:</strong></p>
 
 <ul>
-<li>event: A string representing valid event handler, such as "click".</li>
+<li>event: A string representing valid event handler, such as &#8220;click&#8221;.</li>
 <li>function: A function, either named or anonymous. Note that a bound event that uses an anonymous function cannot be unbound. See last example below for how to avoid this.</li>
 </ul>
 
@@ -940,7 +1018,7 @@ console.log("Time to put an end to this!");
 <p><strong>Parameters:</strong></p>
 
 <ul>
-<li>event: Event A string representing valid event handler, such as "click".</li>
+<li>event: Event A string representing valid event handler, such as &#8220;click&#8221;.</li>
 <li>function: Function A named function executed by the event handler.</li>
 </ul>
 
@@ -1214,7 +1292,7 @@ $.loadEvent(myFunction());
 
 <h2 id="array_domreadylist">Array: $.DOMReadyList</h2>
 
-<p>An array of functions to execute when the document's DOM is ready for access. This is used by $.executeWhenDOMReady.</p>
+<p>An array of functions to execute when the document&#8217;s DOM is ready for access. This is used by $.executeWhenDOMReady.</p>
 
 <p><strong>See Also:</strong></p>
 
@@ -1228,7 +1306,7 @@ $.loadEvent(myFunction());
 
 <h2 id="function_executewhendomready">Function: $.executeWhenDOMReady</h2>
 
-<p>A method to executing methods stored in $.DOMReadyList. This method is called by the $.ready method for executing chained blocks of code when the document fires the DOMContentLoaded event signaling that the document's DOM is ready for access. It readys the $.DOMReadyList array to see what code is stored there and executes it item by item. There is never a need for the user to execute this method as it is an auxilliary method for the $.ready() function.</p>
+<p>A method to executing methods stored in $.DOMReadyList. This method is called by the $.ready method for executing chained blocks of code when the document fires the DOMContentLoaded event signaling that the document&#8217;s DOM is ready for access. It readys the $.DOMReadyList array to see what code is stored there and executes it item by item. There is never a need for the user to execute this method as it is an auxilliary method for the $.ready() function.</p>
 
 <p><strong>Syntax:</strong></p>
 
@@ -1247,7 +1325,7 @@ $.loadEvent(myFunction());
 
 <h2 id="function_ready">Function: $.ready</h2>
 
-<p>Method to determine when the DOM is ready for manipulation and thereupon fire a block of code contained in an anonymous function passed to it as an argument. This method is attached directly to the $ object. If there are mulitple instances of this method, it's arguments will be chained and called sequentially with one registration of the DOMContentLoaded event.</p>
+<p>Method to determine when the DOM is ready for manipulation and thereupon fire a block of code contained in an anonymous function passed to it as an argument. This method is attached directly to the $ object. If there are mulitple instances of this method, it&#8217;s arguments will be chained and called sequentially with one registration of the DOMContentLoaded event.</p>
 
 <p><strong>Syntax:</strong></p>
 
@@ -1277,7 +1355,7 @@ $.loadEvent(myFunction());
 
 <h2 id="function_uihideurlbar">Function: $.UIHideURLbar</h2>
 
-<p>A method to hide the browser's address bar. This is used at page load time and when the user navigates to different views. This is for use when a Web app is running in the mobile browser with an address bar. It's not necessary for Web apps installed on the mobile device's home screen.</p>
+<p>A method to hide the browser&#8217;s address bar. This is used at page load time and when the user navigates to different views. This is for use when a Web app is running in the mobile browser with an address bar. It&#8217;s not necessary for Web apps installed on the mobile device&#8217;s home screen.</p>
 
 <p><strong>Syntax:</strong></p>
 
@@ -1432,7 +1510,7 @@ $("#shirt).data("shirt-size", "XXL"); // outputs data-shirt-size="XXL" on #shirt
 
 <h2 id="function_localitem">Function: $.localItem</h2>
 
-<p>Set a key/value pair to the browser's localStorage, or retrieve a key value. If you pass only a key, it returns the key's value if that key is present in localStorage. Otherwise, passing a key and a value will set these on localStorage.</p>
+<p>Set a key/value pair to the browser&#8217;s localStorage, or retrieve a key value. If you pass only a key, it returns the key&#8217;s value if that key is present in localStorage. Otherwise, passing a key and a value will set these on localStorage.</p>
 
 <p><strong>Syntax:</strong></p>
 
@@ -1443,9 +1521,9 @@ $.localItem(key)
 <p><strong>Parameters:</strong></p>
 
 <ul>
-<li>key: The key to retrieve from the browser's localStorage.</li>
-<li>key: A key to add to the browser's localStorage.</li>
-<li>value: A value to set to the key of the browser's localStorage.</li>
+<li>key: The key to retrieve from the browser&#8217;s localStorage.</li>
+<li>key: A key to add to the browser&#8217;s localStorage.</li>
+<li>value: A value to set to the key of the browser&#8217;s localStorage.</li>
 </ul>
 
 <p><strong>Example:</strong></p>
@@ -1459,7 +1537,7 @@ console.log("The client's name is: " + clientFirstName");
 
 <h2 id="function_deletelocalitem">Function: $.deleteLocalItem</h2>
 
-<p>Set a key/value pair to the browser's localstorage.</p>
+<p>Set a key/value pair to the browser&#8217;s localstorage.</p>
 
 <p><strong>Syntax:</strong></p>
 
@@ -1469,7 +1547,7 @@ console.log("The client's name is: " + clientFirstName");
 <p><strong>Parameters:</strong></p>
 
 <ul>
-<li>key: The key to remove from the browser's localStorage.</li>
+<li>key: The key to remove from the browser&#8217;s localStorage.</li>
 </ul>
 
 <p><strong>Example:</strong></p>
@@ -1481,7 +1559,7 @@ console.log("The client's name is: " + clientFirstName");
 
 <h2 id="function_clearlocalitems">Function: $.clearLocalItems</h2>
 
-<p>A method to delete the localStorage. This requires no parameters and will completely remove the browser's localStorage for that domain. A new one can be create again at any time.</p>
+<p>A method to delete the localStorage. This requires no parameters and will completely remove the browser&#8217;s localStorage for that domain. A new one can be create again at any time.</p>
 
 <p><strong>Example:</strong></p>
 
@@ -1498,11 +1576,11 @@ console.log("The client's name is: " + clientFirstName");
 
 <p><strong>Example:</strong></p>
 
-<p>In the example below, ingredients is an array in a JSON object. We're going to output the array items as list items in our template.</p>
+<p>In the example below, ingredients is an array in a JSON object. We&#8217;re going to output the array items as list items in our template.</p>
 
 <p><strong>JSP style tags:</strong></p>
 
-<p>The delimiters for this are "&lt;%" and "%>". You can include any JavaScript code you want to execute in the template inside these delimiters. To output the value of a variable, use "&lt;%=" and "%>".</p>
+<p>The delimiters for this are &#8220;&lt;%&#8221; and &#8220;%>&#8221;. You can include any JavaScript code you want to execute in the template inside these delimiters. To output the value of a variable, use &#8220;&lt;%=&#8221; and &#8220;%>&#8221;.</p>
 
 <pre><code>var templates.ingredients =
     "&lt;% /* Check if this recipe has ingredients: */ %&gt;\
@@ -1830,4 +1908,36 @@ greeter.speaks("hello");
 <pre><code>if($("tableview:first-of-type").UICheckForOverflow();) {
     // Handle scrolling.
 }
+</code></pre>
+
+<h2 id="library_compatibility">Library compatibility</h2>
+
+<p>ChocolateChip now checks to see if the global $ exists. If it doesn&#8217;t, it makes its $ and $$ available as objects of the window. But if the $ is already attached to the window, it checks to see if it has the property window.$.libraryName with a value of &#8220;ChocolateChip&#8221;. If it does not, it sets its $ to window.$chocolatechip and its $$ to window.$$chocolatechip. This allows you to use ChocolateChip with other libraries that use $ and/or $$, such as jQuery, Prototype, Mootools, etc.</p>
+
+<p>For this to work, you must load the other library before ChocolateChip. Then, instead of writing your code like:</p>
+
+<pre><code>$.ready(function() {
+    // ChocolateChip stuff here.
+});
+    // or:
+$(function() {
+    // ChocolateChip stuff here.
+});
+</code></pre>
+
+<p>You would need to enclose the ChocolateChip code inside an anonymous function and pass in the $chocolatechip and $$chocolatechip variables:</p>
+
+<pre><code>// ChocolateChip code:
+(function($, $$) {
+    $(function() {
+        $("body").css("border: solid 4px red;");
+        $$("p").forEach(function(p) {
+            p.css("font-weight: bold");
+        });
+    });
+})($chocolatechip, $$chocolatechip);
+// jQuery code:
+$(function() {
+    $("a").css({display: "block", "text-decoration": "none"});
+})
 </code></pre>
