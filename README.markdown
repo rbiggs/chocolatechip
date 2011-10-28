@@ -9,13 +9,13 @@ ChocolateChip is a jQuery-like framework. It retains its small size by avoiding 
 Although it resembles jQuery it differs in that there is no object obfuscation when you get a node or a node collection. At any time you can switch to using regular JavaScript with ChocolateChip. For example, in ChocolateChip you get real "this" not $(this). ChocolateChip differs from jQuery in that it does not hide node results in an internal iterator. If you want one node, you use $(selector). If you want to get a collection of nodes you use $$(selector). $(selector) will always return the first match it finds. $(selector) will return a collection of all matches. ChocolateChip converts the collection to an array so that you can use array methods on it, such as forEach, map, indexOf, filter, etc.
  
     // Will only affect the first paragraph.
-    $("p").css("{ background-color: yellow; color: red; }"); 
+    $("p").css(" background-color: yellow; color: red; "); 
    
 When you get a collection with $$(selector) you get back an array. You can act on all items in that array using Array.forEach(). Pass an anonymous function inside of which you define what you want to do with each item in the array. You can pass an alias as the anonymous function's parameter which will represent each item in the array during the iteration process.
  
     // Get all paragraphs (use "paragraph" as an alias for each array item):
     $$("p").forEach(function(paragraph) {
-       paragraph.css("{ background-color: yellow; color: red; }"); 
+       paragraph.css("background-color: yellow; color: red;"); 
     });
  
 ##Be Ready When You Need To
@@ -24,7 +24,7 @@ ChocolateChip provides a convenient way to allow you to access the DOM when it i
  
 	$.ready(function() {
 		$$("li > a").forEach(function(link) {
-    		link.css("{ display: inline-block; border: solid 1px red; }");
+    		link.css("display: inline-block; border: solid 1px red;");
         	link.bind("touchstart", function handleLink() {
 				// Do something here.
         	});
@@ -35,7 +35,7 @@ You can use a shorthand for as well by passing the anonymous function directly t
  
     $(function() {
 		$$("li > a").forEach(function(link) {
-        	link.css("{ display: inline-block; border: solid 1px red; }");
+        	link.css({ display: "inline-block", border: "solid 1px red" });
         	link.bind("touchstart", function handleLink() {
             	// Do something here.
         	});
