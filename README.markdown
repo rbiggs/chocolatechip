@@ -11,11 +11,15 @@ Although it resembles jQuery it differs in that there is no object obfuscation w
     // Will only affect the first paragraph.
     $("p").css(" background-color: yellow; color: red; "); 
    
-When you get a collection with $$(selector) you get back an array. You can act on all items in that array using Array.forEach(). Pass an anonymous function inside of which you define what you want to do with each item in the array. You can pass an alias as the anonymous function's parameter which will represent each item in the array during the iteration process.
+When you get a collection with $$(selector) you get back an array. You can act on all items in that array using Array.forEach() or Array.each(). The later is a convenience for typing less. Pass it an anonymous function, inside of which you define what you want to do with each item in the array. You can pass an alias as the anonymous function's parameter which will represent each item in the array during the iteration process.
  
     // Get all paragraphs (use "paragraph" as an alias for each array item):
     $$("p").forEach(function(paragraph) {
-       paragraph.css("background-color: yellow; color: red;"); 
+       paragraph.css("{ background-color: yellow; color: red; }"); 
+    });
+	// or: 
+    $$("p").each(function(paragraph) {
+       paragraph.css("{ background-color: yellow; color: red; }"); 
     });
  
 ##Be Ready When You Need To
@@ -84,8 +88,27 @@ ChocolateChip allows you to bind events or delegate them.
     $.UIUpdateOrientationChange()
     $.UIListenForWindowResize()
     Function.prototype.bind()
- 
-HTMLElement Extensions:
+    
+**Array Extension:**
+	
+	[].each()// Iterate over an array:
+	  
+	// In the example below, item will be equal to each the value of each index of the array.
+	// idx will be equal to the integer value of the array index, starting from 0.
+	var arr = ["item 1", "item 2", "item 3", "item 4", "item 5"];
+	arr.each(function(item, idx) {
+		console.log("Item " + ++idx + " is: " + item);
+	});
+
+**Object Extension:**
+
+	Object.each() // Iterate over the object's keys.
+	
+	var obj = {"i-1": "item 1", "i-2":"item 2", "i-3":"item 3", "another-one":"item 4", "something-else":"item 5"};
+	obj.each(function(key, value) {
+		$("ol").append("<li>" + value + "</li>");
+	}); 
+**HTMLElement Extensions:**
  
     HTMLElement.previous() // Get the previous node.
     HTMLElement.next() // Get the next node.
@@ -123,12 +146,12 @@ HTMLElement Extensions:
     HTMLElement.removeData() // Remove a data attribute from an element.
     HTMLElement.UICheckForOverflow() // Check for content overflow on an element.
  
-String methods:
+**String methods:**
  
     String.capitalize() // Capitalize the first letter of a string. 
     String.capitalizeAll() // Capitalize all letters of a string.
  
-Properties:
+**Properties:**
  
     $.events - an array
     $.iphone - a boolean
