@@ -6,14 +6,14 @@
        /OOOO\
      /OOOOOOOO\
     ((OOOOOOOO))
-     \:~=++=~:/  
+      \:~=++=~:/    
            
     ChocolateChip.js: It's tiny but delicious
     A JavaScript library for mobile Web app development.
     
     Copyright 2011 Robert Biggs: www.choclatechip-ui.com
     License: BSD
-    Version 1.2.0
+    Version 1.3.0
 
 
 
@@ -21,7 +21,7 @@
 
 ##Function: $
 
-This method uses JavaScript's document.querySelector() method to get the designated node. It will always return the first match. To get more a collection of nodes, use the [$$](#$$) method. A selector is required as the main argument. A second optional argument may be passed as a context for the selector. This is useful where you want to limit where ChococlateChip searches for a node, such as only as a descendant of a particular document node, avoiding possible matches outside that node.
+This method uses JavaScript's document.querySelector() method to get the designated node. It will always return the first match. To get more a collection of nodes, use the [$$](#$$) method. A selector is required as the main argument. A second optional argument may be passed as a context for the selector. This is useful where you want to limit where ChococlateChip searches for a node, such as only as a descendant of a particular document node, avoiding possible matches outside that node. If no argument is passed, $() will return the html tag as the default, which is the document root.
 
 **Syntax:**
 
@@ -81,13 +81,186 @@ A method to extend the ChocolateChip's $ method. This uses EC5's Object.definePr
     $("p:first-of-type").sing("Even a paragraph can sing!");
 
 
+$nbsp;
+
+##Function: Array.each
+
+A shortcut for Array.prototype.forEach().
+
+**Syntax**
+
+    Array.each(function(user, idx) {
+    	// Do stuff with user or idx.
+    });
+
+**Example**
+
+    var users = ["John", "Dave", "Sally", "Bob", "Cathy"];
+    users.each(function(user, idx) {
+    	console.log(user + " is user number " + idx+1);
+    });
+    
+$nbsp;
+
+##Function: Array.eq
+
+A method to get a specific index of an array of nodes. This is intended to work with array of nodes returned by $$. However it will work with any array.
+
+**Syntax**
+ 
+    Nodes.eq(integer);
+
+**Parameters:**
+
+- Integer: any number indicating the position of the item. A negative number will count backwards from the end.
+
+**Example**
+
+    // Get the fourth item in the menu:
+    var importantItem = $$("#menu li")eq(3);
+    
+
+
+$nbsp;
+
+<a name="Nodes.is"></a>
+
+##Function: Nodes.is
+
+A method operating on an array of nodes to return all indices that match the argument passed.
+
+**Syntax**
+
+    Nodes.is(argument).each(function(item, idx) {
+		// Do stuff with item or idx.
+	});
+
+**Parameters:**
+
+- Any valid tag.
+- Any valid class.
+- Any valid attribute.
+
+**Example**
+
+    $$("li").is(".money").each(function(li) {
+		li.css("background-color","green");
+	});
+
+**See Also:**
+
+[Element.is](#Element.is)  
+   
+
+$nbsp;
+
+<a name="Nodes.not"></a>
+
+##Function: Nodes.not
+
+A method operating on an array of nodes to return all indices that do not match the argument passed This is the opposite of Nodes.is().
+
+**Syntax**
+
+    Nodes.not(argument).each(function(item, idx) {
+		// Do stuff with item or idx.
+	});
+
+**Parameters:**
+
+- Any valid tag.
+- Any valid class.
+- Any valid attribute.
+
+**Example**
+
+    $$("li").not(".paid").each(function(li) {
+		li.css("background-color","red");
+	});
+
+**See Also:**
+
+[Element.not](#Element.not)  
+   
+
+$nbsp;
+
+<a name="Nodes.has"></a>
+
+##Function: Nodes.has
+
+A method operating on an array of nodes to return all indices whose child nodes match the argument passed.
+
+**Syntax**
+
+    Nodes.has(argument).each(function(item, idx) {
+		// Do stuff with item or idx.
+	});
+
+**Parameters:**
+
+- Any valid tag.
+- Any valid class.
+- Any valid attribute.
+
+**Example**
+
+    $$("div").has("p").forEach(function(item, idx) {
+   	   item.append("<em>This div has at least one paragraph.</em>");
+    });
+
+**See Also:**
+
+[Element.has](#Element.has)  
+
+
+&nbsp;
+
+##Function: Nodes.prependTo
+
+A method that operates on an array of nodes to prepend them to the node passed as an argument.
+
+**Syntax**
+
+    Nodes.prependTo(selector);
+
+**Parameters:**
+
+- A valid selector.
+- A reference to an existing node.
+
+**Example**
+
+	// newItems is an array of nodes.
+    newItems.prependTo("#newContent");
+
+&nbsp;
+
+##Function: Nodes.appendTo
+
+A method that operates on an array of nodes to append them to the node passed as an argument.
+
+**Syntax**
+
+    nodes.appendTo(selector);
+
+**Parameters:**
+
+- A valid selector.
+- A reference to an existing node.
+
+**Example**
+
+	// newItems is an array of nodes.
+    newItems.appendTo("#newContent");
+
 
 
 &nbsp;
 
 ##Variable: $.version
 
-Version: 1.2.0
+Version: 1.3.0
 
 **Example:**
 
@@ -109,37 +282,28 @@ A variable holding the name of this library: "ChocolateChip".
 
 
 
-<a name="collectionToArray"></a>
-
 
 &nbsp;
 
-##Function: $.collectionToArray
+##Function: $.slice
 
-This is a function to convert an DOM node collection into an array. This is so you can use array extras like, forEach, map, slice, etc.
+This is a shortcut for Array.prototype.slice. Is is used to turn node collections or any array-like object, such as arguments, into an array.
 
 **Syntax:**
 
-    $.collectionToArray(NodeList);
+    var $p = $.slice.apply(document.querySelectorAll("p"));
 
 **Parameters:**
 
-- The node collection to convert into an array.
+- The node collection or array-like object to convert into an array.
 
 **Returns**
 
-An array of nodes in an HTMLElement collection. 
+An array. 
 
 **Example:**
 
-    var p = document.getElementsByTagName("p");
-    var pArray = $.collectionToArray(p);
-    
-    var elem = $("#myList");
-    var listitems = $.collectionToArray(elem.children);
-        listitems.forEach(function(item) {
-        // Process code here.
-    }
+    var $p = $.slice.apply(document.querySelectorAll("p"));
 
 **See Also:**
 
@@ -154,7 +318,7 @@ An array of nodes in an HTMLElement collection.
 
 ##Function: $.$$ 
 
-This method uses document.querySelectorAll to return a DOM collection as an array. It employs the method $.collectionToArray to convert the collection of nodes into an array. This will later be passed out as a global object. It also uses the $.collectionToArray method to convert and HTMLCollection into an array. $.$$() gets aliased as window.$$() so that you can uses it as just $$() instead of $.$$(). A second optional argument may be passed as a context for the selector. This is useful where you want to limit where ChococlateChip searches for nodes, such as only as a descendant of a particular document node, avoiding possible matches outside that node.
+This method uses document.querySelectorAll to return a DOM collection as an array. It employs the method $.collectionToArray to convert the collection of nodes into an array. This will later be passed out as a global object. $.$$() gets aliased as window.$$() so that you can uses it as just $$() instead of $.$$(). A second optional argument may be passed as a context for the selector. This is useful where you want to limit where ChococlateChip searches for nodes, such as only as a descendant of a particular document node, avoiding possible matches outside that node.
 
 **Syntax:**
 
@@ -179,8 +343,44 @@ An array of nodes comprising an element collection.
 
 **See Also:**
  
-[$.collectionToArray #collectionToArray]
+[$.slice #slice]
 
+$nbsp;
+
+##Function: $.noop
+
+This method is for "no operation performed" situations. In other words, where a function is expected as an argument, you can pass this. It does nothing but fulfills the requirement of being a function.
+
+**Syntax:**
+
+    $.noop();
+
+**Example:**
+
+	// The following will get a collection of nodes, iterate and do nothing.
+    $$("p").forEach($.noop);
+
+&nbsp;
+
+##Function: $.concat
+
+This is a method for concatenating complex strings. String concatenation is very slow in JavaScript. However, the array.join function is very fast at creating a string. This method uses that technique to turn an array of string or an argument list of strings into a single string.
+
+**Syntax:**
+
+    var str = $.concat(arguments);
+    
+**Parameters:**
+
+- An array of strings
+- A comma separated set of strings passed as arguments.
+
+
+**Example:**
+
+	var users = ["Bob, ", "John, ", "Dave, ", "Drew, ", "Stan"];
+    var str1 = $.concat(users);
+    var sentence = $.concat("This"," ","is"," ","a"," ","rather," ","tedious"," ","example",".");
 
 
 &nbsp;
@@ -194,6 +394,7 @@ A method to get a node as the descendant of the element find is executed on. Thi
 	var element = Element.find(selector);
 	
 **Returns:** 
+
 	A single node.
 	
 **Example:**
@@ -305,7 +506,63 @@ A method to get the last child of an element, while avoiding empty text nodes. T
 **Example:**
 
     $("#menu").last();
+    
+    
 
+$nbsp;
+
+##Function: Element.childElements
+
+**Syntax**
+
+    Element.childEelemnts();
+    Element.childEelemnts(selector);
+
+**Parameters:**
+
+- Any valid tag.
+- Any valid class.
+- Any valid attribute.
+
+**Example:**
+
+    var els = $("#main").childEelemnts();
+    var pTags = $("#main").childEelemnts("p");
+    var newItems = $("#content").childEelemnts(".new");
+
+$nbsp;
+
+##Function: Element.kids
+
+This is just a shortcut for Element.childElements.
+
+
+$nbsp;
+
+##Function: Element.siblings
+
+**Syntax**
+
+    Element.siblings();
+    Element.siblings(selector);
+
+**Parameters:**
+
+- Any valid tag.
+- Any valid class.
+- Any valid attribute.
+
+**Example:**
+
+	// Get all siblings of "#tasks""
+    $("#tasks").siblings().forEach(function(item, idx) {
+    	// Do something with the item or idex.
+    });
+    
+    // Get all siblings with a class of ".completed":
+    $("#tasks > .current").siblings(".completed").forEach(function(item, idx) {
+    	// Do something with the item or idex.
+    });
 
 <a name="elementAncestor"></a>
 
@@ -341,7 +598,108 @@ A matched ancestor node.
     // Will return a subview tag if it is an ancestor of "#someID":
     var theAncestor = $("#someID").ancestor("subview");
 
-         
+
+**See Also:**
+
+[Element.closest](#closest)         
+
+
+
+$nbsp;
+
+<a name="Element.is"></a>
+
+
+##Function: Element.is
+
+A method only returns the element if it matches the argument passed.
+
+**Syntax**
+
+    Element.is(argument);
+
+**Parameters:**
+
+- Any valid tag.
+- Any valid class.
+- Any valid attribute.
+
+**Example**
+
+    $("#menu").is(".movies").css("display","block");
+
+**See Also:**
+
+[Nodes.is](#Nodes.is) 
+   
+
+
+
+$nbsp;
+
+<a name="Element.not"></a>
+
+
+##Function: Element.not
+
+
+**Syntax:** 
+
+    Element.not(argument);
+
+
+**Parameters:**
+
+- Any valid tag.
+- Any valid class.
+- Any valid attribute.
+
+
+**Example:**
+
+    $("#menu").not(".movies").css("display","none");
+
+**See Also:**
+
+[Nodes.not](#Nodes.not) 
+
+
+$nbsp;
+
+<a name="Element.has"></a>
+
+
+##Function: Element.has
+
+
+**Syntax:** 
+
+    Element.has(argument);
+
+**Parameters:**
+
+- Any valid tag.
+- Any valid class.
+- Any valid attribute.
+
+**Example:**
+
+    $("#menu").has("li").css("display","block");
+
+**See Also:**
+
+[Nodes.has](#Nodes.has) 
+
+
+&nbsp;
+
+<a name="closest"></a>
+
+##Function: Element.closest
+
+This is an alias for ancestor, mostly to match the function with the same name in jQuery and Zepto.
+
+
 
 &nbsp;
 

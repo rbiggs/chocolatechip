@@ -67,6 +67,8 @@ ChocolateChip allows you to bind events or delegate them.
     $.extend() // ECMAScript5 Object extension
     $.collectionToArray()
     $.$$() // This gets aliased to just $$ for convenience. Returns a collection of nodes
+    $.noop() // An array that does nothing to use where a function is required.
+    $.concat() // Creates a string from the arguments.
     $.make() // Create valid nodes from a string of markup.
     $.processJSON() // This takes the result of an Ajax request for JSON and makes it available for processing.
     $.delay() // Allows you to delay the execution of a code block.
@@ -91,7 +93,7 @@ ChocolateChip allows you to bind events or delegate them.
     
 **Array Extension:**
 	
-	[].each()// Iterate over an array:
+	[].each() // Iterate over an array:
 	  
 	// In the example below, item will be equal to each the value of each index of the array.
 	// idx will be equal to the integer value of the array index, starting from 0.
@@ -99,6 +101,16 @@ ChocolateChip allows you to bind events or delegate them.
 	arr.each(function(item, idx) {
 		console.log("Item " + ++idx + " is: " + item);
 	});
+	
+    [].eq(integer) // Return a specific index of an array.
+    
+    $$("li").eq(3);
+    
+    [].is() // Return all indices that match the argument.
+    [].not() // Return all indices that do not match the argument.
+    [].has() // Return all indices whose child nodes match the argument.
+    [].prependTo() // Prepends the array of nodes to the argument.
+    [].appendTo() // Appends the array of nodes to the argument.
 
 **Object Extension:**
 
@@ -114,7 +126,14 @@ ChocolateChip allows you to bind events or delegate them.
     HTMLElement.next() // Get the next node.
     HTMLElement.first() // Get the first node of a set of siblings.
     HTMLElement.last() // Get the last node of a set of siblings.
+    HTMLElement.childElements() // Get the child nodes that match the argument.
+    HTMLElement.kids() // Same as HTMLElement.childElements().
+    HTMLElement.siblings() // Get an element's siblings that match the argument.
     HTMLElement.ancestor() // Get an ancestor node base on class, id, tag, attribute or position.
+    HTMLElement.closest() // Same as HTMLElement.ancestor().
+    HTMLElement.is() //  Returns the element if it matches the argument.
+    HTMLElement.not() // Returns the element if it does not match the argument.
+    HTMLElement.has() // Returns the element if a child node matches the argument.
     HTMLElement.clone() // Clone a node and/or its descendant nodes.
     HTMLElement.wrap() // Wrap markup around a node.
     HTMLElement.unwrap() // Unwarp markup from around a node.

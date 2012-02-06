@@ -1,23 +1,26 @@
 /*		  
-	pO\		
+    pO\     
    6  /\
-	 /OO\
-	/OOOO\
+     /OO\
+    /OOOO\
   /OOOOOOOO\
  ((OOOOOOOO))
-  \:~=++=~:/  
+  \:~=++=~:/ 
 		
 ChocolateChip.js: It's tiny but delicious
 A JavaScript library for mobile Web app development.
  
 Copyright 2011 Robert Biggs: www.choclatechip-ui.com
 License: BSD
-Version 1.2.0
+Version 1.3.0
  
 */
  
 (function() {
 	var $ = function ( selector, context ) {
+		if (typeof selector === "object" && selector.nodeType === 1) {
+			return selector;
+		}
 		if (!!context) {
 			if (typeof context === "string") {
 				return document.querySelector(context + " " + selector);
@@ -32,7 +35,7 @@ Version 1.2.0
 		} else {
 			return document.querySelector(selector);
 		}
-		return false;
+		return document.getElementsByTagName("html")[0];
 	};
  
 	$.extend = function(obj, prop) {
@@ -59,40 +62,78 @@ Version 1.2.0
 		}
 		return this;
 	};
-		
-	$.extend(Array.prototype, {
-		each : Array.prototype.forEach
-	});
 	 
+	$.extend(Array.prototype, {
+		each : Array.prototype.forEach,
+		
+		eq : function ( index ) {
+			return index === -1 ? this.slice(index)[0] : this.slice(index, + index + 1)[0];
+		},
+		
+		is : function ( arg ) {
+			var items = [];
+			this.each(function(item) {
+				if (item.is(arg)) items.push(item);
+			});
+			if (items.length) return items;
+			else return false;
+		},
+		
+		has : function ( arg ) {
+			var items = [];
+			this.each(function(item) {
+				if (item.has(arg)) items.push(item);
+			});
+			if (items.length) return items;
+			else return false;
+		},
+		
+		not : function ( arg ) {
+			var items = [];
+			this.each(function(item) {
+				if (!item.is(arg)) items.push(item);
+			});
+			if (items.length) return items;
+			else return false;
+		},
+		
+		prependTo : function ( selector ) {
+			this.each(function(item) {
+				$(selector).prepend(item);
+			});
+			return $(selector);
+		},
+		
+		appendTo : function ( selector ) {
+			this.each(function(item) {
+				$(selector).append(item);
+			});
+			return $(selector);
+		}
+	});
+	
 	$.extend($, {
  
-		version : "1.2.0",
+		version : "1.3.0",
 		
 		libraryName : "ChocolateChip",
 		
 		$$ : function ( selector, context ) {
 			if (!!context) {
 				if (typeof context === "string") {
-					return $.collectionToArray(document.querySelectorAll(context + " " + selector));
+					return [].slice.apply(document.querySelectorAll(context + " " + selector));
 				} else if (context.nodeType === 1){
-					return $.collectionToArray(context.querySelectorAll(selector));
+					return [].slice.apply(context.querySelectorAll(selector));
 				}
 			} else {
-				return $.collectionToArray(document.querySelectorAll(selector));
+				return [].slice.apply(document.querySelectorAll(selector));
 			}
 		},
-		 
+		
 		make : function ( HTMLString ) {
-			var nodes = [];
 			var temp = document.createElement("div");
 			temp.innerHTML = HTMLString;
-			var i = 0;
-			var len = temp.childNodes.length;
-			while (i < len) {
-				nodes[i] = temp.childNodes[i];
-				i++;
-			}
-			return nodes;
+			return Array.prototype.slice.apply(temp.childNodes);
 		},
 		 
 		replace : function ( newElem, oldElem ) {
@@ -110,12 +151,17 @@ Version 1.2.0
 				var id = "#" + scriptID;
 				$(id).remove();
 			});
+		},
+		
+		noop : function ( ) { },
+		
+		concat : function ( args ) {
+			return args instanceof Array ? args.join("") : $.slice.apply(arguments).join("");
 		}
-	});
-	
+	});	
 	
 	$.extend(Object.prototype, {
-		each: function(callback, objectLength) {
+		each: function(callback) {
 			for (key in this) {
 				if(callback(key, this[key]) === false) { return this; }
 			}
@@ -146,6 +192,38 @@ Version 1.2.0
 		 
 		last : function ( ) {
 			return this.lastElementChild;
+		},
+		
+		childElements : function ( selector ) {
+			if (typeof selector === "string") {
+				return $.slice.apply(this.findAll(selector));
+			} else {
+				return $.slice.apply(this.children);
+			}
+		},
+		
+		kids : function( selector ) {
+		 	return this.childElements(selector);
+		},
+		
+		siblings: function(selector){
+			var $this = this;
+			var foundEls = [];
+			if (!!selector) {
+				$.slice.apply(this.parentNode.findAll(selector)).filter(function(el){ 
+					if (el !== $this) {
+						foundEls.push(el); 
+					}
+				});
+				return foundEls;
+			} else {
+				$.slice.apply(this.parentNode.children).filter(function(el){ 
+					if (el !== $this) {
+						foundEls.push(el); 
+					}
+				});
+				return foundEls;
+			}
 		},
 	 
 		ancestor : function( selector ) {
@@ -199,6 +277,44 @@ Version 1.2.0
 				   return p.ancestor(selector);
 			   } 
 			}
+		}, 
+		
+		closest : this.ancestor,
+		
+		is : function ( arg ) {
+			$this = this;
+			if (typeof arg === "string") {
+				if (this.parentNode.findAll(arg).indexOf($this) >= 0) return this;
+			} else if (typeof arg === "function") {
+				if (arg.call($this)) return this;
+			} else if (arg.length) {
+				if ($.slice.apply(arg).indexOf(this) !== -1) return this;
+			} else if (arg.nodeType === 1) {
+				if (this === arg) return this;
+			} else {
+				return false;
+			}
+		},
+		
+		has : function ( arg ) {
+			if (typeof arg === "string") {
+				var whichNode = [].slice.apply(this.find(arg))[0];
+				if ($.slice.apply(this.children).indexOf(whichNode)) {
+					return this;
+				}
+			} else if (arg.nodeType === 1) {
+				if ($.slice.apply(this.children).indexOf(arg)) {
+					return this;
+				}
+			} else {
+				return false;
+			}
+			
+		},
+		
+		not : function ( arg ) {
+			if (!this.is(arg)) return this;
+			else return false;
 		}, 
 		 
 		clone : function ( value ) {
@@ -525,24 +641,24 @@ Version 1.2.0
 		},
 		 
 		xhrjson : function ( url, options ) {
-			if (options === "undefined") {
-				return this;
-			}
-			var c = options.callback;
-			if (typeof c != 'function') {
-				c = function (x) {
-					return x;
-				};
-			}
-			var callback = function () {
-				var o = JSON.parse(this.responseText);
-				for (var prop in o) {
-					$(options[prop]).fill(c(o[prop]));
-				}
-			};
-			options.successCallback = callback;
-			this.xhr(url, options);
-			return this;
+            if (options === "undefined") {
+                return this;
+            }
+            var c = options.successCallback;
+            if (typeof c != 'function') {
+                c = function (x) {
+                    return x;
+                };
+            }
+            var callback = function () {
+                var o = eval('(' + this.responseText + ')');
+                for (var prop in o) {
+                    $(options[prop]).fill(c(o[prop]));
+                }
+            };
+            options.successCallback = callback;
+            this.xhr(url, options);
+            return this;
 		},
 
 		data : function ( key, value ) {
