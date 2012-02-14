@@ -1,8 +1,7 @@
 ---
-title: ChocolateChip - A Compact JavaScript Framework for Mobile Webkit
+ChocolateChip - A Compact JavaScript Framework for Mobile Webkit
 ---
  
-#ChocolateChip.js - A Compact JavaScript Framework for Mobile Webkit
  
 ChocolateChip is a jQuery-like framework. It retains its small size by avoiding desktop and legacy browser support, choosing to support the latest standards in modern mobile browsers using Webkit.
  
