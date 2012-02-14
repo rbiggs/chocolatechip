@@ -65,11 +65,11 @@ ChocolateChip allows you to bind events or delegate them.
  
     $() // Get the first ocurrence of the selector
     $.extend() // ECMAScript5 Object extension
-    $.collectionToArray()
     $.$$() // This gets aliased to just $$ for convenience. Returns a collection of nodes
     $.noop() // An array that does nothing to use where a function is required.
     $.concat() // Creates a string from the arguments.
     $.make() // Create valid nodes from a string of markup.
+    $.html() // Alias for $.make().
     $.processJSON() // This takes the result of an Ajax request for JSON and makes it available for processing.
     $.delay() // Allows you to delay the execution of a code block.
     $.defer() // Allows you to designate a block of code to be executed after other code.
@@ -109,6 +109,7 @@ ChocolateChip allows you to bind events or delegate them.
     [].is() // Return all indices that match the argument.
     [].not() // Return all indices that do not match the argument.
     [].has() // Return all indices whose child nodes match the argument.
+    [].hasNot() // Return all indices whose child nodes do not match the argument.
     [].prependTo() // Prepends the array of nodes to the argument.
     [].appendTo() // Appends the array of nodes to the argument.
 
@@ -134,6 +135,7 @@ ChocolateChip allows you to bind events or delegate them.
     HTMLElement.is() //  Returns the element if it matches the argument.
     HTMLElement.not() // Returns the element if it does not match the argument.
     HTMLElement.has() // Returns the element if a child node matches the argument.
+    HTMLElement.hasNot() // Returns the element if a child node does not match the argument.
     HTMLElement.clone() // Clone a node and/or its descendant nodes.
     HTMLElement.wrap() // Wrap markup around a node.
     HTMLElement.unwrap() // Unwarp markup from around a node.
@@ -142,6 +144,9 @@ ChocolateChip allows you to bind events or delegate them.
     HTMLElement.empty() // Delete all child nodes of an element.
     HTMLElement.remove() // Delete a node from the document.
     HTMLElement.insert() // Insert a node into the document at designate place.
+    HTMLElement.html() // Replace the node's content with new content.
+    HTMLElement.prepend() // Insert content before the first child of the element.
+    HTMLElement.append() // Insert content after the last child of the element.
     HTMLElement.before() // Insert content before designated node.
     HTMLElement.after() // Insert content after dsignated node.
     HTMLElement.hasClass() // Returns true or false.
@@ -180,5 +185,6 @@ ChocolateChip allows you to bind events or delegate them.
     $.webos - a boolean
     $.blackberry - a boolean
     $.touchEnabled - a boolean
+    $.userAction - "click" on desktop, "touchstart" on mobile
     $.online - a boolean
     $.standalone - a boolean
