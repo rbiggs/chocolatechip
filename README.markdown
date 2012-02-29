@@ -79,7 +79,8 @@ ChocolateChip allows you to bind events or delegate them.
     $.executeWhenDOMReady() // A method to execute the DOMReadyList
     $.ready() // A method that executes a block of code when DOMContentLoaded fires.
     $.UIHideURLbar() // Hide the url bar.
-    $.importScript() // Dynamically import an external script.
+    $.require() // Dynamically import an external script and execture a callback.
+    $.importScript() // Alias for $.require().
     $.localItem() // Get or set data in localStorage.
     $.deleteLocalItem() // Delete item from localStorage.
     $.clearLocalItems() // Delete all items from localStorage.
