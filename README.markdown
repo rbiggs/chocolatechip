@@ -123,6 +123,9 @@ ChocolateChip allows you to bind events or delegate them.
 	}); 
 **HTMLElement Extensions:**
  
+ 	HTMLElement.cache(data) //Cache data on a node.
+ 	HTMLElement.cache() // Retrieve data cached on a node.
+ 	HTMLElement.unchache() // Remove data cached on a node.
     HTMLElement.previous() // Get the previous node.
     HTMLElement.next() // Get the next node.
     HTMLElement.first() // Get the first node of a set of siblings.
