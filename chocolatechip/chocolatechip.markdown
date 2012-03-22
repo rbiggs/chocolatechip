@@ -28,6 +28,7 @@ This method uses JavaScript's document.querySelector() method to get the designa
     $(selector);
     $(selector, context);
     $(function);
+    $();
 
 **Parameters:**
 
@@ -37,7 +38,7 @@ This method uses JavaScript's document.querySelector() method to get the designa
 
 **Returns:** 
 
-A valid document node.
+A valid document node. If no argument is supplied it returns the document root. If a function is passed, determines if the document is loaded already. If it is, it returns the executed function, if it is not loaded, it added a listener for DOMContentLoaded
 
 **Example:**
 
@@ -51,6 +52,7 @@ A valid document node.
     });
     // Get the document height:
     var height = $(document).css('height');
+    var d = $() // returns the document object.
 
 
 
@@ -557,7 +559,7 @@ You can inspect the keys and values of the event cache as follows:
 	$.chch_cache.events.values[0] // returns the first value in the events cache.
 
 
-$nbsp;
+&nbsp;
 
 ##Function: Element.cache
 
@@ -1729,7 +1731,7 @@ A method to attach events to elements.
 **Parameters:**
 
 - event: A string representing valid event handler, such as "click".
-- function: A function, either named or anonymous. Note that a bound event that uses an anonymous function cannot be unbound. See last example below for how to avoid this.
+- function: Either named or anonymous. Note that a bound event that uses an anonymous function cannot be unbound. See last example below for how to avoid this.
 
 **Example:**
 
@@ -1759,7 +1761,7 @@ A method to remove events from elements.
 **Parameters:**
 
 - event: Event A string representing valid event handler, such as "click".
-- function: Function A named function executed by the event handler.
+- function: A named function executed by the event handler.
 
 **Example:**
 
@@ -1918,10 +1920,18 @@ A method to postpone the execution of a function until the callstack is clear.
 
 **Example:**
 
-    $.defer(function() { 
-        console.log("This comes before Squawk!"); 
-    });
-
+	$.defer(function() { 
+		console.log("This comes after everything else!"); 
+	});
+	var squawk = function() {
+		console.log('Squawk!');
+	};
+	squawk();
+	console.log("Some other stuff");
+	[1,1,1,1,1].forEach(function(item, idx) {
+		console.log('Item: ', idx);
+	});
+	// The deferred console.log will be executed last.
 
  
 
@@ -1929,16 +1939,18 @@ A method to postpone the execution of a function until the callstack is clear.
 
 ##Function: $.enclose
 
-Method to capitalize the first letter of a words in a string. This method is attached directly to the $ object.
+Method to enclose one method inside another. This method is attached directly to the $ object.
 
 **Syntax:**
 
-    $.enclose(function, enclosure);
+    $.enclose(function, function);
 
 **Parameters:**
 
-- function:function A function to enclose.
-- function:function A function with which to enclose.
+(The first function is the one to be enclosed, the second, the function that will enclose it.)
+
+- function: The function to  be enclosed.
+- function: The function that will enclose it.
 
 **Returns:**
 
@@ -1946,11 +1958,12 @@ The result of the enclosed function with output for the enclosing function.
 
 **Example:**
 
-    var hello = function(name) { return "Hello, " + name + "!"; };
-    hello = $.enclose(hello, function(func) {
-        return "Before I said, \"" + func("Stan") + "\" I thought about it for a while.";
-    });
-
+	// hello will get enclose in saySomething.
+	var hello = function(name) { return "Hello, " + name + "!"; };
+	var saySomething = $.enclose(hello, function(func) {
+		   return "Before I said, \"" + func("Stan") + "\" I thought about it for a while.";
+	});
+	console.log(saySomething());
 
  
 
@@ -1958,7 +1971,7 @@ The result of the enclosed function with output for the enclosing function.
 
 ##Function: $.compose
 
-Method to return the composition of several functions, where each function consumes the return value of the function that follows. This method is attached directly to the $ object.
+Method to return the composition of several functions, where each function consumes the return value of the function that follows. This method is attached directly to the $ object. The last function on the right is passed to the previous function, all the way to the first on the left (see example below).
 
 **Syntax:**
 
@@ -1966,7 +1979,7 @@ Method to return the composition of several functions, where each function consu
 
 **Parameters:**
 
-- function:function A function to pass as an argument.
+- function: A function to pass as an argument.
 
 **Returns:**
 
@@ -1976,7 +1989,7 @@ The result of the execution of each function passed as an argument.
 
     var greet = function(name) { return "Hi there, " + name; };
     var exclaim  = function(statement) { return statement + "!"; };
-    var remark = function(remark) { return remark + " You know I'm glad to see you."; };
+    var remark = function(statement) { return statement + " You know I'm glad to see you."; };
     var welcome = $.compose(remark, greet, exclaim);
     console.log(welcome('Jeff')); // => Hi there, Jeff! You know I'm glad to see you.
 
@@ -2064,20 +2077,36 @@ A method to executing methods stored in $.DOMReadyList. This method is called by
 
 ##Function: $.ready
 
-Method to determine when the DOM is ready for manipulation and thereupon fire a block of code contained in an anonymous function passed to it as an argument. This method is attached directly to the $ object. If there are mulitple instances of this method, it's arguments will be chained and called sequentially with one registration of the DOMContentLoaded event.
+Method to determine when the DOM is ready for manipulation and thereupon fire a block of code contained in an anonymous function passed to it as an argument. This method is attached directly to the $ object. If there are mulitple instances of this method, it's arguments will be chained and called sequentially with one registration of the DOMContentLoaded event. Before doing this though it checks to see if the document is already loaded. If it is, then no listener is added for the DOMContentLoaded event and instead it immediately executes its function.
 
 **Syntax:**
 
     $.ready(function);
+    
+An alternate sytax is:
+
+    $(function);
 
 **Parameters:**
 
-- function:function An anonymous function or block of code to execute.
+- function: An anonymous function or block of code to execute.
 
 **Example:**
 
     $.ready(function() { 
         console.log("The document is ready for action!"); 
+    });
+    
+This could be simplified to:
+
+    $(function() {
+        console.log("The document is ready for action!"); 
+    });
+
+You can also wrap the document object in $() as jQuery does for the same functionality:
+
+    $(document).ready(function() {
+    	console.log("The document is ready for action!"); 
     });
 
 **See Also:**

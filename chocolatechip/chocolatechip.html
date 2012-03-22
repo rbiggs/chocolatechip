@@ -27,6 +27,7 @@ Version 1.3.4
 <pre><code>$(selector);
 $(selector, context);
 $(function);
+$();
 </code></pre>
 
 <p><strong>Parameters:</strong></p>
@@ -39,7 +40,7 @@ $(function);
 
 <p><strong>Returns:</strong> </p>
 
-<p>A valid document node.</p>
+<p>A valid document node. If no argument is supplied it returns the document root. If a function is passed, determines if the document is loaded already. If it is, it returns the executed function, if it is not loaded, it added a listener for DOMContentLoaded</p>
 
 <p><strong>Example:</strong></p>
 
@@ -53,6 +54,7 @@ $(function() {
 });
 // Get the document height:
 var height = $(document).css('height');
+var d = $() // returns the document object.
 </code></pre>
 
 <p>&nbsp;</p>
@@ -572,7 +574,7 @@ $.chch_cache.events.values // returns an array of all values in the events cache
 $.chch_cache.events.values[0] // returns the first value in the events cache.
 </code></pre>
 
-<p>$nbsp;</p>
+<p>&nbsp;</p>
 
 <h2 id="function_elementcache">Function: Element.cache</h2>
 
@@ -1752,7 +1754,7 @@ recipe.deCamelize(); //Returns recipes-cake-name
 
 <ul>
 <li>event: A string representing valid event handler, such as &#8220;click&#8221;.</li>
-<li>function: A function, either named or anonymous. Note that a bound event that uses an anonymous function cannot be unbound. See last example below for how to avoid this.</li>
+<li>function: Either named or anonymous. Note that a bound event that uses an anonymous function cannot be unbound. See last example below for how to avoid this.</li>
 </ul>
 
 <p><strong>Example:</strong></p>
@@ -1783,7 +1785,7 @@ console.log("Time to put an end to this!");
 
 <ul>
 <li>event: Event A string representing valid event handler, such as &#8220;click&#8221;.</li>
-<li>function: Function A named function executed by the event handler.</li>
+<li>function: A named function executed by the event handler.</li>
 </ul>
 
 <p><strong>Example:</strong></p>
@@ -1949,26 +1951,37 @@ console.log("Time to put an end to this!");
 <p><strong>Example:</strong></p>
 
 <pre><code>$.defer(function() { 
-    console.log("This comes before Squawk!"); 
+    console.log("This comes after everything else!"); 
 });
+var squawk = function() {
+    console.log('Squawk!');
+};
+squawk();
+console.log("Some other stuff");
+[1,1,1,1,1].forEach(function(item, idx) {
+    console.log('Item: ', idx);
+});
+// The deferred console.log will be executed last.
 </code></pre>
 
 <p>&nbsp;</p>
 
 <h2 id="function_enclose">Function: $.enclose</h2>
 
-<p>Method to capitalize the first letter of a words in a string. This method is attached directly to the $ object.</p>
+<p>Method to enclose one method inside another. This method is attached directly to the $ object.</p>
 
 <p><strong>Syntax:</strong></p>
 
-<pre><code>$.enclose(function, enclosure);
+<pre><code>$.enclose(function, function);
 </code></pre>
 
 <p><strong>Parameters:</strong></p>
 
+<p>(The first function is the one to be enclosed, the second, the function that will enclose it.)</p>
+
 <ul>
-<li>function:function A function to enclose.</li>
-<li>function:function A function with which to enclose.</li>
+<li>function: The function to  be enclosed.</li>
+<li>function: The function that will enclose it.</li>
 </ul>
 
 <p><strong>Returns:</strong></p>
@@ -1977,17 +1990,19 @@ console.log("Time to put an end to this!");
 
 <p><strong>Example:</strong></p>
 
-<pre><code>var hello = function(name) { return "Hello, " + name + "!"; };
-hello = $.enclose(hello, function(func) {
-    return "Before I said, \"" + func("Stan") + "\" I thought about it for a while.";
+<pre><code>// hello will get enclose in saySomething.
+var hello = function(name) { return "Hello, " + name + "!"; };
+var saySomething = $.enclose(hello, function(func) {
+       return "Before I said, \"" + func("Stan") + "\" I thought about it for a while.";
 });
+console.log(saySomething());
 </code></pre>
 
 <p>&nbsp;</p>
 
 <h2 id="function_compose">Function: $.compose</h2>
 
-<p>Method to return the composition of several functions, where each function consumes the return value of the function that follows. This method is attached directly to the $ object.</p>
+<p>Method to return the composition of several functions, where each function consumes the return value of the function that follows. This method is attached directly to the $ object. The last function on the right is passed to the previous function, all the way to the first on the left (see example below).</p>
 
 <p><strong>Syntax:</strong></p>
 
@@ -1997,7 +2012,7 @@ hello = $.enclose(hello, function(func) {
 <p><strong>Parameters:</strong></p>
 
 <ul>
-<li>function:function A function to pass as an argument.</li>
+<li>function: A function to pass as an argument.</li>
 </ul>
 
 <p><strong>Returns:</strong></p>
@@ -2008,7 +2023,7 @@ hello = $.enclose(hello, function(func) {
 
 <pre><code>var greet = function(name) { return "Hi there, " + name; };
 var exclaim  = function(statement) { return statement + "!"; };
-var remark = function(remark) { return remark + " You know I'm glad to see you."; };
+var remark = function(statement) { return statement + " You know I'm glad to see you."; };
 var welcome = $.compose(remark, greet, exclaim);
 console.log(welcome('Jeff')); // =&gt; Hi there, Jeff! You know I'm glad to see you.
 </code></pre>
@@ -2089,22 +2104,41 @@ $.loadEvent(myFunction());
 
 <h2 id="function_ready">Function: $.ready</h2>
 
-<p>Method to determine when the DOM is ready for manipulation and thereupon fire a block of code contained in an anonymous function passed to it as an argument. This method is attached directly to the $ object. If there are mulitple instances of this method, it&#8217;s arguments will be chained and called sequentially with one registration of the DOMContentLoaded event.</p>
+<p>Method to determine when the DOM is ready for manipulation and thereupon fire a block of code contained in an anonymous function passed to it as an argument. This method is attached directly to the $ object. If there are mulitple instances of this method, it&#8217;s arguments will be chained and called sequentially with one registration of the DOMContentLoaded event. Before doing this though it checks to see if the document is already loaded. If it is, then no listener is added for the DOMContentLoaded event and instead it immediately executes its function.</p>
 
 <p><strong>Syntax:</strong></p>
 
 <pre><code>$.ready(function);
 </code></pre>
 
+<p>An alternate sytax is:</p>
+
+<pre><code>$(function);
+</code></pre>
+
 <p><strong>Parameters:</strong></p>
 
 <ul>
-<li>function:function An anonymous function or block of code to execute.</li>
+<li>function: An anonymous function or block of code to execute.</li>
 </ul>
 
 <p><strong>Example:</strong></p>
 
 <pre><code>$.ready(function() { 
+    console.log("The document is ready for action!"); 
+});
+</code></pre>
+
+<p>This could be simplified to:</p>
+
+<pre><code>$(function() {
+    console.log("The document is ready for action!"); 
+});
+</code></pre>
+
+<p>You can also wrap the document object in $() as jQuery does for the same functionality:</p>
+
+<pre><code>$(document).ready(function() {
     console.log("The document is ready for action!"); 
 });
 </code></pre>
