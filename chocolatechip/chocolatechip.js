@@ -12,13 +12,13 @@ A JavaScript library for mobile Web app development.
  
 Copyright 2011 Robert Biggs: www.choclatechip-ui.com
 License: BSD
-Version 1.3.6
+Version 1.3.8
  
 */
  
 (function() {
    var $ = function ( selector, context ) {
-      if (selector === undefined) {
+      if (typeof selector === 'undefined') {
          return document;
       }
       if (selector === window || selector === document) {
@@ -40,31 +40,33 @@ Version 1.3.6
       } else {
          return document.querySelector(selector);
       }
-   };
- 
-   $.extend = function(obj, prop) {
-      var O, P;
-      O = prop ? obj : this;
-      P = prop ? prop : obj;
-      if (!Object.keys) {
-         for (var i in P) {
-            O[i] = P[i];
-         }
-         return O;
-      } else {
-         Object.keys(P).forEach(function(p) {
-            if (P.hasOwnProperty(p)) {
-               Object.defineProperty(O, p, {
-                  value: P[p],
-                  writable: true,
-                  enumerable: false,
-                  configurable: true
-               });
-            }
-         });
-      }
       return this;
    };
+   
+	$.extend = function(obj, prop) {
+		if (Object.keys in window) {
+			Object.keys(prop).forEach(function(p) {
+				if (prop.hasOwnProperty(p)) {
+					Object.defineProperty(obj, p, {
+						value: prop[p],
+						writable: true,
+						enumerable: false,
+						configurable: true
+					});
+				}
+			});
+		} else {
+			if (!prop) {
+				prop = obj;
+				obj = this;
+			}
+			for (var i in prop) {
+				obj[i] = prop[i];
+			}
+			return obj;
+		}
+		return this;
+	};
    
    $.extend(Array.prototype, {
       each : Array.prototype.forEach,
@@ -127,7 +129,7 @@ Version 1.3.6
    
    $.extend({
  
-      version : '1.3.6',
+      version : '1.3.8',
       
       libraryName : 'ChocolateChip',
       
@@ -213,7 +215,7 @@ Version 1.3.6
       
       uuid : 0,
       
-      chch_cache : {},
+      chch_cache : {}
    });   
    
    $.uuid = $.uuidNum();
@@ -252,12 +254,12 @@ Version 1.3.6
          else return false;
       },
       
-      delete : function ( key ) {
+      _delete : function ( key ) {
          var idx = this.keys.indexOf(key);
          this.keys[idx] = null;
          this.keys.splice(idx, idx + 1);
          this.values[idx] = null;
-         this.values.splice(idx, idx + 1)
+         this.values.splice(idx, idx + 1);
       }
    });
    
@@ -306,7 +308,7 @@ Version 1.3.6
          else return false;
       },
       
-      delete : function ( element, event, callback, capturePhase  ) {
+      _delete : function ( element, event, callback, capturePhase  ) {
          var idx = this.keys.indexOf(element);
          var nodeCache = this.keys;
          var nodeIdx = nodeCache[idx];
@@ -315,7 +317,7 @@ Version 1.3.6
          if (!element) {
             return;
          }
-         if (event === undefined) {
+         if (typeof event === 'undefined') {
             cache[idx].each(function(item) {
                $("#"+element).removeEventListener(item[0], item[1], item[2]);
                $.chch_cache.events.keys.splice(idx, 1);
@@ -324,7 +326,6 @@ Version 1.3.6
             cache.splice(idx, 1);
          }
          if (event && callback) {
-            console.log(cache);
             cache[idx].each(function(item) {
                if (item[0] === event) {
                   $('#'+element).removeEventListener(item[0], item[1], item[2]);
@@ -333,9 +334,8 @@ Version 1.3.6
                }
             });
          }
-         if (event && callback === undefined) {
+         if (event && typeof callback === 'undefined') {
             this.values[idx].each(function(item) {
-               console.log(item);
                if (item[0] === event) {
                   $('#'+element).removeEventListener(item[0], item[1], item[2]);
                   $.chch_cache.events.values.splice(idx, 1);
@@ -351,6 +351,7 @@ Version 1.3.6
          for (key in this) {
             if(callback(key, this[key]) === false) { return this; }
          }
+         return this;
       }
    });
    
@@ -382,7 +383,7 @@ Version 1.3.6
          if (!$.chch_cache.data.hasKey(this.id)) {
             return this;
          }
-         return $.chch_cache.data.delete(id);
+         return $.chch_cache.data._delete(id);
       },
    
       find : function ( selector ) {
@@ -442,7 +443,7 @@ Version 1.3.6
       },
     
       ancestor : function( selector ) {
-         if (selector === undefined) {
+         if (typeof selector === 'undefined') {
             return false;
          }
          var idCheck = new RegExp('^#');
@@ -514,7 +515,7 @@ Version 1.3.6
       not : function ( arg ) {
          if (!this.is(arg)) return this;
          else return false;
-      }, 
+      },
       
       has : function ( arg ) {
          if (typeof arg === 'string') {
@@ -777,13 +778,17 @@ Version 1.3.6
             return this;
          }
          capturePhase = capturePhase || false;
-         $.chch_cache.events.delete(this.id, event, callback, capturePhase);
+         $.chch_cache.events._delete(this.id, event, callback, capturePhase);
          return this;
       },
        
-      delegate : function ( selector, event, callback ) {
+      delegate : function ( selector, event, callback, capturePhase ) {
+      	capturePhase = capturePhase || false;
          this.addEventListener(event, function(e) {
             var target = e.target;
+            if (e.target.nodeType == 3) {
+            	target = e.target.parentNode;
+            }
             $.$$(selector, this).each(function(element) {
                if (element === target) {
                   callback.apply(this, arguments);
@@ -797,7 +802,7 @@ Version 1.3.6
                   } catch(err) {}
                }
             });
-         }, false);
+         }, capturePhase);
       },
        
       trigger : function ( event ) {
@@ -864,7 +869,7 @@ Version 1.3.6
       },
        
       xhrjson : function ( url, options ) {
-            if (options === 'undefined') {
+            if (typeof options === 'undefined') {
                 return this;
             }
             var c = options.successCallback;
@@ -1056,6 +1061,8 @@ Version 1.3.6
       ios4 : navigator.userAgent.match(/OS 4/i),
       ios5 : navigator.userAgent.match(/OS 5/i),
       userAction : ($.touchEnabled ? 'touchstart' : 'click'),
+      mobile : /mobile/img.test(navigator.userAgent),
+      desktop : !(/mobile/img.test(navigator.userAgent)),
        
       localItem : function ( key, value ) {
          try {
@@ -1171,10 +1178,10 @@ Version 1.3.6
       kvo : function () {
          // Register observers of a key for this object:
          this.registerObserver = function(observer, key) {
-            if (this.observers === undefined) {
+            if (typeof this.observers === 'undefined') {
                this.observers = {};
             }
-            if (this.observers[key] === undefined) {
+            if (typeof this.observers[key] === 'undefined') {
                this.observers[key] = [observer];
             } else {
                this.observers[key].push(observer);
@@ -1303,6 +1310,7 @@ Version 1.3.6
    
    $.extend(document, {
    	  ready : function(fn) {
+   	  	  fn = fn || $.noop;
    	  	  if (document.getElementsByTagName('body')[0]) {
    	  	  	fn();
    	  	  } else {
@@ -1310,15 +1318,30 @@ Version 1.3.6
    	  	  }
    	  }
    });
+   
+   $.extend(Object.prototype, {
+   	  key : function(idx) {
+   	     var ret;
+   	     var count = 0;
+   	     for (key in this) {
+   	     	if (idx === count) {
+   	     		return ret = key;
+   	     	} else {
+   	     		count++;
+   	     	}
+   	     }
+   	     if (ret) return ret;
+   	  }
+   });
 
    window.$chocolatechip = $;
    window.$$chocolatechip = $.$$;
-   if (window.$ === undefined) {
+   if (typeof window.$ === 'undefined') {
       window.$chocolatechip = window.$ = $;
       window.$$chocolatechip = window.$$ = $.$$;
    }
 })(); 
-$.ready(function() {
+$(function() {
    $.UIUpdateOrientationChange();
    $.UIListenForWindowResize();
 });
