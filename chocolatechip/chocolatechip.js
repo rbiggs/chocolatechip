@@ -12,7 +12,7 @@ A JavaScript library for mobile Web app development.
  
 Copyright 2011 Robert Biggs: www.choclatechip-ui.com
 License: BSD
-Version 1.3.8
+Version 2.0.0
  
 */
  
@@ -40,21 +40,25 @@ Version 1.3.8
       } else {
          return document.querySelector(selector);
       }
-      return this;
+	  return this;
    };
-   
-	$.extend = function(obj, prop) {
-		if (Object.keys in window) {
+   $.extend = function(obj, prop, enumerable) {
+   	enumerable = enumerable || false;
+   	if (!prop) {
+   		prop = obj;
+   		obj = $;
+   	}
+		if (Object.keys) {
 			Object.keys(prop).forEach(function(p) {
 				if (prop.hasOwnProperty(p)) {
 					Object.defineProperty(obj, p, {
 						value: prop[p],
-						writable: true,
-						enumerable: false,
-						configurable: true
-					});
-				}
-			});
+                  writable: true,
+                  enumerable: enumerable,
+                  configurable: true
+               });
+            }
+         });
 		} else {
 			if (!prop) {
 				prop = obj;
@@ -64,15 +68,32 @@ Version 1.3.8
 				obj[i] = prop[i];
 			}
 			return obj;
-		}
-		return this;
-	};
+      }
+      return this;
+   };
    
+ 	if (!Object.keys) {
+		 Object.keys = function (obj) {
+			  var keys = [],
+					k;
+			  for (k in obj) {
+					if (Object.prototype.hasOwnProperty.call(obj, k)) {
+						 keys.push(k);
+					}
+			  }
+			  return keys;
+		 };
+	}
+	
    $.extend(Array.prototype, {
       each : Array.prototype.forEach,
       
       eq : function ( index ) {
-         return index === -1 ? this.slice(index)[0] : this.slice(index, + index + 1)[0];
+      	if (index === 0 || !!index) {
+      		return this[index];
+      	} else {
+      		return;
+      	}
       },
       
       is : function ( arg ) {
@@ -84,13 +105,17 @@ Version 1.3.8
          else return false;
       },
       
-      not : function ( arg ) {
+      isnt : function ( arg ) {
          var items = [];
          this.each(function(item) {
             if (!item.is(arg)) items.push(item);
          });
          if (items.length) return items;
          else return false;
+      },
+      
+      not : function ( arg ) {
+      	return this.isnt(arg);
       },
       
       has : function ( arg ) {
@@ -102,13 +127,17 @@ Version 1.3.8
          else return false;
       },
       
-      hasNot : function ( arg ) {
+      hasnt : function ( arg ) {
          var items = [];
          this.each(function(item) {
             if (item.hasNot(arg)) items.push(item);
          });
          if (items.length) return items;
          else return false;
+      },
+      
+      hasNot : function ( arg ) {
+      	return this.hasnt(arg);
       },
       
       prependTo : function ( selector ) {
@@ -129,7 +158,7 @@ Version 1.3.8
    
    $.extend({
  
-      version : '1.3.8',
+      version : '2.0.0',
       
       libraryName : 'ChocolateChip',
       
@@ -174,13 +203,18 @@ Version 1.3.8
          $('head').insert(script, 'last');
       },
        
-      processJSON : function ( data ) {
+      processJSON : function ( data, name ) {
+      	if (name != null || name != undefined) {
+      		name = 'var ' + name + ' = ';
+      	} else {
+      		name = 'var data = ';
+      	}
          var script = document.createElement('script');
          script.setAttribute('type', 'text/javascript');
          var scriptID = $.UIUuid();
          script.setAttribute('id', scriptID);
-         script.insert(data);
-         $('head').insert(script, 'last');
+         script.html(name + data);
+         $('head').append(script);
          $.defer(function() {
             var id = '#' + scriptID;
             $(id).remove();
@@ -190,7 +224,16 @@ Version 1.3.8
       noop : function ( ) { },
       
       concat : function ( args ) {
-         return args instanceof Array ? args.join('') : $.slice.apply(arguments).join('');
+      	if (args instanceof Array) {
+      		return args.join('');
+      	} else {
+				args = $.slice.apply(arguments);
+				return String.prototype.concat.apply(args.join(''));
+			}
+		},
+      
+      w : function ( str ) {
+      	return str.split(' ');
       },
       
       isArray : function ( array ) {
@@ -210,7 +253,7 @@ Version 1.3.8
       },
       
       makeUuid : function ( ) {
-         return $.concat(["chch_",$.uuid]);
+         return $.concat("chch_", $.uuid);
       },
       
       uuid : 0,
@@ -223,45 +266,6 @@ Version 1.3.8
    $.chch_cache.data = {};
    
    $.chch_cache.events = {};
-   
-   $.extend($.chch_cache.data, {
-   
-      keys : [],
-      
-      values : [],
-      
-      set : function ( key, data ) {
-         if (this.keys.indexOf(key) >= 0) {
-            this.values[this.keys.indexOf(key)] = data;
-         } else {
-            this.keys.push(key);
-            this.values.push(data);
-         }
-      },
-      
-      get : function ( key ) {
-         return this.values[this.keys.indexOf(key)];
-      },
-      
-      hasKey : function ( key ) {
-         if (this.keys.indexOf(key) >= 0) return true;
-         else return false;
-      },
-      
-      hasData : function ( key ) {
-         var idx = this.keys.indexOf(key);
-         if (this.values[idx]) return true;
-         else return false;
-      },
-      
-      _delete : function ( key ) {
-         var idx = this.keys.indexOf(key);
-         this.keys[idx] = null;
-         this.keys.splice(idx, idx + 1);
-         this.values[idx] = null;
-         this.values.splice(idx, idx + 1);
-      }
-   });
    
    $.extend($.chch_cache.events, {
    
@@ -352,38 +356,69 @@ Version 1.3.8
             if(callback(key, this[key]) === false) { return this; }
          }
          return this;
-      }
-   });
+      },
+
+	  key : function(idx) {
+		  var ret;
+		  var count = 0;
+		  for (key in this) {
+			if (idx === count) {
+				return ret = key;
+			} else {
+				count++;
+			}
+		  }
+		  if (ret) return ret;
+	  }
+   }, false);
    
    $.extend(HTMLElement.prototype, {
-   
-      cache : function ( data ) {
-         if (!!data) {
-            if (!!this.id) {
-               $.chch_cache.data.set(this.id, data);
-               return this;
-            } else {
-               ++$.uuid;
-               this.setAttribute("id", $.makeUuid());
-               $.chch_cache.data.set(this.id, data);
-               return this;
-            }
-         } else {
-            if (this.id) {
-               if (!$.chch_cache.data.hasKey(this.id)) return false;
-               return $.chch_cache.data.get(this.id);
-            } else {
-               return false;
-            }
-         }
+      
+      data : function( key, value ) {
+      	if (key == 'undefined' || key == null) {
+      		return;
+      	}
+      	if (key && !value) {
+      		var id = this.id;
+      		if (!id) {
+					return;
+				} else {
+					try {
+						return $.chch_cache.data[id][key];
+					} catch(err) {}
+				}
+			} else {
+				if (!this.id) {
+					++$.uuid;
+					id = $.makeUuid();
+               this.setAttribute("id", id);
+               $.chch_cache.data[id] = {};
+               $.chch_cache.data[id][key] = value;
+				} else {
+					id = this.id;
+					if (!$.chch_cache.data[id]) {
+               	$.chch_cache.data[id] = {};
+               	$.chch_cache.data[id][key] = value;
+               } else {
+               	$.chch_cache.data[id][key] = value;
+               }
+				}
+			}
+		 return this;
       },
       
-      uncache : function ( ) {
+      removeData : function ( key ) {
          var id = this.getAttribute('id');
-         if (!$.chch_cache.data.hasKey(this.id)) {
+         if (!id) return;
+         if (!$.chch_cache.data[this.id]) {
             return this;
          }
-         return $.chch_cache.data._delete(id);
+         if (Object.keys($.chch_cache.data[id]).length == 0) {
+         	delete $.chch_cache.data[id];
+         } else {
+         	delete $.chch_cache.data[id][key];
+         }
+         return this;
       },
    
       find : function ( selector ) {
@@ -396,6 +431,10 @@ Version 1.3.8
           
       previous : function ( ) {
          return this.previousElementSibling;
+      },
+      
+      prev : function ( ) {
+      	return this.previousElementSibling;
       },
     
       next : function ( ) {
@@ -440,6 +479,10 @@ Version 1.3.8
             });
             return foundEls;
          }
+      },
+      
+      parent: function() {
+      	return this.parentNode;
       },
     
       ancestor : function( selector ) {
@@ -495,7 +538,9 @@ Version 1.3.8
          }
       }, 
       
-      closest : this.ancestor,
+      closest : function( selector ) {
+      	return this.ancestor(selector);
+      },
       
       is : function ( arg ) {
          $this = this;
@@ -512,10 +557,12 @@ Version 1.3.8
          }
       },
       
-      not : function ( arg ) {
+      isnt : function ( arg ) {
          if (!this.is(arg)) return this;
          else return false;
       },
+      
+      not : this.isnt,
       
       has : function ( arg ) {
          if (typeof arg === 'string') {
@@ -531,10 +578,13 @@ Version 1.3.8
          }
       },
       
-      hasNot : function ( arg ) {
+      hasnt : function ( arg ) {
          if (!this.has(arg)) return this;
          else return false;
       },
+      
+      hasNot : this.hasnt,
+      
        
       clone : function ( value ) {
          if (value === true || !value) {
@@ -564,7 +614,7 @@ Version 1.3.8
       },
        
       text : function ( value ) {
-         if (!!value) {
+         if (!!value || value === 0) {
             this.innerText = value;
             return this;
          } else {
@@ -590,7 +640,7 @@ Version 1.3.8
        
       remove : function ( ) {
          this.unbind();
-         this.uncache();
+         this.removeData();
          this.parentNode.removeChild(this);
       },
        
@@ -626,7 +676,7 @@ Version 1.3.8
       },
       
       html : function ( content ) {
-         this.empty().insert(content);
+         this.innerHTML = content;
       },
       
       prepend : function ( content ) {
@@ -675,6 +725,26 @@ Version 1.3.8
          }
          return this;
       },
+      
+      attr : function ( property, value ) {
+      	 if (!value) {
+      	 	return this.getAttribute(property);
+      	 } else {
+      	 	return this.setAttribute(property, value);
+      	 }
+      },
+      
+      prop : function ( property, value ) {
+      	return this.attr(property, value);
+      },
+      
+      removeAttr : function ( property ) {
+      	 return this.removeAttribute(property);
+      },
+      
+      hasAttr : function ( property ) {
+      	return this.hasAttribute(property);
+      },
        
       hasClass : function ( className ) {
          return new RegExp('(?:^|\\s+)' + className + '(?:\\s+|$)').test(this.className);
@@ -693,6 +763,14 @@ Version 1.3.8
             this.className = currentClasses.replace(new RegExp('(?:^|\\s+)' + className + '(?:\\s+|$)', 'g'), ' ').replace(/^\s*|\s*$/g, '');
             return this;
          }
+      },
+      
+      val : function ( value ) {
+      	if (value) {
+      		return this.value = value;
+      	} else {
+      		return this.value;
+      	}
       },
        
       disable : function ( ) {
@@ -726,6 +804,10 @@ Version 1.3.8
          }
          return this;
       },
+      
+      toggleClassName : function ( firstClassName, secondClassName ) {
+      	return this.toggleClass(firstClassName, secondClassName);
+      },
        
       getTop : function() {
          var element = this;
@@ -748,18 +830,23 @@ Version 1.3.8
          pos = pos + document.body.offsetLeft;
          return pos;
       },
+      
+      offset : function () {
+      	var offset = {};
+      	offset.top = this.getTop();
+      	offset.left = this.getLeft();
+      	return offset;
+      },
        
       css : function ( property, value ) {
          if (property instanceof Object) {
             for (var key in property) {
-               this.style[key] = property[key];
+               this.style[key.camelize()] = property[key];
             }
-         } else if (typeof property === 'string' && (/:/).test(property) && !value) {
-            this.style.cssText += property;
          } else if (!value) {
             return document.defaultView.getComputedStyle(this, null).getPropertyValue(property.toLowerCase());
          } else if (value) {
-            this.style.cssText += property + ':' + value + ';';
+            this.style[property.camelize()] = value;
             return this;
          } else {
             return false;
@@ -783,7 +870,7 @@ Version 1.3.8
       },
        
       delegate : function ( selector, event, callback, capturePhase ) {
-      	capturePhase = capturePhase || false;
+      	 capturePhase = capturePhase || false;
          this.addEventListener(event, function(e) {
             var target = e.target;
             if (e.target.nodeType == 3) {
@@ -804,6 +891,10 @@ Version 1.3.8
             });
          }, capturePhase);
       },
+      
+      undelegate : function ( selector, event, callback, capturePhase ) {
+      	this.unbind(event, callback, capturePhase);
+      },
        
       trigger : function ( event ) {
          if( document.createEvent ) {
@@ -811,6 +902,21 @@ Version 1.3.8
            evtObj.initEvent(event, true, false);
            this.dispatchEvent(evtObj);
          }
+      },
+      on : function ( event, selector, callback, capturePhase ) {
+      	 if (typeof selector === 'function') {
+      	 	this.bind(event, selector, callback);
+      	 } else {
+      	 	this.delegate(selector, event, callback, capturePhase);
+      	 }
+      },
+      
+      off : function( event, selector, callback, capturePhase ) {
+      	 if (typeof selector === 'function') {
+      	 	this.unbind(event, selector, callback);
+      	 } else {
+      	 	this.undelegate(selector, event, callback, capturePhase);
+      	 }
       },
        
       anim : function ( options ) {
@@ -825,113 +931,6 @@ Version 1.3.8
             }
          }
          this.css(value);
-      },
-      xhr : function ( url, options ) {
-         var o = options ? options : {};
-         var successCallback = null;
-         var errorCallback = null;
-         if (!!options) {
-            if (!!options.successCallback || !!options.success) {
-               successCallback = options.successCallback || options.success;
-            }
-         }
-         var that = this,
-            request     = new XMLHttpRequest(),
-            method = o.method || 'get',
-            async  = o.async || false,        
-            params = o.data || null,
-            i = 0;
-         request.queryString = params;
-         request.open(method, url, async);
-         if (o.headers) {
-            for (; i<o.headers.length; i++) {
-              request.setRequestHeader(o.headers[i].name, o.headers[i].value);
-            }
-         }
-         request.handleResp = (successCallback !== null) ? successCallback : function() { 
-            that.insert(this.responseText); 
-         }; 
-         function hdl(){ 
-            if(request.status===0 || request.status==200 && request.readyState==4) {   
-               $.responseText = request.responseText;
-               request.handleResp(); 
-            } else {
-               if (!!options.errorCallback || !!options.error) {
-                  var errorCallback = options.errorCallback || options.error;
-                  errorCallback();
-               }
-            }
-         }
-         if(async) request.onreadystatechange = hdl;
-         request.send(params);
-         if(!async) hdl();
-         return this;
-      },
-       
-      xhrjson : function ( url, options ) {
-            if (typeof options === 'undefined') {
-                return this;
-            }
-            var c = options.successCallback;
-            if (typeof c != 'function') {
-                c = function (x) {
-                    return x;
-                };
-            }
-            var callback = function () {
-                var o = eval('(' + this.responseText + ')');
-                for (var prop in o) {
-                    $(options[prop]).fill(c(o[prop]));
-                }
-            };
-            options.successCallback = callback;
-            this.xhr(url, options);
-            return this;
-      },
-
-      data : function ( key, value ) {
-         if (!!document.documentElement.dataset) {
-            key = key.camelize();
-            if (!value) {
-               if (/\{/.test(value)) {
-                  return JSON.parse(this.dataset[key]);
-               } else {
-                  return this.dataset[key];
-               }
-            } else {
-               if (typeof value === 'object') {
-                  this.dataset[key] = JSON.stringify(value);
-               } else {
-                  this.dataset[key] = value;
-               }
-            }
-         // Fallback for earlier versions of Webkit:
-         } else {
-            if (!value) {
-               if (/\{/.test(value)) {
-                  return JSON.parse(this.getAttribute('data-' + key));
-               } else {
-                  return this.getAttribute('data-' + key);
-               }
-            } else {
-               if (typeof value === 'object') {
-                  this.setAttribute('data-' + key, JSON.stringify(value));
-               } else {
-                  this.setAttribute('data-' + key, value);
-               }
-            } 
-         }
-         return this;
-      },
-       
-      removeData : function ( key ) {
-         if (!!document.documentElement.dataset) {
-            key = key.camelize();
-            this.dataset[key] = null;
-         // Fallback for earlier versions of Webkit:
-         } else {
-            this.removeAttribute('data-' + key);
-         }
       },
  
       UICheckForOverflow : function (){
@@ -972,7 +971,72 @@ Version 1.3.8
     
     
    $.extend($, {
-       
+   
+      xhr : function ( options ) {
+         var o = options ? options : {};
+         var successCallback = null;
+         var errorCallback = options.error || $.noop;
+         if (!!options) {
+            if (!!o.successCallback || !!o.success) {
+               successCallback = o.successCallback || o.success;
+            }
+         }
+         var request = new XMLHttpRequest(),
+            method = o.method || 'get',
+            async  = o.async || false,        
+            params = o.data || null,
+            i = 0;
+         request.queryString = params;
+         request.open(method, o.url, async);
+         if (o.headers) {
+            for (; i<o.headers.length; i++) {
+              request.setRequestHeader(o.headers[i].name, o.headers[i].value);
+            }
+         }
+         request.handleResp = (successCallback !== null) ? successCallback : $.noop; 
+         function hdl(){ 
+            if(request.status===0 || request.status==200 && request.readyState==4) {   
+               $.responseText = request.responseText;
+               request.handleResp(request.responseText); 
+            } else {
+               if (!!o.errorCallback || !!o.error) {
+                  var errorCallback = o.errorCallback || o.error;
+                  errorCallback(request);
+               }
+            }
+         }
+         if(async) request.onreadystatechange = hdl;
+         request.send(params);
+         if(!async) hdl();
+         return this;
+      },
+      
+      ajax : function( options ) {
+      	return $.xhr(options);
+      },
+      
+      xhrjson : function ( url, options ) {
+            if (typeof options === 'undefined') {
+                return this;
+            }
+            var c = options.successCallback;
+            if (typeof c != 'function') {
+                c = function (x) {
+                    return x;
+                };
+            }
+            var callback = function () {
+                var o = eval('(' + this.responseText + ')');
+                for (var prop in o) {
+                    $(options[prop]).fill(c(o[prop]));
+                }
+            };
+            options.successCallback = callback;
+            options.url = url;
+            $.xhr(options);
+            return this;
+      },
+             
       delay : function ( fnc, time ) {
          fnc = fnc || $.noop;
          setTimeout(function() { 
@@ -1060,7 +1124,7 @@ Version 1.3.8
       standalone : navigator.standalone,
       ios4 : navigator.userAgent.match(/OS 4/i),
       ios5 : navigator.userAgent.match(/OS 5/i),
-      userAction : ($.touchEnabled ? 'touchstart' : 'click'),
+      userAction : ($.touchEnabled ? 'touchend' : 'click'),
       mobile : /mobile/img.test(navigator.userAgent),
       desktop : !(/mobile/img.test(navigator.userAgent)),
        
@@ -1305,7 +1369,7 @@ Version 1.3.8
             }
          });
          return result;
-      }  
+      }
    });
    
    $.extend(document, {
@@ -1316,21 +1380,6 @@ Version 1.3.8
    	  	  } else {
    	  	  	$.ready(fn);
    	  	  }
-   	  }
-   });
-   
-   $.extend(Object.prototype, {
-   	  key : function(idx) {
-   	     var ret;
-   	     var count = 0;
-   	     for (key in this) {
-   	     	if (idx === count) {
-   	     		return ret = key;
-   	     	} else {
-   	     		count++;
-   	     	}
-   	     }
-   	     if (ret) return ret;
    	  }
    });
 
@@ -1344,13 +1393,15 @@ Version 1.3.8
 $(function() {
    $.UIUpdateOrientationChange();
    $.UIListenForWindowResize();
+   
+	if (!Function.prototype.bind) {
+		$.extend(Function.prototype, {
+			bind : function(func, obj) {
+				var args = $.slice.call(arguments, 2);
+				return function() {
+				return func.apply(obj || {}, args.concat($.slice.call(arguments)));
+				};
+			}
+		});
+	}
 });
- 
-if (!Function.prototype.bind) {
-   Function.prototype.bind = function(func, obj) {
-      var args = $.slice.call(arguments, 2);
-      return function() {
-      return func.apply(obj || {}, args.concat($.slice.call(arguments)));
-      };
-   };
-}

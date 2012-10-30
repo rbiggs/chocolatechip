@@ -13,187 +13,91 @@ A JavaScript library for mobile Web app development.
 
 Copyright 2011 Robert Biggs: www.choclatechip-ui.com
 License: BSD
-Version 1.3.4
+Version 2.0
 </code></pre>
 
 <p>&nbsp;</p>
 
-<h2 id="function_">Function: $</h2>
+<h2 id="main_object">Main Object</h2>
 
-<p>This method uses JavaScript&#8217;s document.querySelector() method to get the designated node. It will always return the first match. To get more a collection of nodes, use the <a href="#$$">$$</a> method. A selector is required as the main argument. A second optional argument may be passed as a context for the selector. This is useful where you want to limit where ChococlateChip searches for a node, such as only as a descendant of a particular document node, avoiding possible matches outside that node. Optionally, you may pass the window or document object. Please note that all methods that extend HTMLElement will not work with these objects as they lack the interface for that functionality. If no selector is supplied, $() will return the document root.</p>
+<h3 id="">$</h3>
 
-<p><strong>Syntax:</strong></p>
-
-<pre><code>$(selector);
-$(selector, context);
-$(function);
-$();
-</code></pre>
-
-<p><strong>Parameters:</strong></p>
-
-<ul>
-<li>selector: A string defining a valid CSS selector.</li>
-<li>context: A string defining a valid CSS selector or an actual node.</li>
-<li>function: A function to execute when the document&#8217;s DOM is fully loaded.</li>
-</ul>
-
-<p><strong>Returns:</strong> </p>
-
-<p>A valid document node. If no argument is supplied it returns the document root. If a function is passed, determines if the document is loaded already. If it is, it returns the executed function, if it is not loaded, it added a listener for DOMContentLoaded</p>
+<p>This is the main object for ChocolateChip.js. Everything else is a child of this. It purpose is to return a DOM node. If no parameter is provided, such as <strong>$()</strong>, it returns itself. If a string is passed as an argument, it parses the string using the DOM method <strong>querySlector</strong>. For this reason, <strong>$</strong> will always return the first instance of a match. Other matches will be ignored. If you want to get all possible matches, you&#8217;ll need to use the <strong>$$</strong> method. If you pass in a reference to the window object, document or a DOM node, it will return those. If you pass a function as the argument, it will execute an onDOMContentLoaded event.</p>
 
 <p><strong>Example:</strong></p>
 
-<pre><code>var item = $("#item");
-var menuItems = $(".menu &gt; li"); // Will return the first list item only.
-$("section &gt; p:first-of-type").css("color: red; background-color: yellow; padding: 10px;");
-var list = $("ul", mainList);
-// Passing an anonymous function is the same as $.read(function() { // do stuff }).
+<pre><code>$() // returns the ChocolateChip object
+var button = $('.button') // returns the first instance of an element with the class 'button'
+$(button) returns the element from the line above
+$(window) returns the window object (DOMWindow)
+$(document) returns the document element (Document)
 $(function() {
-    console.log("The page is loaded and ready to manipulate.");
-});
-// Get the document height:
-var height = $(document).css('height');
-var d = $() // returns the document object.
+   console.log('The DOM is fully ready!')
+})
 </code></pre>
 
-<p>&nbsp;</p>
+<h3 id="extend">$.extend</h3>
 
-<h2 id="function_extend">Function: $.extend</h2>
+<p>This method allows you to extend objects. There are two types of objects you can extend, native and one you define yourself. This method uses Object.keys and Object.defineProperty to add properties to JavaScript&#8217;s native objects without poluting their prototypes. This means that if you iterate over the native properties of the extended object, your newly added properties will not show. That&#8217;s fine for native objects, however with object you define, if you try to extend one later, those properties would also not be exposed when looping the object&#8217;s properties. You can make your added properties show on the objects you&#8217;ve create by passing in an extra boolean parameter of <em>true</em>. </p>
 
-<p>A method to extend the ChocolateChip&#8217;s $ method. This uses EC5&#8217;s Object.defineProperty to extend objects without polluting the object&#8217;s prototype. For older browsers that don&#8217;t support this feature of ECMAScript5, ChocolateChip uses a simpler method of object prototype chaining for compatibility. If you simply want to extend $ itself, you can just pass in the object without the target object.</p>
+<p>If only a property is passed as an argument, extend will add these to the <strong>$</strong>. </p>
 
-<p><strong>Syntax:</strong></p>
-
-<pre><code>$.extend(object, {
-    // object literal here.
-});
-// Exetend $ itself by passing only the object:
-$.extend({
-    // Stuff here.
-});
-</code></pre>
-
-<p><strong>Parameters:</strong></p>
-
-<ul>
-<li>The object to extend. In most cases this will be $ or HTMLElement.prototype.</li>
-<li>An object literal of properties to add to the object. These can be variables, array or methods.</li>
-</ul>
+<p>When extending native JavaScript objects you&#8217;ll need to include the object&#8217;s prototype. See the examples below.</p>
 
 <p><strong>Example:</strong></p>
 
-<pre><code>$.extend($, {
-    saySomething : function ( msg ) {
-        console.log("This is what I have to say: " + msg);
-    }
-});
-$.saySomething("This is a pretty cool feature!");
+<pre><code>$.extend(HTMLElement.prototype, {
+   click : function() {
+      alert('You just clicked me!');
+   }
+})
 
-$.extend(HTMLElement.prototype, {
-    sing : function ( lyrics ) {
-        console.log(msg);
-    }
-});
-$("p:first-of-type").sing("Even a paragraph can sing!");
-
-// Extend $ by only passing in the new properties:
-$.extend({
-    saySomething : function ( msg ) {
-        console.log("This is what I have to say: " + msg);
-    }
-});
-</code></pre>
-
-<p>&nbsp;</p>
-
-<h2 id="variable_version">Variable: $.version</h2>
-
-<p>Version: 1.3.4</p>
-
-<p><strong>Example:</strong></p>
-
-<pre><code>console.log("The version is: " + $.version);
-</code></pre>
-
-<p>&nbsp;</p>
-
-<h2 id="variable_libraryname">Variable: libraryName</h2>
-
-<p>A variable holding the name of this library: &#8220;ChocolateChip&#8221;.</p>
-
-<p><strong>Example:</strong></p>
-
-<pre><code>if ($.libraryName !== "ChocolateChip") {
-    console.log("You are using some other library than ChocolateChip.");
-    return;
+// A user defined object:
+var obj = {
+   firstname: 'Bozo'
+};
+$.extend(obj, {
+   lastname: 'The Clown',
+   job: 'Entertainer'
+}, **true**) // Pass 'true' to make the new properties enumerable.
+for (key in obj) {
+    console.log(key)
 }
+
+// Only a parameter passed, so extending **$**:
+$({
+   funny: function() {
+      console.log('Ha ha ha!');
+   }
+})
 </code></pre>
 
-<p>&nbsp;</p>
+<h2 id="array_methods">Array Methods:</h2>
 
-<h2 id="function_arrayeach">Function: Array.each</h2>
+<h3 id="each">each</h3>
 
-<p><strong>Syntx:</strong></p>
-
-<pre><code>Array.each(function(item, index){ //code });
-</code></pre>
-
-<p><strong>Parameters:</strong></p>
-
-<ul>
-<li>a function to execute. The function takes two arguments, the item at that iteration (equavalent to &#8220;this&#8221;), and the numerical index of the iteration.</li>
-</ul>
+<p>This method is just a short cut for [].forEach. It works exactly the same. It takes a function as its argument and returns both the index and context of the iteration.</p>
 
 <p><strong>Example:</strong></p>
 
-<p>&nbsp;</p>
-
-<h2 id="function_arrayeq">Function: Array.eq</h2>
-
-<p>This method is used on node collections returned by $$. It allows you to pick out a particular node from the collection based on its index. Counting starts from 0. So Array.eq(0) would be the first node in the collection. If a negative number is provided, it, the counting starts from the end of the collection using 1 as the first. In other words, Array.eq(-1) will return the last node in the collection.  Array.eq(-2) will return the next to the last, etc.</p>
-
-<p><strong>Syntx:</strong></p>
-
-<pre><code>Array.eq(0);
+<pre><code>var listItems = ['one','two','three','four','five'];
+listItems.each(function(ctx, idx){
+   console.log('Item ' + idx+1 + ' is ' + ctx + '.');
+})
 </code></pre>
 
-<p><strong>Parameters:</strong></p>
+<h3 id="eq">eq</h3>
 
-<ul>
-<li>A valid index number. This may be positive or negative.</li>
-</ul>
-
-<p><strong>Returns:</strong></p>
-
-<p>The index of the array. </p>
+<p>This method is used to return an index of an array, particularly with respect to arrays of DOM nodes. This allows you to get a node from a collection based on its order in the collection. So, if we hade a colleciton of nodes called <strong>nodes</strong>, we could get the first node with <strong>nodes.eq(0)</strong>, the second with <strong>nodes.eq(1)</strong>, the third with <strong>nodes.eq(2)</strong> and the last with <strong>nodes.eq(nodes.length-1)</strong>.</p>
 
 <p><strong>Example:</strong></p>
 
-<p>var p = $$(&#8220;p&#8221;);
-   p.eq(5).addClass(&#8220;important&#8221;);
-   p.eq(-2).addClass(&#8220;nearTheEnd&#8221;);</p>
-
-<p>&nbsp;</p>
-
-<h2 id="function_arrayis">Function: Array.is</h2>
-
-<p><strong>Syntx:</strong></p>
-
-<pre><code>Array.is();
+<pre><code>$('#menu').findAll('li').eq(4) // Get the fourth menu item
 </code></pre>
 
-<p><strong>Parameters:</strong></p>
+<h3 id="is">is</h3>
 
-<ul>
-<li>A valid tag.</li>
-<li>A valid class name.</li>
-<li>A valid attribute.</li>
-</ul>
-
-<p><strong>Returns:</strong></p>
-
-<p>Returns an array of all nodes that match the argument.</p>
+<p>This method allows us to pick a node out of a collection based on some attribute or property. It uses ChocolateChip&#8217;s <strong>HTMLElement.is</strong> method. It can accept the following arguemnts: tag, class, attribute. It returns all nodes in the array that match the argument.</p>
 
 <p><strong>Example:</strong></p>
 
@@ -205,28 +109,9 @@ var menuItems = $$('li').is('.menu');
 var disabled = $$('button').is('[disabled]');
 </code></pre>
 
-<p>&nbsp;</p>
+<h3 id="isnt">isnt</h3>
 
-<h2 id="function_arraynot">Function: Array.not</h2>
-
-<p>This method is the opposite of Array.is. It returns an array of all nodes that do not match the argument.</p>
-
-<p><strong>Syntx:</strong></p>
-
-<pre><code>Array.not();
-</code></pre>
-
-<p><strong>Parameters:</strong></p>
-
-<ul>
-<li>A valid tag.</li>
-<li>A valid class name.</li>
-<li>A valid attribute.</li>
-</ul>
-
-<p><strong>Returns:</strong></p>
-
-<p>Returns an array of all nodes that do not match the argument.</p>
+<p>This method is similar to <strong>is</strong> but returns all nodes in the collection that <strong>do not</strong> match the arguemnt passed. Like <strong>is</strong> it expects a tag, class or attribute as its argument.</p>
 
 <p><strong>Example:</strong></p>
 
@@ -238,28 +123,13 @@ var menuItems = $$('li').is('.menu');
 var disabled = $$('button').not('[disabled]');
 </code></pre>
 
-<p>&nbsp;</p>
+<h3 id="not">not</h3>
 
-<h2 id="function_arrayhas">Function: Array.has</h2>
+<p>Same as <strong>isnt</strong>.</p>
 
-<p>This method allows you to filter an array of nodes based on each node&#8217;s child nodes. You can define the child nodes by tag, class or attribute. The match will return a node if at least one of its child nodes matches the argument.</p>
+<h3 id="has">has</h3>
 
-<p><strong>Syntx:</strong></p>
-
-<pre><code>Array.has();
-</code></pre>
-
-<p><strong>Parameters:</strong></p>
-
-<ul>
-<li>A valid tag.</li>
-<li>A valid class name.</li>
-<li>A valid attribute.</li>
-</ul>
-
-<p><strong>Returns:</strong></p>
-
-<p>An array of nodes whose child node(s) match the argument.</p>
+<p>This method is similar to <strong>is</strong> but it checks the child nodes of the element and returns all nodes whose child nodes match the argument. Like <strong>is</strong> it accepts an argument of a tag, class or attribute.</p>
 
 <p><strong>Example:</strong></p>
 
@@ -271,28 +141,9 @@ var complete = $$("p.tasks").has(".status");
 var disabledItems = $$(".widget").has("[disabled]");
 </code></pre>
 
-<p>&nbsp;</p>
+<h3 id="hasnt">hasnt</h3>
 
-<h2 id="function_arrayhasnot">Function: Array.hasNot</h2>
-
-<p>This method allows you to filter an array of nodes based on each node&#8217;s child nodes. You can define the child nodes by tag, class or attribute. The match will return a node if at least one of its child nodes does not match the argument.</p>
-
-<p><strong>Syntx:</strong></p>
-
-<pre><code>Array.hasNot();
-</code></pre>
-
-<p><strong>Parameters:</strong></p>
-
-<ul>
-<li>A valid tag.</li>
-<li>A valid class name.</li>
-<li>A valid attribute.</li>
-</ul>
-
-<p><strong>Returns:</strong></p>
-
-<p>An array of nodes whose child node(s) do not match the argument.</p>
+<p>This method is the opposite of <strong>has</strong> in that it returns all nodes whose child nodes do not match the argument passed. Like <strong>has</strong> it expects an argument of a tag, class or attribute.</p>
 
 <p><strong>Example:</strong></p>
 
@@ -304,550 +155,348 @@ var todo = $$("p.tasks").hasNot(".completed");
 var disabledItems = $$(".widget").hasNot("[disabled]");
 </code></pre>
 
-<p>&nbsp;</p>
+<h3 id="hasnot">hasNot</h3>
 
-<h2 id="function_arrayprependto">Function: Array.prependTo</h2>
+<p>Same as <strong>hasnt</strong>.</p>
 
-<p>This method inserts an array of nodes before the contents of the selector. If the selector has no children, the result is the same as an insertion. When prependTo iterates on an array, the default would normally be for the array&#8217;s contents to be reverse after inserting. This is probably not what the user would expect, so prependTo automatically reverses an array before prepending so that the inserted nodes are in the same order as in the original array. If this is not the behavior you want, you can simply reverse the array before prepending it. </p>
+<h3 id="prependto">prependTo</h3>
 
-<p><strong>Syntx:</strong></p>
-
-<pre><code>Array.prependTo(selector);
-</code></pre>
-
-<p><strong>Parameters:</strong></p>
-
-<ul>
-<li>Any valid selector.</li>
-</ul>
+<p>This method will prepend a collection of nodes to the element it is executed on.</p>
 
 <p><strong>Example:</strong></p>
 
-<p>var arr = $.make(&#8216;<li>One</li><li>Two</li><li>Three</li>&#8217;);
-   // Insert before whatever items are already in the list:
-   arr.prependTo(&#8216;ol&#8217;);
-   // or simply:
-   $.make(&#8216;<li>One</li><li>Two</li><li>Three</li>&#8217;).prependTo(&#8216;ol&#8217;);</p>
+<pre><code>html: 
+&lt;ul id="list1"&gt;&lt;li&gt;one&lt;/li&gt;&lt;li&gt;two&gt;&lt;/li&gt;&lt;li&gt;three&lt;/li&gt;&lt;/ul&gt;
+&lt;ul id="list2"&gt;&lt;li&gt;four&gt;&lt;/li&gt;&lt;/ul&gt;
 
-<p>&nbsp;</p>
-
-<h2 id="function_arrayappendto">Function: Array.appendTo</h2>
-
-<p>This method insert an array of nodes after the contents of the selector. If the selector has no children, it is the same as an insertion.</p>
-
-<p><strong>Syntx:</strong></p>
-
-<pre><code>Array.appendTo(selector);
+$('#list1').findAll('li').prependTo('#list2');
+// This will result in:
+&lt;ul id="list1"&gt;&lt;/ul&gt;
+&lt;ul id="list2"&gt;&lt;li&gt;one&lt;/li&gt;&lt;li&gt;two&gt;&lt;/li&gt;&lt;li&gt;three&lt;/li&gt;&lt;li&gt;four&gt;&lt;/li&gt;&lt;/ul&gt;
 </code></pre>
 
-<p><strong>Parameters:</strong></p>
+<h3 id="appendto">appendTo</h3>
 
-<ul>
-<li>Any valid selector.</li>
-</ul>
+<p>Like <strong>prependTo</strong>, this method will append a collection of node to its target.</p>
 
 <p><strong>Example:</strong></p>
 
-<p>var arr = $.make(&#8216;<li>Five</li><li>Six</li><li>Seven</li>&#8217;);
-   // Insert after whatever items are already in the list:
-   arr.appendTo(&#8216;ol&#8217;);
-   // or simply:
-   $.make(&#8216;<li>Five</li><li>Six</li><li>Seven</li>&#8217;).appendTo(&#8216;ol&#8217;);</p>
+<pre><code>html: 
+&lt;ul id="list1"&gt;&lt;li&gt;one&lt;/li&gt;&lt;/ul&gt;
+&lt;ul id="list2"&gt;&lt;li&gt;two&gt;&lt;/li&gt;&lt;li&gt;three&lt;/li&gt;&lt;li&gt;four&gt;&lt;/li&gt;&lt;/ul&gt;
 
-<p><a name="$$"></a> </p>
-
-<p>&nbsp;</p>
-
-<h2 id="function_">Function: $.$$</h2>
-
-<p>This method uses document.querySelectorAll to return a DOM collection as an array. $.$$() gets aliased as window.$$() so that you can uses it as just $$() instead of $.$$(). A second optional argument may be passed as a context for the selector. This is useful where you want to limit where ChococlateChip searches for nodes, such as only as a descendant of a particular document node, avoiding possible matches outside that node.</p>
-
-<p><strong>Syntax:</strong></p>
-
-<pre><code>$$(selector);
-$$(selector, context);
+$('#list2').findAll('li').prependTo('#list1');
+// This will result in:
+&lt;ul id="list1"&gt;&lt;li&gt;one&lt;/li&gt;&lt;li&gt;two&gt;&lt;/li&gt;&lt;li&gt;three&lt;/li&gt;&lt;li&gt;four&gt;&lt;/li&gt;&lt;/ul&gt;
+&lt;ul id="list2"&gt;&lt;/ul&gt;
 </code></pre>
 
-<p><strong>Parameters:</strong></p>
+<h2 id="_methods">$ Methods</h2>
 
-<ul>
-<li>A string defining a valid CSS selector.</li>
-<li>Context: A string defining a valid CSS selector or an actual node.</li>
-</ul>
+<h3 id="version">version</h3>
 
-<p><strong>Returns:</strong></p>
+<p>The current version of ChocolateChip.js</p>
 
-<p>An array of nodes comprising an element collection.</p>
+<h3 id="libraryname">libraryName</h3>
+
+<p>The name of the libary: ChocolateChip. By examining $.libraryName you can tell if $ belongs to ChocolateChip or some other library.</p>
+
+<h3 id="slice">slice</h3>
+
+<p>This is an alias for Array.prototype.slice. This is used to reduce an array like collection to an array.</p>
+
+<h3 id="">$$</h3>
+
+<p>This method is similar to <strong>$</strong> except that it returns all nodes that match the supplied selector. You can pass it an optional context from which to begin search for nodes. This can be a string or a node.</p>
 
 <p><strong>Example:</strong></p>
 
-<pre><code>var sections = $$("section");
-$$("section &gt; p").forEach(function(p) {
-    p.css("color: red; background-color: yellow; padding: 10px;");
+<pre><code>var listItems = $$('li');
+var menuItems = $$('li', '#menu');
+// Get a node to use as the context:
+var sideMenu = $('#sideMenu');
+var sideMenuItems = $$('li', sideMenu);
+</code></pre>
+
+<h3 id="make">make</h3>
+
+<p>This method takes a string of DOM markup and converts it into DOM nodes. The markup defined in the string must be well formed or it will throw an exception. Common erros are inproper tags or mismatched quotation marks.</p>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>var button = $.make('&lt;button id="myButton" class="funButton"&gt;Click here&lt;/button&gt;');
+</code></pre>
+
+<h3 id="html">html</h3>
+
+<p>This is an alias for <strong>make</strong>.</p>
+
+<h3 id="replace">replace</h3>
+
+<p>This method will replace one DOM element with another.</p>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>var newMenu = $.make('&lt;ul id="newMenu"&gt;&lt;li&gt;One&lt;/li&gt;&lt;li&gt;Two&lt;/li&gt;&lt;li&gt;Three&lt;/li&gt;&lt;/ul&gt;')
+$.replace(newMenu, $('#menu1'));
+</code></pre>
+
+<h3 id="require">require</h3>
+
+<p>This method allows you to dynamically load scripts and execute a callback once the script is full loaded.</p>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>$.require('/scripts/libs/sillyputty.js', function() {
+   var sp = new SillyPutty(); // Will not execute until sillyputty.js is full loaded.
 });
 </code></pre>
 
-<p>&nbsp;</p>
+<h3 id="processjson">processJSON</h3>
 
-<h2 id="function_noop">Function: $.noop</h2>
-
-<p><strong>Syntx:</strong></p>
-
-<pre><code>$.noop();
-</code></pre>
+<p>This method will take JSON retrieved by an Ajax request, inject it into the header in a script tag, then remove the script tag. It expects at least one argument, the data to process. You can pass it a second, optional argument to use to identify the data in JavaScript. See the example below. If no second argument is passed, it will be assigned to the variable &#8216;data&#8217;, overwriting any other value that might have been assigned to that variable earlier. As such, it&#8217;s always best to supply your own names for you processed JSON data.</p>
 
 <p><strong>Example:</strong></p>
 
-<pre><code>// Use where code expects a function:
-function doSomething(callback) {
-    console.log("We're doing something here.");
-    callback();
-}
-doSomething($.noop);
-</code></pre>
-
-<p>&nbsp;</p>
-
-<h2 id="function_concat">Function: $.concat</h2>
-
-<p>A method to create strings. Generally speaking, string concatenation is terribly inefficient. I&#8217;m talking about using the &#8220;+&#8221; operator with strings. The more pieces you add the more inefficient it becomes. In contrast, In contrast, collapsing an array into a string using Array.join() is very quick and efficient. $.concat uses this array method to concatenate strings efficiently. The method can take as arguments an array, or a comma separated series of strings (see Parameters below). In the case of a list of strings as arguments, it converts the arguments object into an array and joins it.</p>
-
-<p><strong>Syntx:</strong></p>
-
-<pre><code>$.concat(Array);
-$.concat(String, String, String, String);
-</code></pre>
-
-<p><strong>Parameters:</strong></p>
-
-<ul>
-<li>An array of strings to concatenate.</li>
-<li>A comma separated list of strings to concatenate.</li>
-</ul>
-
-<p><strong>Returns:</strong></p>
-
-<p>A string.</p>
-
-<p><strong>Example:</strong></p>
-
-<pre><code>var str1 = $.concat(['This',' ','an',' ','example',' ','of',' ','string',' ','concatenation','.']);
-var str2 = $.concat('This',' ','an',' ','example',' ','of',' ','string',' ','concatenation','.');
-</code></pre>
-
-<p>&nbsp;</p>
-
-<h2 id="function_isarray">Function: $.isArray</h2>
-
-<p>A method to test if the argument is an array.</p>
-
-<p><strong>Syntx:</strong></p>
-
-<pre><code>$.isArray(Array);
-</code></pre>
-
-<p><strong>Parameters:</strong></p>
-
-<ul>
-<li>A valid array.</li>
-</ul>
-
-<p><strong>Returns:</strong></p>
-
-<p>A boolean true or false.</p>
-
-<p><strong>Example:</strong></p>
-
-<pre><code>// This returns true:
-var arr = $.isArray([]);
-</code></pre>
-
-<p>&nbsp;</p>
-
-<h2 id="function_isfunction">Function: $.isFunction</h2>
-
-<p><strong>Syntx:</strong></p>
-
-<pre><code>$.isFunction(Function);
-</code></pre>
-
-<p><strong>Parameters:</strong></p>
-
-<ul>
-<li>A valid function.</li>
-</ul>
-
-<p><strong>Returns:</strong></p>
-
-<p>A boolean true or false.</p>
-
-<p><strong>Example:</strong></p>
-
-<pre><code>// This will return true:
-var func = $.isFunction($.noop);
-</code></pre>
-
-<p>&nbsp;</p>
-
-<h2 id="function_isobject">Function: $.isObject</h2>
-
-<p><strong>Syntx:</strong></p>
-
-<pre><code>$.isObject(Object);
-</code></pre>
-
-<p><strong>Parameters:</strong></p>
-
-<ul>
-<li>A valid object.</li>
-</ul>
-
-<p><strong>Returns:</strong></p>
-
-<p>A boolean true or false.</p>
-
-<p><strong>Example:</strong></p>
-
-<pre><code>// This returns true:
-var obj = $.isObject({});
-</code></pre>
-
-<p>&nbsp;</p>
-
-<h2 id="function_uuidnum">Function: $.uuidNum</h2>
-
-<p>A method to create a random uuid number used by the cache to create a unique id for elements with cached data.</p>
-
-<p>&nbsp;</p>
-
-<h2 id="function_makeuuid">Function: $.makeUuid</h2>
-
-<p>A method to create a unique id for elements that are getting data cached on them.  All it does is concatenate &#8220;chch_&#8221; to the uuid created by $.uuidNum.</p>
-
-<p>&nbsp;</p>
-
-<h2 id="variable_uuid">Variable: $.uuid</h2>
-
-<p>This is used by the cache to create a unique id for elements that don&#8217;t have one. Every time a new cache is stored on a node, the value of $.uuid gets increased.</p>
-
-<p>&nbsp;</p>
-
-<h2 id="object_chch_cache">Object: $.chch_cache</h2>
-
-<p>This object holds the cache and methods used by the cache for storing, retrieving and deleting data, and for storing events bound to nodes. Data gets stored on $.chch_cache.data and events in $.chch_cache.events. You never need to do anything to use the event cache. It gets used internally by Element.bind() and Element.unbind(). Similarly, you access the data cache through Element.cache() and Element.uncache().</p>
-
-<p>The cache&#8217;s data object has the following members:</p>
-
-<ul>
-<li>keys: This is an array of keys used to identify their corresponding data.</li>
-<li>values: This is an array of data whose index corresponds to its identifying key in the keys array.</li>
-<li>set: Sets the key and value in the cache.</li>
-<li>get: Retrieves the value from the cache based on the key.</li>
-<li>hasKey: Returns a boolean.</li>
-<li>hasData: Returns a boolean.</li>
-<li>delete: A method to delete a key and value from their arrays.</li>
-</ul>
-
-<p>You can inspect the keys and values of the data cache as follows:</p>
-
-<pre><code>$.chch_cache.data.keys // returns an array of all keys in the data cache.
-$.chch_cache.data.keys[0] // returns only the first key in the data cache.
-$.chch_cache.data.values // returns an array of all values in data the cache.
-$.chch_cache.data.values[0] // returns the first value in the data cache.
-</code></pre>
-
-<p>The cache&#8217;s events object has the following members:</p>
-
-<ul>
-<li>keys: This is an array of keys used to identify events bound to a node.</li>
-<li>values: This is an array of events whose index corresponds to its identifying key in the keys array.</li>
-<li>set: Sets the key and value in the event cache.</li>
-<li>hasKey: Returns a boolean.</li>
-<li>delete: A method to delete a key and value from their arrays.</li>
-</ul>
-
-<p>You can inspect the keys and values of the event cache as follows:</p>
-
-<pre><code>$.chch_cache.events.keys // returns an array of all keys in the events cache.
-$.chch_cache.events.keys[0] // returns only the first key in the events cache.
-$.chch_cache.events.values // returns an array of all values in the events cache.
-$.chch_cache.events.values[0] // returns the first value in the events cache.
-</code></pre>
-
-<p>&nbsp;</p>
-
-<h2 id="function_elementcache">Function: Element.cache</h2>
-
-<p>A method to cache data in relation to a DOM node. The data can be a variable, boolean, string, array, function, object or reference to another node. It uses an id to identify the node in the cache. If the node does not have an id, one is created using a uuid-based technique. This same method also serves to retrieve the data cache for a node when executed on a node without any parameters. A node can have only one cache. So, if there is already a cache stored for a node and you attempt to cache some other data, the previous data will be overridden. <strong>When dealing with dynamic content that can be replaced at any given time, if you cache data on such nodes you&#8217;ll need to uncache them before replacing them or you&#8217;ll create a memory leak. The best approach in such a case is to cache the data on the parent node of the dynamic content.</strong></p>
-
-<p><strong>Syntax:</strong> </p>
-
-<pre><code>Element.chache(data);
-var data = Element.cache();
-</code></pre>
-
-<p><strong>Parameters:</strong></p>
-
-<ul>
-<li>data: a variable, string, array, object, function or reference to another node.</li>
-</ul>
-
-<p><strong>Returns:</strong></p>
-
-<pre><code>The node with the cache attached.
-</code></pre>
-
-<p><strong>Examples:</strong></p>
-
-<pre><code>// Set a chache on a node:
-$('tableview').cache({item: 'milk', price: '$1.00'});
-// Retrieve the cache of a node:
-var data = $('tableview').cache(); // returns {item: 'milk', price: '$1.00'}
-// You can access the individual members of a cached object as follows:
-var item = $('tableview').cache().item; // returns 'milk'
-var price = $('tableview').cache().price // returns '$1.00'
-</code></pre>
-
-<p>&nbsp;</p>
-
-<h2 id="function_elementuncache">Function: Element.uncache</h2>
-
-<p>A method to remove the cache from a node. This method gets called automatically when using Element.remove().</p>
-
-<p><strong>Syntax:</strong></p>
-
-<pre><code>Element.uncache();
-</code></pre>
-
-<p><strong>Returns:</strong></p>
-
-<pre><code>The node without it's cache removed. If the node has no cache, it returns the node as normal.
-</code></pre>
-
-<p><strong>Examples:</strong></p>
-
-<pre><code>$('tableview').uncache();
-</code></pre>
-
-<p>&nbsp;</p>
-
-<h2 id="function_elementfind">Function: Element.find</h2>
-
-<p>A method to get a node as the descendant of the element find is executed on. This will return the first match for the selector provided.</p>
-
-<p><strong>Syntax:</strong></p>
-
-<pre><code>var element = Element.find(selector);
-</code></pre>
-
-<p><strong>Returns:</strong> 
-    A single node.</p>
-
-<p><strong>Example:</strong></p>
-
-<pre><code>var main = $("#main");
-var menu = main.find(".menu"); // Get the first menu.
-var menu3 = main.find(".menu:nth-of-typ(3)"); // Get the third menu.
-var menuLast = main.find(".menu.last-of-type"); // Get the last menu.
-</code></pre>
-
-<p>&nbsp;</p>
-
-<h2 id="function_elementfindall">Function: Element.findAll</h2>
-
-<p>A method to get a collection of nodes that are descendants of the element on which findAll is executed and which match the selector provided.</p>
-
-<p><strong>Syntax:</strong></p>
-
-<pre><code>var elements = Element.findAll(selector);
-</code></pre>
-
-<p><strong>Returns:</strong></p>
-
-<pre><code>An array of nodes.
-</code></pre>
-
-<p><strong>Example:</strong></p>
-
-<pre><code>var main = $("#main");
-var menus = main.find(".menu"); // Get all menus.
-// Or operate directly on the returned results:
-main.find(".menu").forEach(function(menu)) { 
-    menu.css("display", "none");
+<pre><code>$.ajax({
+    url: "data.json",
+    success : function() {
+        return $.processJSON($.responseText, 'collectionData');
+    }
 });
 </code></pre>
 
-<p>&nbsp;</p>
+<h3 id="noop">noop</h3>
 
-<h2 id="function_elementprevious">Function: Element.previous</h2>
+<p>This is a &#8220;no operation performed&#8221; method. It can be used where a function/callback is expected but you don&#8217;t want anything to happen.</p>
 
-<p>This method returns the previous sibling of the element upon which it executes. This method is attached directly to the Element object.</p>
-
-<p><strong>Syntax:</strong></p>
-
-<pre><code>Element.previous();
+<pre><code>$(function() {
+   $('#order').on('click', function() {
+      $.noop; // Nothing will happen.
+   })
+})
 </code></pre>
 
-<p><strong>Returns:</strong></p>
+<h3 id="concat">concat</h3>
 
-<p>The previous sibling node. </p>
+<p>This method utilizes String.prototype.concat to allow you to do efficient string concatenation with a method-like interface.</p>
 
 <p><strong>Example:</strong></p>
 
-<pre><code>var previousItem = $("#item").previous();
+<pre><code>$(function() {
+    function createButton(options) {
+        var id = options.id ? 'id="' + options.id + '" ' : ' ';
+        var class = options.class ? 'class="' + options.class + '" ' : ' ';
+        var style = options.style ? 'style="' + options.style + '" ' : ' ';
+        var submit = options.submit || ' ';
+        return $.concat('&lt;button ', id, class, style, '&gt;&lt;/button&gt;');
+    }
+})
 </code></pre>
 
-<p>&nbsp;</p>
+<h3 id="w">w</h3>
 
-<h2 id="function_elementnext">Function: Element.next</h2>
-
-<p>This method returns the next sibling of the element upon which it executes. This method is attached directly to the Element object.</p>
-
-<p><strong>Syntax:</strong></p>
-
-<pre><code>Element.next();
-</code></pre>
-
-<p><strong>Returns:</strong></p>
-
-<p>The next sibling node. </p>
+<p>This method takes a space-delimited string of words and returns it as an array where the inidividual words are indeces.</p>
 
 <p><strong>Example:</strong></p>
 
-<pre><code>var nextItem = $("#item").next();
+<pre><code>var str = 'This is an example of a string'
+var strArray = $.w(str) // Returns ['This','is','an','example','of','a','string']
 </code></pre>
 
-<p>&nbsp;</p>
+<h3 id="isarray">isArray</h3>
 
-<h2 id="function_elementfirst">Function: Element.first</h2>
+<p>If passed an array as its argument, this method returns a boolean true, otherwise false.</p>
 
-<p>A method to get the first child of an element while avoiding empty text nodes. This method is attached directly to the Element object.</p>
+<h3 id="isfunction">isFunction</h3>
 
-<p><strong>Syntax:</strong></p>
+<p>If passed a function as its argument, this method returns a boolean true, otherwise false.</p>
 
-<pre><code>Element.first();
-</code></pre>
+<h3 id="isobject">isObject</h3>
+
+<p>If passed an object as its argument, this method returns a boolean true, otherwise false.</p>
+
+<h3 id="uuidnum">uuidNum</h3>
+
+<p>This method returns a random ten digit number.</p>
+
+<h3 id="makeuuid">makeUuid</h3>
+
+<p>This method is used by the ChocolateChip cache system to create a uuid for each cache entry. It uses the uuid number stored in the variable below.</p>
+
+<h3 id="uuid">uuid</h3>
+
+<p>This variable is used by <strong>$.makeUuid</strong> to create uuids for ChocolateChip&#8217;s cache entries.</p>
+
+<h3 id="chch_cache">chch_cache</h3>
+
+<p>This object serves as the storage center for both events and data. Therefore you should never overwrite $.chch_cache or you&#8217;ll disable the ability of ChocolateChip to register events and cache data in relation to nodes.</p>
+
+<h2 id="object_methods">Object methods</h2>
+
+<h3 id="objecteach">Object.each</h3>
+
+<p>This method allows you to use <em>each</em> to iterate over the properties of a function. It is basically equivalent to writing out a for (key in obj) loop.</p>
 
 <p><strong>Example:</strong></p>
 
-<p>(start code)
-$(&#8220;#menu&#8221;).first();
-(end)</p>
+<pre><code>var obj = {
+    firstname: 'Joe',
+    lastname: 'Bodoni',
+    age: 35
+};
+obj.each(function(key, value){
+    console.log("Key is: " + key + ", value is: " + value + ".")
+});
 
-<p>&nbsp;</p>
-
-<h2 id="function_elementlast">Function: Element.last</h2>
-
-<p>A method to get the last child of an element, while avoiding empty text nodes. This method is attached directly to the Element object.</p>
-
-<p><strong>Syntax:</strong></p>
-
-<pre><code>Element.last();
+/* returns: 
+Key is: firstname, value is: Joe.
+Key is: lastname, value is: Bodoni.
+Key is: age, value is: 35.
+*/
 </code></pre>
+
+<h3 id="objectkey">Object.key</h3>
+
+<p>This method allow you to access the properties of an object using numeric values.</p>
 
 <p><strong>Example:</strong></p>
 
-<pre><code>$("#menu").last();
+<pre><code>var obj = {
+    firstname: 'Joe',
+    lastname: 'Bodoni',
+    age: 35
+};
+
+obj.key(0); // returns 'Joe'
+obj.key(1); // returns 'Bodoni'
+obj.key2; // returns 35
 </code></pre>
 
-<p><a name="elementAncestor"></a></p>
+<p>Using a key value greater than the number of object properties will return &#8216;undefined&#8217;.</p>
 
-<p>&nbsp;</p>
+<h2 id="htmlelementprototype">HTMLElement.prototype</h2>
 
-<h2 id="function_elementchildelements">Function: Element.childElements</h2>
+<p>The following are all the methods that can operate on a DOM node.</p>
 
-<p>A method to get all of the child nodes of an element. This will not include empty text nodes or comments. If a selector is passed as an argument, the child nodes will be filtered by that selector. </p>
+<h3 id="data">data</h3>
 
-<p><strong>Syntx:</strong></p>
-
-<pre><code>Element.childElements();
-</code></pre>
-
-<p><strong>Parameters:</strong></p>
-
-<ul>
-<li>Any valid selector: tag, class or attribute.</li>
-</ul>
-
-<p><strong>Returns:</strong></p>
-
-<p>An array of child nodes.</p>
+<p>Like jQuery and Zepto, the data method allows you to store data in relation to a DOM node. It takes two arguments: the name by which to retrieve the data, and the data itself. This allows you to store multiple pieces of data on a single node.</p>
 
 <p><strong>Example:</strong></p>
 
-<pre><code>// Get all child nodes of the element:
-var descendants = $('#main').childElements();
-// Get all child nodes that are paragraphs:
-var descendants = $('#main').childElements('p');
-// Get all child nodes that has a class 'fun':
-var descendants = $('#main').childElements('.fun');
-// Get all child nodes that are disabled:
-var disabledEls = $('#main').childElements('[disabled=disabled]');
+<pre><code>$('#mainMenu').data("menuitems", {people: "/data/menus/people/", places: "/data/menus/places", food: "/data/menus/food"});
 </code></pre>
 
-<p>&nbsp;</p>
+<h3 id="removedata">removeData</h3>
 
-<h2 id="function_elementkids">Function: Element.kids</h2>
-
-<p>This is just a shortcut for Element.childElements.</p>
-
-<p>&nbsp;</p>
-
-<h2 id="function_elementsiblings">Function: Element.siblings</h2>
-
-<p>A method to get the siblings of an element. This will not include empty text node or comments. If a selector is passed as an argument, the siblings will be filtered by that argument.</p>
-
-<p><strong>Syntx:</strong></p>
-
-<pre><code>Element.siblings();
-</code></pre>
-
-<p><strong>Parameters:</strong></p>
-
-<ul>
-<li>Any valid selector: tag, class or attribute.</li>
-</ul>
-
-<p><strong>Returns:</strong></p>
-
-<p>An array of sibling nodes.</p>
+<p>This removes the data associated with a node.</p>
 
 <p><strong>Example:</strong></p>
 
-<pre><code>// Get all siblings of the element:
-var sibs = $('#menu').siblings();
-// Get all siblings that are paragraphs:
-var sibs = $('#menu').siblings('p');
-// Get all siblings that have a class 'fun':
-var sibs = $('#menu').siblings('.fun');
-// Get all siblings that do not have the class 'fun':
-var sibs = $('#menu').siblings().not('.fun');
+<pre><code>$('#mainMenu').removeData("menuitems");
 </code></pre>
 
-<p>&nbsp;</p>
+<h3 id="find">find</h3>
 
-<h2 id="function_elementancestor">Function: Element.ancestor</h2>
-
-<p>A method to retrieve an ancestor of a node. It can find an ancestor by numeric postion, tag, class or id. Besides class and id, no other attributes can be parsed and will throw an exception.</p>
-
-<p><strong>Parameters:</strong></p>
-
-<ul>
-<li>value: Either a number, a class, an id or a tag.</li>
-</ul>
-
-<p><strong>Syntax:</strong> </p>
-
-<pre><code>Element.ancestor(selector)
-</code></pre>
-
-<p><strong>Returns:</strong></p>
-
-<p>A matched ancestor node. </p>
+<p>This method finds the first occurrence of the selector from the current node. </p>
 
 <p><strong>Example:</strong></p>
 
-<pre><code>// Will return the third ancestor tag:
+<pre><code>// Find the first instance of '.menu' that is a descendant of '#sidebar'
+$('#sidebar').find('.menu');
+</code></pre>
+
+<h3 id="findall">findAll</h3>
+
+<p>This method finds every occurence of the selector from the current node.</p>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>// Find all instances of 'li' that are descendants of '#menu'
+$('#menu').findAll('li');
+</code></pre>
+
+<h3 id="previous">previous</h3>
+
+<p>This method returns the previous sibling of the current node. It is equivalent to the ECMAScript 5 method <strong>previousElementSibling</strong>.</p>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>&lt;p class='paragraph1'&gt;Lorem ipsum&lt;/p&gt;
+&lt;p class='paragraph2'&gt;Dolor sit amet&lt;/p&gt;
+
+$('.paragraph2').previous() // Returns '.paragraph1'
+</code></pre>
+
+<h3 id="prev">prev</h3>
+
+<p>This method is an alias for <strong>previous</strong>.</p>
+
+<h3 id="next">next</h3>
+
+<p>This method returns the next sibling of the current node. It is equivalent to the ECMAScript 5 method <strong>nextElementSibling</strong>.</p>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>&lt;p class='paragraph1'&gt;Lorem ipsum&lt;/p&gt;
+&lt;p class='paragraph2'&gt;Dolor sit amet&lt;/p&gt;
+
+$('.paragraph1').next() // Returns '.paragraph2'
+</code></pre>
+
+<h3 id="first">first</h3>
+
+<p>This method returns the first child of an element.</p>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>$('#menu').first() // returns the first child of '#menu'
+</code></pre>
+
+<h3 id="last">last</h3>
+
+<p>This method returns the last child of an element.</p>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>$('#menu').last() // returns the last child of '#menu'
+</code></pre>
+
+<h3 id="childelements">childElements</h3>
+
+<p>This method returns all the child nodes of an element, minus empty text nodes. It is equivalent to the ECMAScript 5 method <strong>children</strong>.</p>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>$('#menu').childElements() // Returns all child elements of '#menu'
+</code></pre>
+
+<h3 id="siblings">siblings</h3>
+
+<p>This method get all the sibling elements of a node. </p>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>$('#paragraph5').siblings() // Returns all child elements of '#paragraph5'
+</code></pre>
+
+<h3 id="parent">parent</h3>
+
+<p>This method returns the parent of a node. It is the same as accessing the ECMAScript 5 property <strong>parentNode</strong>.</p>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>$('#menu').parent() // Returns the parent node of '#menu'
+</code></pre>
+
+<h3 id="ancestor">ancestor</h3>
+
+<p>This method allows you to get a specific ancestor of a node. You can use a tag, class, attribute or number as the filter for singling out the node. A number will indicate how far back the ancestor is. This method returns the first match for the provided selector.</p>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>// Will return the third ancestor tag back from the current node:
 var theAncestor = $("#someID").ancestor(3);
 // Will return the element with id of "#main" 
 // if it is an ancestor of "#someID":
@@ -859,98 +508,43 @@ var theAncestor = $("#someID").ancestor(".myView");
 var theAncestor = $("#someID").ancestor("subview");
 </code></pre>
 
-<p>&nbsp;</p>
+<h3 id="closest">closest</h3>
 
-<h2 id="function_elementclosest">Function: Element.closest</h2>
+<p>This is an alias for ancestor for compatibility with jQuery/Zepto.</p>
 
-<p>This is a shortcut for ancestor. This is for those used to using the jQuery function of the same name and functionality.</p>
+<h3 id="is">is</h3>
 
-<p>&nbsp;</p>
-
-<h2 id="function_elementsis">Function: Elements.is</h2>
-
-<p>A method to test if the element matches the argument passed.</p>
-
-<p><strong>Syntx:</strong></p>
-
-<pre><code>Element.is(selector);
-</code></pre>
-
-<p><strong>Parameters:</strong></p>
-
-<ul>
-<li>A valid tag.</li>
-<li>A valid class name.</li>
-<li>A valid attribute.</li>
-</ul>
-
-<p><strong>Returns:</strong></p>
-
-<p>If the element matches the argument, it returns the element, otherwise it returns boolean false.</p>
+<p>This method returns the node if it matches the tag, class or attribute provided as an argument.</p>
 
 <p><strong>Example:</strong></p>
 
-<p>// Return the element if its a paragraph:
-   var p = $(&#8220;#content&#8221;).is(&#8216;p&#8217;);
-   // Return the element if it has the class &#8216;content&#8217;:
-   var content = $(&#8216;article&#8217;).is(&#8216;.content&#8217;);
-   // Return the element if it has the atribute &#8216;disabled&#8217;:
-   var disabled = $(&#8216;button&#8217;).is(&#8216;[disabled]&#8217;);</p>
-
-<p>&nbsp;</p>
-
-<h2 id="function_elementnot">Function: Element.not</h2>
-
-<p>A method to test is the element does not match the argument passed.</p>
-
-<p><strong>Syntx:</strong></p>
-
-<pre><code>Element.not(selector)
+<pre><code>var p = $("#content").is('p');
+// Return the element if it has the class 'content':
+var content = $('article').is('.content');
+// Return the element if it has the atribute 'disabled':
+var disabled = $('button').is('[disabled]');
 </code></pre>
 
-<p><strong>Parameters:</strong></p>
+<h3 id="isnt">isnt</h3>
 
-<ul>
-<li>A valid tag.</li>
-<li>A valid class name.</li>
-<li>A valid attribute.</li>
-</ul>
-
-<p><strong>Returns:</strong></p>
-
-<p>If the element does not match the argument, it returns the element, otherwise it returns boolean false.</p>
+<p>This method returns the node if it does not match the tag, class or attribute provided as an argument.</p>
 
 <p><strong>Example:</strong></p>
 
-<p>// Return the element if it is not a paragraph:
-   var notParagraph = $(&#8220;#content&#8221;).not(&#8216;p&#8217;);
-   // Return the element if it does not have the class &#8216;content&#8217;:
-   var notContent = $(&#8216;article&#8217;).not(&#8216;.content&#8217;);
-   // Return the element if it has the atribute &#8216;disabled&#8217;:
-   var enabled = $(&#8216;button&#8217;).not(&#8216;[disabled]&#8217;);</p>
-
-<p>&nbsp;</p>
-
-<h2 id="function_elementhas">Function: Element.has</h2>
-
-<p>A method to test is the element has a child node that matches the argument.</p>
-
-<p><strong>Syntx:</strong></p>
-
-<pre><code>Element.has(selector);
+<pre><code>var notParagraph = $("#content").not('p');
+// Return the element if it does not have the class 'content':
+var notContent = $('article').not('.content');
+// Return the element if it has the atribute 'disabled':
+var enabled = $('button').not('[disabled]');
 </code></pre>
 
-<p><strong>Parameters:</strong></p>
+<h3 id="not">not</h3>
 
-<ul>
-<li>A valid tag.</li>
-<li>A valid class name.</li>
-<li>A valid attribute.</li>
-</ul>
+<p>This is the same as <strong>isnt</strong>.</p>
 
-<p><strong>Returns:</strong></p>
+<h3 id="has">has</h3>
 
-<p>If the element has a child node that matches the argument, it returns the element, otherwise it returns boolean false.</p>
+<p>This method returns the node if one of its child nodes matches the tag, class or attribute provided as an argument.</p>
 
 <p><strong>Example:</strong></p>
 
@@ -962,28 +556,9 @@ var hasNewContent = $('#content').has('.new');
 var somethingDisabled = $('#content').has('[disabled=disabled]');
 </code></pre>
 
-<p>&nbsp;</p>
+<h3 id="hasnt">hasnt</h3>
 
-<h2 id="function_elementhasnot">Function: Element.hasNot</h2>
-
-<p>A method to test if the element does not have a child node that matches the argument.</p>
-
-<p><strong>Syntx:</strong></p>
-
-<pre><code>Element.hasNot(selector);
-</code></pre>
-
-<p><strong>Parameters:</strong></p>
-
-<ul>
-<li>A valid tag.</li>
-<li>A valid class name.</li>
-<li>A valid attribute.</li>
-</ul>
-
-<p><strong>Returns:</strong></p>
-
-<p>If the element has a child node that does not match the argument, it returns the element, otherwise it returns boolean false.</p>
+<p>This method returns the node if one of its child nodes does not match the tag, class or attribute provided as an argument.</p>
 
 <p><strong>Example:</strong></p>
 
@@ -995,677 +570,530 @@ var doesntHaveNewContent = $('#content').hasNot('.new');
 var notDisabled = $('#content').hasNot('[disabled=disabled]');
 </code></pre>
 
-<p>&nbsp;</p>
+<h3 id="hasnot">hasNot</h3>
 
-<h2 id="function_make">Function: $.make</h2>
+<p>This is the same as <strong>hassnt</strong>.</p>
 
-<p>This method creates nodes from a string of valid HTML passed as an argument. The result is an array of one or more nodes. By iterating this array you can insert them into a document. This method is attached directly to the $ object.</p>
+<h3 id="clone">clone</h3>
 
-<p><strong>Parameters:</strong></p>
-
-<ul>
-<li>A string defining nodes to create.</li>
-<li>An array of valid nodes existing in memory.</li>
-</ul>
-
-<p><strong>Syntax:</strong></p>
-
-<pre><code>$.make(string);
-</code></pre>
-
-<p><strong>Returns:</strong></p>
-
-<p>A collection of new nodes. </p>
+<p>This method clones the node it is execute on. If a boolean value that evaluates to true is passed as an argument, the method will clone the node and all its child nodes, otherwise it clones only the node itself.</p>
 
 <p><strong>Example:</strong></p>
 
-<pre><code>var paragraph = $.make("&lt;p&gt;This is a paragraph&lt;/p&gt;");
+<pre><code>var menuEmpty = $("#menu").clone(); // Clone only the node.
+var menuComplete = $("#menu").clone(true); // Clone the node and its child nodes.
 </code></pre>
 
-<p>&nbsp;</p>
+<h3 id="wrap">wrap</h3>
 
-<h2 id="function_html">Function: $.html</h2>
-
-<p>This is an alias for $.make to represent what it does better.</p>
-
-<p>&nbsp;</p>
-
-<h2 id="function_replace">Function: $.replace</h2>
-
-<p>A method to clone a node. If a boolean value that evaluates to true is passed as an argument, the method will clone the node and all its child nodes, otherwise it clones only the node itself. This method is attached directly to the Element object.</p>
-
-<p><strong>Syntax:</strong></p>
-
-<pre><code>$.replace(newNode, oldNode);
-</code></pre>
-
-<p><strong>Parameters:</strong></p>
-
-<ul>
-<li>newNode: A a node to with which to replace.</li>
-<li>oldNode: The node to be replaced.</li>
-</ul>
-
-<p><strong>Example:</strong></p>
-
-<pre><code>var newNode = $.make("&lt;div&gt;A new div&lt;/div&gt;");
-$.replace(newNode, $("#menu"));
-</code></pre>
-
-<p>$nbsp;</p>
-
-<h2 id="function_require">Function: $.require</h2>
-
-<p>Function to import an external script. The script can be on any domain without cross domain access issues.</p>
-
-<p><strong>Syntax:</strong></p>
-
-<p>$.require(src, callback);</p>
-
-<p><strong>Parameters:</strong></p>
-
-<ul>
-<li>src: A valid uri for a script.</li>
-<li>callback: an optional callback to execute when the script is fully loaded.</li>
-</ul>
-
-<p><strong>Example:</strong></p>
-
-<pre><code>$.require('scripts/importantScript.js', function() {
-   // Do stuff with the variables, functions and objects 
-   // in importantScripts.js
-});
-</code></pre>
-
-<p>&nbsp;</p>
-
-<h2 id="function_elementempty">Function: Element.empty</h2>
-
-<p>Remove all child nodes of an element. This method invokes the removeEvents method first to remove any attached events and thereby prevent memory leaks. This method is attached directly to the Element object.</p>
-
-<p><strong>Syntax:</strong></p>
-
-<pre><code>Element.empty();
-</code></pre>
-
-<p><strong>Example:</strong></p>
-
-<pre><code>$("#item").empty();
-</code></pre>
-
-<p>&nbsp;</p>
-
-<h2 id="function_elementclone">Function: Element.clone</h2>
-
-<p>A method to clone a node. If a boolean value that evaluates to true is passed as an argument, the method will clone the node and all its child nodes, otherwise it clones only the node itself. This method is attached directly to the Element object.</p>
-
-<p><strong>Syntax:</strong></p>
-
-<pre><code>Element.clone();
-</code></pre>
-
-<p><strong>Parameters:</strong></p>
-
-<ul>
-<li>Any boolean value.</li>
-</ul>
-
-<p><strong>Returns:</strong> </p>
-
-<p>The clone of an element. </p>
-
-<p><strong>Example:</strong></p>
-
-<pre><code>var menu = $("#menu").clone(true);
-</code></pre>
-
-<p>&nbsp;</p>
-
-<h2 id="function_elementwrap">Function: Element.wrap</h2>
-
-<p>A method to wrap a node in markup. This method is attached directly to the Element object.</p>
-
-<p><strong>Syntax:</strong></p>
-
-<pre><code>Element.wrap(string);
-</code></pre>
-
-<p><strong>Parameters:</strong></p>
-
-<ul>
-<li>string: A string of valid HTML markup in which to encase the element.</li>
-</ul>
+<p>This method allows you to enclose a node in markup. The markup is passed as a string argument.</p>
 
 <p><strong>Example:</strong></p>
 
 <pre><code>$("#menu").wrap("&lt;nav id='main'&gt;&lt;/nav&gt;");
 </code></pre>
 
-<p>&nbsp;</p>
+<h3 id="unwrap">unwrap</h3>
 
-<h2 id="function_elementunwrap">Function: Element.unwrap</h2>
-
-<p>A method to unwrap a node by removing its parent node. It has a failsafe to stop removing nodes when it reaches the body tag.</p>
-
-<p><strong>Syntax:</strong></p>
-
-<pre><code>Element.unwrap();
-</code></pre>
+<p>This method will remove the parent node container the node, escentially making it the child of it grandparent node. See the example below:</p>
 
 <p><strong>Example:</strong></p>
 
-<pre><code>$("#menu").unwrap();
+<pre><code>&lt;header&gt;
+   &lt;nav&gt;
+      &lt;div id="#menu"&gt;&lt;/div&gt;
+   &lt;/nav&gt;
+&lt;/header&gt;
+
+// Executing:
+$('#menu').unwrap()
+
+// Will result in:
+
+&lt;header&gt;
+   &lt;div id="#menu"&gt;&lt;/div&gt;
+&lt;/header&gt;
 </code></pre>
 
-<p>&nbsp;</p>
+<h3 id="text">text</h3>
 
-<h2 id="function_elementtext">Function: Element.text</h2>
-
-<p>This method adds text to the target element, replacing whatever child nodes it might have. If no value is passed as an argument, the method returns the text value of all child nodes of the target element. This method is attached directly to the Element object.</p>
-
-<p><strong>Syntax:</strong></p>
-
-<pre><code>$(selector).text(string);
-$(selector).text(variable);
-$(selector).text();
-</code></pre>
-
-<p><strong>Parameters:</strong></p>
-
-<ul>
-<li>string: A string of text to add to an element.</li>
-<li>variable: A string of text to add to an element.</li>
-</ul>
-
-<p><strong>Returns:</strong></p>
-
-<p>The text nodes of the element. </p>
+<p>This method can return the text nodes contained by the target element, or add text to a node. If no argument is provided, it returns the node&#8217;s text. If a string of text is provided, it inserts the string as a text node of the target node. When this method returns text, it will not contain styling or semantic markup. It only returns only plain text with spaces. Be aware that when you use this method to add text to a node, the text will replace any other child nodes within the target node.</p>
 
 <p><strong>Example:</strong></p>
 
-<pre><code>$("#item").text("This is an example of added text.");
-var textValue = $("#item").text();
+<pre><code>$('#menu').find('li').first().text("Menu Item One");
+// Pass in a variable of a string:
+var menuContent = "Menu Item One";
+('#menu').find('li').first().text(menuContent);
+// Get the text of the last menu item:
+('#menu').find('li').last().text();
 </code></pre>
 
-<p>&nbsp;</p>
+<h3 id="fill">fill</h3>
 
-<h2 id="function_elementfill">Function: Element.fill</h2>
+<p>This method will replace the contents of the target node with the argument, which can be a text string or the reference to a DOM node. This has been deprecated. For text use the <strong>text</strong> method above and for node injection use <strong>insert</strong> or <strong>html</strong> present below.</p>
 
-<p>Replace element&#8217;s childNodes with content. This method is attached directly to the Element object.</p>
+<h3 id="empty">empty</h3>
 
-<p><strong>Syntax:</strong></p>
-
-<pre><code>Element.fill(content);
-</code></pre>
+<p>This method will remove all child nodes from the target element.</p>
 
 <p><strong>Example:</strong></p>
 
-<pre><code>$("#item").fill("Something to say here.");
+<pre><code>$('#menu').empty();
 </code></pre>
 
-<p>&nbsp;</p>
+<h3 id="remove">remove</h3>
 
-<h2 id="function_elementempty">Function: Element.empty</h2>
-
-<p>Remove all child nodes of an element. This method invokes the removeEvents method first to remove any attached events and thereby prevent memory leaks. This method is attached directly to the Element object.</p>
-
-<p><strong>Syntax:</strong></p>
-
-<pre><code>Element.empty();
-</code></pre>
+<p>This method will remove a node from the document. While doing so it will attempt to remove any events attached by check the event cache for that element, as well as clear any data associate with it in the data cache.</p>
 
 <p><strong>Example:</strong></p>
 
-<pre><code>$("#item").empty();
+<pre><code>$('#menu').remove();
 </code></pre>
 
-<p>&nbsp;</p>
+<h3 id="insert">insert</h3>
 
-<h2 id="function_elementremove">Function: Element.remove</h2>
-
-<p>Remove an element from the document. This method is attached directly to the Element object. This method automatically calls Element.uncache to first remove any data cached for this node.</p>
-
-<p><strong>Syntax:</strong></p>
-
-<pre><code>Element.remove();
-</code></pre>
+<p>This method allows you to insert markup into another node. The first argument is the content to insert. This can be a string of valid markup, or a reference to an existing HTML fragement or node. The second argument is optional. If no second argument is provided, the content will be inserted after any other child nodes contained in the target node. Posible positional arguments are &#8220;before&#8221;, &#8220;after&#8221;, or a number indicating the position in relation to the node&#8217;s other child nodes. If you pass a number greater than the actual number of child nodes, the content will be inserted after the last valid child node. A number value of 1 would be the first child position, 2 - second child position, 3 - third child position, etc.</p>
 
 <p><strong>Example:</strong></p>
 
-<pre><code>$("#item").remove();
+<pre><code>var newPara = "&lt;p&gt;Lorem ipsum dolor sit amet.&lt;/p&gt;"
+$('#main').insert(newPara) // Insert after other child nodes.
+$('#main').insert(newPara, "before") // Insert before other child nodes.
+$('#main').insert(newPara, "after") // Insert after other child nodes.
+$('#main').insert(newPara, 2) // Insert as the second child node.
+$('#main').insert(newPara, 5) // Insert as the fifth child node.
 </code></pre>
 
-<p>&nbsp;</p>
+<h3 id="html">html</h3>
 
-<h2 id="function_elementinsert">Function: Element.insert</h2>
-
-<p>A method to insert a node or nodes at nth position in the child node collection of the element on which the method is being called. This can be the first position, the last position, or anywhere in between these. If no position is passed as an argument it defaults to last position. If the parent element has no child nodes, the method inserts the new element as the first child of the parent element. This method is attached directly to the Element object.</p>
-
-<p><strong>Syntax:</strong></p>
-
-<pre><code>$.insert( content, position );
-</code></pre>
-
-<p><strong>Parameters:</strong></p>
-
-<ul>
-<li>A valid node to insert into the child node collection of another node.</li>
-<li>A string of markup to insert.</li>
-<li>A string with a value for &#8216;first&#8217; or &#8216;last&#8217; for the position to insert.</li>
-<li>An integer indicating the position in the target element&#8217;s child node collection at which to insert.</li>
-</ul>
+<p>This method complete replaces the node&#8217;s content with the content passed as an argument. This can be a string of valid markup or a refrence to an HTML fragment or node. This is the same as the jQuery/Zepto method.</p>
 
 <p><strong>Example:</strong></p>
 
-<pre><code>$.itemNumber = 1;
-$$("p").forEach(function(item) { 
-    item.insert( $.make("&lt;span&gt;Introductory Matter: " + $.itemNumber + " .&lt;/span&gt;"), "first");
-    ++$.itemNumber;
-});
-$.itemNumber = null;
+<pre><code>$('#menu').html("&lt;li&gt;one&lt;/li&gt;&lt;li&gt;two&gt;&lt;/li&gt;&lt;li&gt;three&lt;/li&gt;");
+var menuItems = "&lt;li&gt;one&lt;/li&gt;&lt;li&gt;two&gt;&lt;/li&gt;&lt;li&gt;three&lt;/li&gt;";
+$('#menu').html(menuItems);
+var newItems = $('#sidebar').findAll('li');
+$('#menu').html(newItems);
 </code></pre>
 
-<p>&nbsp;</p>
+<h3 id="prepend">prepend</h3>
 
-<h2 id="function_elementhtml">Function: Element.html</h2>
+<p>This method will insert the provided content before all other child nodes of the target node. This is the same as using <strong>element.insert(content, &#8220;before&#8221;)</strong> or <strong>element.insert(content, 1)</strong>. This is mainly for compatibility with jQuery/Zepto.</p>
 
-<p>This method is basically the same as doing Element.empty().insert(). It performs and Element.empty() on the element before inserting the content.</p>
+<p><strong>Example:</strong></p>
 
-<p><strong>Syntx:</strong></p>
-
-<pre><code>Element.html(content);
-</code></pre>
-
-<p><strong>Parameters:</strong></p>
-
-<ul>
-<li>A valid node to insert into the child node collection of another node.</li>
-<li>A string of markup to insert.</li>
-<li>A string with a value for &#8216;first&#8217; or &#8216;last&#8217; for the position to insert.</li>
-<li>An integer indicating the position in the target element&#8217;s child node collection at which to insert.</li>
-</ul>
-
-<p><strong>Example:</strong>    </p>
-
-<pre><code>var arr = '&lt;li&gt;One&lt;/li&gt;&lt;li&gt;Two&lt;/li&gt;&lt;li&gt;Three&lt;/li&gt;';
-$('ul').html(arr);
-// or:
-$('ul').html('&lt;li&gt;One&lt;/li&gt;&lt;li&gt;Two&lt;/li&gt;&lt;li&gt;Three&lt;/li&gt;');
-</code></pre>
-
-<p>&nbsp;</p>
-
-<h2 id="function_elementprepend">Function: Element.prepend</h2>
-
-<p>A method to prepend content to a node. The content can be a string of valid markup, an array of nodes, or a single node.</p>
-
-<p><strong>Syntx:</strong></p>
-
-<pre><code>Element.prepend(content);
-</code></pre>
-
-<p><strong>Parameters:</strong></p>
-
-<ul>
-<li>A valid node to insert.</li>
-<li>An array of nodes to insert.</li>
-<li>A string of markup to insert.</li>
-</ul>
-
-<p><strong>Example:</strong>    </p>
-
-<pre><code>var newNode = $.make('&lt;p&gt;A new node!&lt;/p&gt;');
+<pre><code>var menuItems = "&lt;li&gt;one&lt;/li&gt;&lt;li&gt;two&gt;&lt;/li&gt;&lt;li&gt;three&lt;/li&gt;";
+$('#menu').append(menuItems);
+var newNode = $.make('&lt;p&gt;A new node!&lt;/p&gt;');
 $('#content').prepend(newNode);
-// or:
 $('#content').prepend('&lt;p&gt;A new node!&lt;/p&gt;');
 </code></pre>
 
-<p>&nbsp;</p>
+<h3 id="append">append</h3>
 
-<h2 id="function_elementappend">Function: Element.append</h2>
+<p>This method will insert the provided content after all other child nodes in the target node. This is mainly for compatibility with jQuery/Zepto.</p>
 
-<p>A method to append content to a node. The content can be a string of valid markup, an array of node, or a single node.</p>
+<p><strong>Example:</strong></p>
 
-<p><strong>Syntx:</strong></p>
-
-<pre><code>Element.append(content);
-</code></pre>
-
-<p><strong>Parameters:</strong></p>
-
-<ul>
-<li>A valid node to insert.</li>
-<li>An array of nodes to insert.</li>
-<li>A string of markup to insert.</li>
-</ul>
-
-<p><strong>Example:</strong>    </p>
-
-<pre><code>var newNode = $.make('&lt;p&gt;A new node!&lt;/p&gt;');
+<pre><code>var menuItems = "&lt;li&gt;one&lt;/li&gt;&lt;li&gt;two&gt;&lt;/li&gt;&lt;li&gt;three&lt;/li&gt;";
+$('#menu').prepend(menuItems);
+var newNode = $.make('&lt;p&gt;A new node!&lt;/p&gt;');
 $('#content').append(newNode);
-// or:
 $('#content').append('&lt;p&gt;A new node!&lt;/p&gt;');
 </code></pre>
 
-<p>&nbsp;</p>
+<h3 id="before">before</h3>
 
-<h2 id="function_elementbefore">Function: Element.before</h2>
+<p>This method will insert the content before the target node, making the inserted content the previous sibling of that node.</p>
 
-<p>A method to insert content before the node upon which it operates. This method is attached directly to the Element object.</p>
-
-<p><strong>Syntax:</strong></p>
-
-<pre><code>Element.before(node);
-</code></pre>
-
-<p><strong>Parameters:</strong></p>
-
-<ul>
-<li>node: A valid node to insert before another node.</li>
-</ul>
+<p>In this example, we use <strong>before</strong> to insert a numbered title before each paragraph in the document.</p>
 
 <p><strong>Example:</strong></p>
 
 <pre><code>$.itemNumber = 1;
 $$("p").forEach(function(item) { 
-    item.before( $.make("&lt;h1&gt;Title " + $.itemNumber + "&lt;/h1&gt;"));
-    ++$.itemNumber;
+   item.before("&lt;h1&gt;Title " + $.itemNumber + "&lt;/h1&gt;");
+   ++$.itemNumber;
 });
 $.itemNumber = null;
 </code></pre>
 
-<p>&nbsp;</p>
+<h3 id="after">after</h3>
 
-<h2 id="function_elementafter">Function: Element.after</h2>
+<p>This method will insert the content after the target node, making the inserted content the next sibling of that node.</p>
 
-<p>A method to insert content consisting of a node or nodes before the node upon which it operates. This method is attached directly to the Element object.</p>
-
-<p><strong>Syntax:</strong></p>
-
-<pre><code>Element.after(node);
-</code></pre>
-
-<p><strong>Parameters:</strong></p>
-
-<ul>
-<li>node: A valid node to insert before another node.</li>
-</ul>
+<p>In this example, we use <strong>after</strong> to insert an addendum after each paragraph.</p>
 
 <p><strong>Example:</strong></p>
 
 <pre><code>$.itemNumber = 1;
 $$("p").forEach(function(item) { 
-    item.after( $.make("&lt;p&gt;Addendum " + $.itemNumber + "&lt;/p&gt;"));
-    ++$.itemNumber;
+   item.after("&lt;p&gt;Addendum " + $.itemNumber + "&lt;/p&gt;");
+   ++$.itemNumber;
 });
 $.itemNumber = null;
 </code></pre>
 
-<p>&nbsp;</p>
+<h3 id="attr">attr</h3>
 
-<h2 id="function_elementprepend">Function: Element.prepend</h2>
-
-<p>A method to insert content at the beginning of an element&#8217;s child nodes. This is different from the result of Element.before, which places the content before the element. Prepend creates a new child node inside its element.</p>
-
-<p><strong>Syntax:</strong> </p>
-
-<pre><code>Element.prepend(node);
-</code></pre>
-
-<p><strong>Parameters:</strong></p>
-
-<ul>
-<li>node: A valid node to insert as the first child of the parent.</li>
-</ul>
+<p>This method can return the value of an attribute or set it to the provided value. If only an attribute is provided, it will attempt to return the value of that attribute on the node. If the attribute does not exist, it will return &#8216;undefined&#8217;. If an attribute and a value are passed as arguments, the method will attempt to set that attribute with that value on the node.</p>
 
 <p><strong>Example:</strong></p>
 
-<pre><code>var mainContent = $("#main .content");
-mainContent.prepend("&lt;h2&gt;This is important!&lt;/h2&gt;");
+<pre><code>$('#menuLink').attr('href'); // return the href of a link
+$('#menuLink').attr('href', '/specials.html'); // set the href of the link
 </code></pre>
 
-<p>&nbsp;</p>
+<h3 id="prop">prop</h3>
 
-<h2 id="function_elementappend">Function: Element.append</h2>
+<p>This is the same as <strong>attr</strong> and is included for compatibility with jQuery/Zepto.</p>
 
-<p><strong>Syntax:</strong></p>
+<h3 id="removeattr">removeAttr</h3>
 
-<pre><code>Elemnt.append(node);
-</code></pre>
-
-<p><strong>Parameters:</strong></p>
-
-<ul>
-<li>node: A valid node to insert as the last child of the parent.</li>
-</ul>
+<p>This method removes the provided attribute from the node.</p>
 
 <p><strong>Example:</strong></p>
 
-<pre><code>var mainContent = $("#main .content");
-mainContent.append("&lt;p class='finalNote'&gt;Before you start downloading this file, make sure you have all the windows in your house open and that you have a quick and secure escape route available.&lt;/p&gt;");
+<pre><code>$('#menu').removeAttr('disabled');
 </code></pre>
 
-<p>&nbsp;</p>
+<h3 id="hasclass">hasClass</h3>
 
-<h2 id="function_elementhasclass">Function: Element.hasClass</h2>
-
-<p>Check an element to see if it has a particular class. This method is attached directly to the Element object.</p>
-
-<p><strong>Syntax:</strong></p>
-
-<pre><code>Element.hasClass(className);
-</code></pre>
-
-<p><strong>Parameters:</strong></p>
-
-<ul>
-<li>className: The name of the CSS class to check for.</li>
-</ul>
+<p>This method returns a boolean value. If the node has the class, true, otherwise false. This allows you to test if the node has the class or not.</p>
 
 <p><strong>Example:</strong></p>
 
-<pre><code>Element.hasClass("hover");
+<pre><code>// Get all articles and display them if they have content:
+$$('article').each(function(article) {
+    if (article.hasClass('content')) {
+        article.css('display', 'block');
+    }
+});
 </code></pre>
 
-<p>&nbsp;</p>
+<h3 id="addclass">addClass</h3>
 
-<h2 id="function_elementaddclass">Function: Element.addClass</h2>
-
-<p>Add a class to an element. This method is attached directly to the Element object.</p>
-
-<p><strong>Syntax:</strong></p>
-
-<pre><code>Element.addClass(className);
-</code></pre>
-
-<p><strong>Parameters:</strong></p>
-
-<ul>
-<li>className: The name of the CSS class to add.</li>
-</ul>
+<p>This method adds the provided class to the node.</p>
 
 <p><strong>Example:</strong></p>
 
-<pre><code>$("#item").addClass("hover");
+<pre><code>$('nav').addClass('menu');
 </code></pre>
 
-<p>&nbsp;</p>
+<h3 id="removeclass">removeClass</h3>
 
-<h2 id="function_elementremoveclass">Function: Element.removeClass</h2>
+<p>This method removes the provided class from the node. </p>
 
-<p>Remove a class from an element. This method is attached directly to the Element object.</p>
-
-<p><strong>Syntax:</strong></p>
-
-<pre><code> Element.removeClass(className);
+<pre><code>$('nav').removeClass('menu');
 </code></pre>
 
-<p><strong>Parameters:</strong></p>
+<p><strong>toggleClass</strong></p>
 
-<ul>
-<li>className: The name of the CSS class to remove.</li>
-</ul>
+<p>This method allows you to toggle a class on and off an element, or toggle between two classes. If only one class is passed as an argument, it is added then removed, then add, etc. If two class names are provided, the first is added, then the second, then the first, etc.</p>
 
 <p><strong>Example:</strong></p>
 
-<pre><code>$("#item").removeClass("hover");
-</code></pre>
-
-<p>&nbsp;</p>
-
-<h2 id="function_elementdisable">Function: Element.disable</h2>
-
-<p>A method to disable an element by adding the &#8220;disable&#8221; class and preventing mouse or touch interaction.</p>
-
-<p><strong>Example:</strong></p>
-
-<pre><code>$("#myItem").disabled();
-</code></pre>
-
-<p>&nbsp;</p>
-
-<h2 id="function_elementenable">Function: Element.enable</h2>
-
-<p>A method to facilitate re-enabling an element that was disabled by removing the &#8220;disabled&#8221; class and allow mouse and touch interaction.</p>
-
-<p><strong>Example:</strong></p>
-
-<pre><code>$("#myItem").enable();
-</code></pre>
-
-<p>&nbsp;</p>
-
-<h2 id="function_elementtoggleclass">Function: Element.toggleClass</h2>
-
-<p>Toggle a class on and off an element, or toggle between two classes. This method is attached directly to the Element object.</p>
-
-<p><strong>Syntax:</strong></p>
-
-<pre><code>Element.toggleClass(className);
-Element.toggleClass(className, className);
-</code></pre>
-
-<p><strong>Parameters:</strong></p>
-
-<ul>
-<li>firstClassName: The name of the first class to toggle.</li>
-<li>secondClassName: The name of the second class to toggle.</li>
-</ul>
-
-<p><strong>Example:</strong></p>
-
-<pre><code>$("#item").toggleClass("hover");
+<pre><code>// Toggle the 'hover' class:
+$("#item").toggleClass("hover");
+// Toggle between these two classes:
 $("#item").toggleClass("selected", "unselected");
 </code></pre>
 
-<p>&nbsp;</p>
+<h3 id="toggleclassname">toggleClassName</h3>
 
-<h2 id="function_elementgettop">Function: Element.getTop</h2>
+<p>This method is the same as <strong>toggleClass</strong> and exists only to fullfil the same ability to toggle to classes for jQuery and Zepto when ChocolateChip.js is used in ChocolateChip-UI. That&#8217;s because toggleClass in jQuery and Zepto only toggle a single class by adding and removing it from a node. This allows toggle two classes on and off.</p>
 
-<p>Get the precise top position of an element in relation to the top viewport.</p>
+<h3 id="val">val**</h3>
 
-<p><strong>Syntax:</strong></p>
+<p>This method returns the value of a form element, or, if a value is passed as an argument, the form element&#8217;s value is set to that.</p>
 
-<pre><code>$(selector).getTop();
+<p><strong>Example:</strong> </p>
+
+<pre><code>// Get the value of a text input:
+var msg = $('input[type=text]').val();
+// Set the value of an input:
+$('textarea').val('This is some default text');
 </code></pre>
+
+<h3 id="disable">disable</h3>
+
+<p>This method disables and element by adding a &#8216;disabled&#8217; attribute and changing the cursor to behavior.</p>
 
 <p><strong>Example:</strong></p>
 
-<pre><code>$("#item").getTop();
-var button = $(".button");
-var buttonTop = button.getTop();
+<pre><code>$('button').disable();
 </code></pre>
 
-<p>&nbsp;</p>
+<h3 id="enable">enable</h3>
 
-<h2 id="function_elementgetleft">Function: Element.getLeft</h2>
-
-<p>Get the precise left position of an element in relation to the left viewport.</p>
-
-<p><strong>Syntax:</strong></p>
-
-<pre><code>$(selector).getLeft();
-</code></pre>
+<p>This method enables an element that was previously disabled.</p>
 
 <p><strong>Example:</strong></p>
 
-<pre><code>$("#item").getLeft();
-var button = $(".button");
-var buttonTop = button.getLeft();
+<pre><code>$('input[type=range]').enable();
 </code></pre>
 
-<p>&nbsp;</p>
+<h3 id="gettop">getTop</h3>
 
-<h2 id="function_elementcss">Function: Element.css</h2>
-
-<p>Add a CSS declaration directly to an element. If a boolean value that equates to true is passed as a second, optional argument, the method will replace whatever inline CSS values are presently existing on the element, otherwise it appends the CSS declaration to whatever is already there. This method is attached directly to the Element object.</p>
-
-<p><strong>Syntax:</strong></p>
-
-<pre><code>Element.css(property);
-Element.css(property, value);
-Element.css(string of properties/values);
-Element.css(object literal of properties/values);
-</code></pre>
-
-<p><strong>Parameters:</strong></p>
-
-<ul>
-<li>style declaration: A string of valid CSS property/values enclosed in quotes.</li>
-<li>property: A string defining a CSS property.</li>
-<li>value: A string defining a CSS property value to set on an element.</li>
-<li>an object literal of valid CSS property value pairs. (Hyphenated properties must be quoted, otherwise properties which are single words do not require quotes. Values that are not simple integers must be quoted.)</li>
-</ul>
-
-<p><strong>Returns:</strong></p>
-
-<p>CSS property value pairs as inline cssText or the computed value of a CSS property.</p>
+<p>This method returns the position (y value) of an element from the top of the document. The element does not need to be absolute positioned. This returns an integer representing pixels.</p>
 
 <p><strong>Example:</strong></p>
 
-<pre><code>$("#item").css("font", "bold 12pt/14pt Arial, Helvetica, Sans-serif");
+<pre><code>var buttonTop = $('uibutton[ui-implements=done]').getTop();
+</code></pre>
+
+<h3 id="getleft">getLeft</h3>
+
+<p>This method returns the position (x value) of an element from the left of the document. The element does not need to be aboslutely positioned. This returns an integer representing pixels.</p>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>var buttonLeft = $('uibutton[ui-implements=done]').getLeft();
+</code></pre>
+
+<h3 id="css">css</h3>
+
+<p>This method can get the style or set the style of a node. If only a style property is passed, it returns that property&#8217;s current value on the node. If you are only applying one property definition, you can pass the arguments as two quoted strings separated by commas. Otherwise, for more complex styling you can pass an object of key/value pairs to define the style you wish to apply.</p>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>/* Getting CSS values */
+// Get the width:
+var width = $('#main').css('width');
+// Get the background color:
+var backgroundColor = $('#main').css('background-color'); 
+// Get the top padding:
+var padding = $('#main').css('padding-top');
+// Get the font size:
 console.log($("#item").css("font-size"));
-$("#item").css("font-size: 24px; color: blue; background-color: red;");
-$("#item").css({"font-size":"24px", color:"blue", "background-color":"red"});
+
+/* Setting single key value pairs */
+// Set the font:
+$('#main').css('font', 'bold 24px/32px Myriad');
+$('#main').css('padding', '20px');
+$('#main').css('height', '200px');
+
+/* Setting complex CSS values */
+$('#main').css({'width': '200px', 'height': '500px', 'background-color': 'red'});
+var styles = {
+   position: 'absolute',
+   top: '200px',
+   left: '350px',
+   border: '1px solid red',
+   padding: '20px',
+   'background-color': 'yellow'
+}
+$('#main').css(styles);
 </code></pre>
 
-<p>You can use Element.css to get the value of a CSS property by passing the quoted property as an argument. You simply pass in the normal CSS property. If it is a hyphenated property, pass it in like that. </p>
+<p><strong>Note:</strong></p>
+
+<p>Be aware that when getting a CSS property&#8217;s value, this method always returns a string. This means that if you try to do math operations with the value, you&#8217;ll wind up with string concatenation or a result of NaN. If you want the dimensions or other integer values, you&#8217;ll need to use parseInt() to convert those values to integers. Then you can perform math operations on the value:</p>
+
+<pre><code>var width = $('#rightCol').css('width') // Returns 300px
+width = parseInt(width, 10); // Returns integer 300
+// Increase #rightCol's width by 20 pixels:
+width += 20;
+// Don't forget to tag on the 'px' length at the end!
+$('#rightCol').css('width', width + 'px')
+</code></pre>
+
+<h3 id="bind">bind</h3>
+
+<p>This method binds events to nodes along with a callback. A third optional argument can set the capture phase. By default it is false, but you can pass a boolean true value to change that behavior. In most cases you want the capture phase to resolve to false. </p>
+
+<p>ChocolateChip.js uses its caching system to keep track of which events you&#8217;ve bound to an element to facility unbinding them at a later time. Please see the documentation for <strong>unbind</strong> for more information.</p>
 
 <p><strong>Example:</strong></p>
 
-<pre><code>var bkcolor = $("#item").css("background-color");
-console.log("This item's background color is: " + bkcolor);
+<pre><code>var doSomething = function() {
+   console.log("I'm doing it now.");
+};
+$("#doIt").bind("click", doSomething);
+// or:
+$(".stop").bind("touchend", function() {
+   console.log("Time to put an end to this!");
+   this.remove();
+});
 </code></pre>
 
-<p><strong>Note:</strong> Be aware that all values returned in this way are strings, even if they appear to be numerical values, such as height, margin, etc. So, if you need to do arithmetic with a returned value, you&#8217;ll need to convert it from a string to a number. You can do this using parseInt:</p>
+<h3 id="unbind">unbind</h3>
 
-<pre><code>var itemWidth = $("#item).css("width");
-itemWidth = parseInt(itemWidth);
-var leftPos = $.getLeft("#item");
-var distance = itemWidth + leftPos;
-console.log("The item has a total distance of: " + distance);
+<p>This method unbinds an event from a node. There are several ways in which you can unbind events from a node. The simplest is to just execute <strong>unbind</strong> directly on the node. This will unbind all events attached to the node. This is good to do if you intend on removing or replacing the node with other content.</p>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>// Remove all events bound to the body tag:
+$('body').unbind();
 </code></pre>
 
-<p>&nbsp;</p>
+<p>You can be more specific about which events to unbind by passing in an event type. Please not that it is possible to have multiple events of the same type attached to a node. ChocolateChip&#8217;s system for caching event information keeps track of callbacks even when you use an anonymous function. However, because an anonymous function has no name, the only way that it can be removed is by removing the event it is associated with. For example, if you have several click events attached to the same button and they all use anonymous functions as callbacks, to remove one callback associated with the click event you&#8217;ll actually have to remove all anonymous functions associated with the click event bound to that button.</p>
 
-<h2 id="function_stringcapitalize">Function: String.capitalize</h2>
-
-<p>Method to capitalize the first letter of a string. This method is attached directly to the $ object.</p>
-
-<p><strong>Syntax:</strong></p>
-
-<pre><code>String.capitalize();
+<pre><code>$('#myButton).bind('click', function() {
+    console.log('You just clicked a button.');
+ });
+ $('#myButton).bind('click', function() {
+    alert('Stop clicking me!!!');
+ });
+ $('#myButton).bind('touchstart', function() {
+    console.log('You just touched me.');
+ });
+ // The above button now has to click events that do two different things.
+ // Remove all click events, leaving the touchstart event:
+$('#myButton').unbind('click');
 </code></pre>
 
-<p><strong>Parameters:</strong></p>
+<p>If you passed a named function as a callback for an event, you can be more specific and only unbind the event with that function:</p>
 
-<ul>
-<li>string: A string to capitalize.</li>
-</ul>
+<pre><code>var saySomething = function() {
+   alert('This is what I have to say!');
+};
+$('button').bind('click', saySomething);
+$('button').bind('click', function() {
+   console.log('This is another annoying message.');
+});
+// Unbind only the event with the function 'saySomething':
+$('button').unbind('click', saySomething);
+</code></pre>
 
-<p><strong>Returns:</strong></p>
+<p>You can also use the capture phase as a third argument to be more granular, if you have events and function with different capture phases.</p>
 
-<p>A string with the first word capitalized, if a single word then its first letter is capitalized. </p>
+<h3 id="delegate">delegate</h3>
+
+<p>This method allows you to attach a listener to a parent element to listen for events on a descendant node. This becomes very useful when you&#8217;re dealing with something like a long list of links. Instead of having to attach an event to every link, you can attach the listener to the parent container. Using delegation allows you to attach an event on the parent and not worry about how many descendant elements there are, or even if they are present yet. They might be injected into the document after the listener is attached, allowing you to capture events on them dynamically as they are generated.</p>
+
+<p>To delegate and event you first indicate what parent node you want to listen on, followed by the node type that will be the target of the event, followed by a callback and finally an optional capture phase. By default the capture phase is resolved as false. Like <strong>bind</strong>, in most cases you want it to be false.</p>
+
+<p>When you pass a callback, you can capture a reference to the context of the element that is the target of the event by pass a variable in the callback&#8217;s parenthesis. You can then reference that variable inside the body of the callback. In the example below, the variable &#8216;paragraph&#8217; with refer to the p tag that gets clicked.</p>
+
+<p><strong>Example</strong></p>
+
+<pre><code>$("body").delegate("p", "click", function(paragraph) {
+  paragraph.css("background-color", "yellow");
+});
+</code></pre>
+
+<p>You can also check for attributes on the event target to filter what you do with a node.    </p>
+
+<pre><code>// Check for an attribute on the event target:
+$("app").delegate("button", "touch", function(item) {
+   // Check for button with "ui-implements" attribute:
+   if (item.getAttribute("ui-implements") === "back") {
+       item.addClass('selected');
+   }
+});
+</code></pre>
+
+<h3 id="undelegate">undelegate</h3>
+
+<p>Like unbind, this method allows you to remove a delegate event from a node. The arguments work the same as unbind. So undelegate() with no arguments will remove all event bindings. Passing in only an event will undelegate all of those events, passing in an event with a reference to the callback with remove only the event associated with that callback.</p>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>$("body").undelegate("click");
+
+var markSelect = function(item) {
+    item.addClass('selected');
+};
+$("app").delegate("touch", markSelect);
+</code></pre>
+
+<h3 id="trigger">trigger</h3>
+
+<p>This method sends the provided event to the target element. For example, if you sent a click event to a button, it would react just as if you had actually clicked on it.</p>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>$("#clickLink").bind("click", function() {
+   // Trigger a click event on a hidden button:
+   $("#hiddenButton").trigger("click");
+});
+</code></pre>
+
+<h3 id="on">on</h3>
+
+<p>This method is the modern equivalent of bind and delegate both. You use it just as you would bind and delegate. </p>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>/* Examples of binding events with 'on' */
+var doSomething = function() {
+   console.log("I'm doing it now.");
+};
+$("#doIt").on("click", doSomething);
+// or:
+$(".stop").on("touchend", function() {
+   console.log("Time to put an end to this!");
+   this.remove();
+});
+
+/* Examples of event delegation with 'on' */
+$("body").on("p", "click", function(paragraph) {
+   paragraph.css("background-color", "yellow");
+});
+</code></pre>
+
+<h3 id="off">off</h3>
+
+<p>This method is equivalent to both unbind and undelegate. You use it the same way you would those two methods.</p>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>$('#myButton').off('click');
+// Unbind a click event with the callback "saySomething":
+$('button').off('click', saySomething);
+// Unbind a delegate click event:
+$("body").off("click");
+// Unbind a delegate click event with the callback "saySomething":
+$("app").off("touch", markSelect);
+</code></pre>
+
+<h3 id="anim">anim</h3>
+
+<p>A method to create dynamic CSS3 transitions. The method takes three arguments, an object literal of CSS values to animate, followed by a value for the duration in milliseconds, and an easing descriptor. If no easing is provided, it defaults to linear, if no duration is provided it defaults to half a second.</p>
+
+<pre><code>element.anim(options, duration, easing);
+</code></pre>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>$("#animate").on("click", function() {
+   this.anim({"-webkit-transform": "rotate3d(30, 150, 200, 180deg) scale(3) translate3d(-50%, -30%, 140%)", 
+   "opacity": .25, 
+   "-webkit-transform-style" : "preserve-3d", 
+   "-webkit-perspective": 500}, 
+   2, 
+   "ease-in-out");
+});
+</code></pre>
+
+<p>You can include in the object an optional callback to execute when the animation ends:</p>
+
+<pre><code>function saySomething() {
+     alert('The animation just ended.');
+ }
+$("#animate").on("click", function() {
+   this.anim({"-webkit-transform": "rotate3d(30, 150, 200, 180deg) scale(3) translate3d(-50%, -30%, 140%)", 
+   "opacity": .25, 
+   "-webkit-transform-style" : "preserve-3d", 
+   "-webkit-perspective": 500, 
+   onEnd: saySomething }, 
+   2, 
+   "ease-in-out");
+});
+</code></pre>
+
+<h3 id="uicheckforoverflow">UICheckForOverflow</h3>
+
+<p>This method test to see if an element whose overflow property is set to &#8216;hidden&#8217; is hiding any content overflow.</p>
+
+<h2 id="string_methods">String Methods</h2>
+
+<h3 id="capitalize">capitalize</h3>
+
+<p>This method will capitalize the first letter of a string, as for the first word of a sentence.</p>
 
 <p><strong>Example:</strong></p>
 
@@ -1673,656 +1101,242 @@ console.log("The item has a total distance of: " + distance);
 name.capitalize(); // returns Robert
 </code></pre>
 
-<p>&nbsp;</p>
+<h3 id="capitalizeall">capitalizeAll</h3>
 
-<h2 id="function_stringcapitalizeall">Function: String.capitalizeAll</h2>
-
-<p>Method to capitalize the first letter of a words in a string. This method is attached directly to the $ object.</p>
-
-<p><strong>Syntax:</strong></p>
-
-<pre><code>$.capitalizeAll(string);
-</code></pre>
-
-<p><strong>Parameters:</strong></p>
-
-<ul>
-<li>string: A string to capitalize.</li>
-</ul>
-
-<p><strong>Returns:</strong></p>
-
-<p>A string with all words capitalized. </p>
+<p>This method will capitalize the first letter of each word in a string.</p>
 
 <p><strong>Example:</strong></p>
 
-<pre><code>var name = $.capitalize("get out now"); // returns Get Out Now
+<pre><code>// returns Get Out Now
+var name = $.capitalize("get out now");
 </code></pre>
 
-<p>&nbsp;</p>
+<h3 id="camelize">camelize</h3>
 
-<h2 id="function_stringcamelize">Function: String.camelize</h2>
+<h3 id="decamelize">deCamelize</h3>
 
-<p>This takes a string of hyphenated values, removes the hyphens and capitalizes the first left of each section except the first.</p>
+<h2 id="_methods">$ Methods</h2>
+
+<h3 id="xhr">xhr</h3>
+
+<p>This method allows you to execute an Ajax operation. You pass in an object literal of the properties you wish to execute. It expects at a minimal a URL to access. </p>
 
 <p><strong>Syntax:</strong></p>
 
-<pre><code>String.camelize();
-</code></pre>
-
-<p><strong>Returns:</strong></p>
-
-<p>A string with hyphens removed and the First letter of each section capitalized.</p>
-
-<p><strong>Example:</strong></p>
-
-<pre><code>var recipe = "recipes-cake-name";
-recipe.camelize() // Returns recipesCakeName
-</code></pre>
-
-<p>&nbsp;</p>
-
-<h2 id="function_stringdecamelize">Function: String.deCamelize</h2>
-
-<p><strong>Syntax:</strong></p>
-
-<pre><code>String.deCamelize();
-</code></pre>
-
-<p><strong>Returns:</strong></p>
-
-<p>A string with hyphens replacing the camel case notation.</p>
-
-<p><strong>Example:</strong> </p>
-
-<pre><code>var recipe = "recipesCakeName";
-recipe.deCamelize(); //Returns recipes-cake-name
-</code></pre>
-
-<p>&nbsp;</p>
-
-<h2 id="function_elementbind">Function: Element.bind</h2>
-
-<p>A method to attach events to elements.</p>
-
-<p><strong>Syntax:</strong></p>
-
-<pre><code>Element.bind(event, function);
-</code></pre>
-
-<p><strong>Parameters:</strong></p>
-
-<ul>
-<li>event: A string representing valid event handler, such as &#8220;click&#8221;.</li>
-<li>function: Either named or anonymous. Note that a bound event that uses an anonymous function cannot be unbound. See last example below for how to avoid this.</li>
-</ul>
-
-<p><strong>Example:</strong></p>
-
-<pre><code>var doSomething = function() {
-    console.log("I'm doing it now.");
-};
-$("#doIt").bind("click", doSomething);
-// or:
-$(".stop").bind("touchend", function() {
-console.log("Time to put an end to this!");
-    this.remove();
+<pre><code>$.ajax({
+    url : (a valid url),
+    type : (get, post, put, delete),
+    async : (true or false),
+    params : (any data you wish to include),
+    success : success,
+    error : error,
 });
 </code></pre>
 
-<p>&nbsp;</p>
-
-<h2 id="function_elementunbind">Function: Element.unbind</h2>
-
-<p>A method to remove events from elements.</p>
-
-<p><strong>Syntax:</strong></p>
-
-<pre><code>Element.unbind(event, callback);
-</code></pre>
-
-<p><strong>Parameters:</strong></p>
-
-<ul>
-<li>event: Event A string representing valid event handler, such as &#8220;click&#8221;.</li>
-<li>function: A named function executed by the event handler.</li>
-</ul>
-
 <p><strong>Example:</strong></p>
 
-<pre><code>$("#doIt").unbind("click", doSomething);
-</code></pre>
-
-<p><a name="elementRemoveEvents"></a></p>
-
-<p>&nbsp;</p>
-
-<h2 id="function_elementremoveevents">Function: Element.removeEvents</h2>
-
-<p>Remove events from an element. This method uses an array of events owned by the global $ object to know which events to remove. This method is invoked before removing any nodes from a document to prevent memory leaks. This method is attached directly to the Element object.</p>
-
-<p><strong>Syntax:</strong></p>
-
-<pre><code>Element.removeEvents();
-</code></pre>
-
-<p><strong>Example:</strong></p>
-
-<pre><code>$("#item").removeEvents();
-</code></pre>
-
-<p>&nbsp;</p>
-
-<h2 id="function_elementdelegate">Function: Element.delegate</h2>
-
-<p>A method to create event delegation. It uses the Element.ancestor method to check the ancestors of the event target to determine whether to execute the event or not.</p>
-
-<p><strong>Syntax:</strong></p>
-
-<pre><code>Element.delegate(selector, event, callback);
-</code></pre>
-
-<p><strong>Parameters:</strong></p>
-
-<ul>
-<li>selector: A valid selector for the target element(s).</li>
-<li>event: An event to be fired on the element.</li>
-<li>function: A callback to be executed in relation to the target element.</li>
-</ul>
-
-<p><strong>Example:</strong></p>
-
-<pre><code>$("body").delegate("p", "click", function(element) {
-    Element.css("background-color: yellow");
+<pre><code>/* This will replace the content of the paragraph above with the content of the requested document. If the script is successful, it will execute the success callback, and if it is not, it will execute the error callback.
+*/
+ var content = $("#content");
+$.xhr({
+     url : "data.html",
+    success : function(data) {
+        content.html(data);
+     },
+     error: function(data) {
+         content.html("&lt;h4&gt;There was an error while trying to get the file.&lt;/h4&gt;");
+         if (data.status === -1100) {
+             content.append('&lt;h2&gt;The file does not exist.&lt;/h2&gt;');
+         }
+     }
 });
 </code></pre>
 
-<p>To trap a tag with an attribute, you can use a conditional check inside your delegate assignment:</p>
+<h3 id="ajax">ajax</h3>
 
-<pre><code>$("app").delegate("button", "touch", function(item) {
-    // Check for button with "ui-implements" attribute:
-    if (item.getAttribute("ui-implements") === "back") {
-        // Processing code goes here.
+<p>This is just an alias for $.xhr described above.</p>
+
+<h3 id="xhrjson">xhrjson</h3>
+
+<p>This is a method that allows you to do simple JSON data-binding to markup.</p>
+
+<pre><code><div id="content_02"><span id='firstName'>Joe</span> <span id='lastName'>Bodoni</span> is a <span id='job'>great waiter at a restaurant downtown.</span><span id='role'></div>
+
+/* Here we do a request for a JSON file. If the request is successful, the returned data gets mapped to the object of document elements. This results in the data being inserted into the designated elements of the document. If there is an error, an error message will be displayed. */
+var content2 = $("#content_02");
+$.xhrjson("person.json", { 
+    "firstName": "#firstName",
+    "lastName": "#lastName",
+    "role":"#role",
+    "job": "#job",
+    errorCallback : function() {
+        content2.insert("&lt;h4&gt;There was a problem processing your request. Try again later.&lt;/h4&gt;");
     }
 });
 </code></pre>
 
-<p><strong>See Also:</strong></p>
+<h3 id="delay">delay</h3>
 
-<p><a href="#elementAncestor">Element.ancestor</a></p>
-
-<p><a href="#$events">$.events</a></p>
-
-<p>&nbsp;</p>
-
-<h2 id="function_elementtrigger">Function: Element.trigger</h2>
-
-<p>A method to fire events on elements.</p>
-
-<p><strong>Syntax:</strong></p>
-
-<pre><code>Element.trigger(event);
-</code></pre>
-
-<p><strong>Parameters:</strong></p>
-
-<ul>
-<li>event: An event to be fired on the element.</li>
-</ul>
-
-<p><strong>Example:</strong></p>
-
-<pre><code>$("#importantButton").bind("click", function() {
-    $("#link").trigger("click");
-});
-</code></pre>
-
-<p>&nbsp;</p>
-
-<h2 id="function_elementanim">Function: Element.anim</h2>
-
-<p>A method to implement CSS-based transition animations on elements.</p>
-
-<p><strong>Syntax:</strong></p>
-
-<pre><code>Element.anim(options, duration, easing);
-</code></pre>
-
-<p><strong>Parameters:</strong></p>
-
-<ul>
-<li>object literal: An object literal of key value pairs of CSS properties and values.</li>
-<li>time: integer or float A valid integer or float representing time.</li>
-<li>string: string A string defining an easing function for the animation.</li>
-</ul>
-
-<p><strong>Example:</strong></p>
-
-<pre><code>$("#animate").bind("click", function() {
-    this.anim({"-webkit-transform": "rotate3d(30, 150, 200, 180deg) 
-       scale(3) translate3d(-50%, -30%, 140%)", "opacity": .25, 
-       "-webkit-transform-style" : "preserve-3d", "-webkit-perspective": 500}, 
-       2, "ease-in-out");
-});
-</code></pre>
-
-<p>&nbsp;</p>
-
-<h2 id="function_delay">Function: $.delay</h2>
-
-<p>A method to delay the execution of a function.</p>
-
-<p><strong>Syntax:</strong></p>
-
-<pre><code>$.delay(function, time);
-</code></pre>
-
-<p><strong>Parameters:</strong></p>
-
-<ul>
-<li>function: A function to execute.</li>
-<li>time: integer or float A valid integer or float representing time in milliseconds for delay.</li>
-</ul>
+<p>This method allows you to execute a function with a delay, like setTimeout:</p>
 
 <p><strong>Example:</strong></p>
 
 <pre><code>$.delay(function() {
-    console.log("This message is delayed by two seconds.");
+   console.log("This message is delayed by two seconds.");
 }, 2000);
 </code></pre>
 
-<p>&nbsp;</p>
-
-<h2 id="function_defer">Function: $.defer</h2>
+<h3 id="defer">defer</h3>
 
 <p>A method to postpone the execution of a function until the callstack is clear.</p>
-
-<p><strong>Syntax:</strong></p>
-
-<pre><code>$.defer(function);
-</code></pre>
-
-<p><strong>Parameters:</strong></p>
-
-<ul>
-<li>function: A function to execute.</li>
-</ul>
 
 <p><strong>Example:</strong></p>
 
 <pre><code>$.defer(function() { 
-    console.log("This comes after everything else!"); 
+   console.log("This comes before Squawk!"); 
 });
-var squawk = function() {
-    console.log('Squawk!');
-};
-squawk();
-console.log("Some other stuff");
-[1,1,1,1,1].forEach(function(item, idx) {
-    console.log('Item: ', idx);
-});
-// The deferred console.log will be executed last.
 </code></pre>
 
-<p>&nbsp;</p>
+<h3 id="enclose">enclose</h3>
 
-<h2 id="function_enclose">Function: $.enclose</h2>
-
-<p>Method to enclose one method inside another. This method is attached directly to the $ object.</p>
-
-<p><strong>Syntax:</strong></p>
-
-<pre><code>$.enclose(function, function);
-</code></pre>
-
-<p><strong>Parameters:</strong></p>
-
-<p>(The first function is the one to be enclosed, the second, the function that will enclose it.)</p>
-
-<ul>
-<li>function: The function to  be enclosed.</li>
-<li>function: The function that will enclose it.</li>
-</ul>
-
-<p><strong>Returns:</strong></p>
-
-<p>The result of the enclosed function with output for the enclosing function. </p>
+<p>A method that allows you to execute one function within the execution of another function.</p>
 
 <p><strong>Example:</strong></p>
 
-<pre><code>// hello will get enclose in saySomething.
-var hello = function(name) { return "Hello, " + name + "!"; };
-var saySomething = $.enclose(hello, function(func) {
-       return "Before I said, \"" + func("Stan") + "\" I thought about it for a while.";
+<pre><code>var hello = function(name) { return "Hello, " + name + "!"; };
+hello = $.enclose(hello, function(func) {
+   return "Before I said, \"" + func("Stan") + "\" I thought about it for a while.";
 });
-console.log(saySomething());
 </code></pre>
 
-<p>&nbsp;</p>
+<h3 id="compose">compose</h3>
 
-<h2 id="function_compose">Function: $.compose</h2>
-
-<p>Method to return the composition of several functions, where each function consumes the return value of the function that follows. This method is attached directly to the $ object. The last function on the right is passed to the previous function, all the way to the first on the left (see example below).</p>
-
-<p><strong>Syntax:</strong></p>
-
-<pre><code>$.capitalize(string);
-</code></pre>
-
-<p><strong>Parameters:</strong></p>
-
-<ul>
-<li>function: A function to pass as an argument.</li>
-</ul>
-
-<p><strong>Returns:</strong></p>
-
-<p>The result of the execution of each function passed as an argument. </p>
+<p>Method to return the composition of several functions, where each function consumes the return value of the function that follows.</p>
 
 <p><strong>Example:</strong></p>
 
 <pre><code>var greet = function(name) { return "Hi there, " + name; };
 var exclaim  = function(statement) { return statement + "!"; };
-var remark = function(statement) { return statement + " You know I'm glad to see you."; };
+var remark = function(remark) { return remark + " You know I'm glad to see you."; };
 var welcome = $.compose(remark, greet, exclaim);
-console.log(welcome('Jeff')); // =&gt; Hi there, Jeff! You know I'm glad to see you.
+console.log(welcome('Jeff')); // => Hi there, Jeff! You know I'm glad to see you.
 </code></pre>
 
-<p><a name="$events"></a></p>
-
-<p>&nbsp;</p>
-
-<h2 id="array_events">Array: $.events</h2>
+<h3 id="events">events</h3>
 
 <p>An array of events to be removed before a node is deleted from a document. This array is attached directly to the $ object.</p>
 
-<p><strong>See Also:</strong></p>
+<p><strong>loadEvent</strong></p>
 
-<p><a href="#elementRemoveEvents">Element.removeEvents</a></p>
-
-<p>&nbsp;</p>
-
-<h2 id="function_loadevent">Function: $.loadEvent</h2>
-
-<p>A method to chain load multiple functions to execute when the document finishes loading.</p>
-
-<p><strong>Syntax:</strong></p>
-
-<pre><code>$.loadEvent(callback);
-</code></pre>
-
-<p><strong>Parameters:</strong></p>
-
-<ul>
-<li>function:function A valid function to run when the document finishes loading.</li>
-</ul>
+<p>A method to chain load multiple functions to execute when the document finishes loading. This is equivalent to the load event on the body tag.</p>
 
 <p><strong>Example:</strong></p>
 
 <pre><code>var myFunction = function () {
-    return true;
+   return true;
 };
 $.loadEvent(myFunction());
 </code></pre>
 
-<p><a name="$DOMReadyList"></a></p>
+<h3 id="ready">ready</h3>
 
-<p>&nbsp;</p>
-
-<h2 id="array_domreadylist">Array: $.DOMReadyList</h2>
-
-<p>An array of functions to execute when the document&#8217;s DOM is ready for access. This is used by $.executeWhenDOMReady.</p>
-
-<p><strong>See Also:</strong></p>
-
-<p><a href="#$executeWhenDOMReady">$.executeWhenDOMReady</a></p>
-
-<p><a href="#$ready">$.ready</a></p>
-
-<p><a name="$executeWhenDOMReady"></a></p>
-
-<p>&nbsp;</p>
-
-<h2 id="function_executewhendomready">Function: $.executeWhenDOMReady</h2>
-
-<p>A method to executing methods stored in $.DOMReadyList. This method is called by the $.ready method for executing chained blocks of code when the document fires the DOMContentLoaded event signaling that the document&#8217;s DOM is ready for access. It readys the $.DOMReadyList array to see what code is stored there and executes it item by item. There is never a need for the user to execute this method as it is an auxilliary method for the $.ready() function.</p>
-
-<p><strong>Syntax:</strong></p>
-
-<pre><code>$.executeWhenDOMReady();
-</code></pre>
-
-<p><strong>See Also:</strong></p>
-
-<p><a href="#$DOMReadyList">$.DOMReadyList</a></p>
-
-<p><a href="#$ready">$.ready</a></p>
-
-<p><a name="$ready"></a></p>
-
-<p>&nbsp;</p>
-
-<h2 id="function_ready">Function: $.ready</h2>
-
-<p>Method to determine when the DOM is ready for manipulation and thereupon fire a block of code contained in an anonymous function passed to it as an argument. This method is attached directly to the $ object. If there are mulitple instances of this method, it&#8217;s arguments will be chained and called sequentially with one registration of the DOMContentLoaded event. Before doing this though it checks to see if the document is already loaded. If it is, then no listener is added for the DOMContentLoaded event and instead it immediately executes its function.</p>
-
-<p><strong>Syntax:</strong></p>
-
-<pre><code>$.ready(function);
-</code></pre>
-
-<p>An alternate sytax is:</p>
-
-<pre><code>$(function);
-</code></pre>
-
-<p><strong>Parameters:</strong></p>
-
-<ul>
-<li>function: An anonymous function or block of code to execute.</li>
-</ul>
+<p>Method to determine when the DOM is ready for manipulation and thereupon fire a block of code contained in an anonymous function passed to it as an argument. If there are mulitple instances of this method, it&#8217;s arguments will be chained and called sequentially with one registration of the DOMContentLoaded event.</p>
 
 <p><strong>Example:</strong></p>
 
 <pre><code>$.ready(function() { 
-    console.log("The document is ready for action!"); 
+   console.log("The document is ready for action!"); 
 });
 </code></pre>
 
-<p>This could be simplified to:</p>
+<p>There are several other variants of this method that you can use:</p>
 
-<pre><code>$(function() {
-    console.log("The document is ready for action!"); 
+<pre><code>// Like jQuery and Zepto:
+$(document).ready(function() { 
+   console.log("The document is ready for action!"); 
+});
+
+// Just pass in an anonymous function around the code you wish 
+// to execute to the $() method:
+$(function() { 
+   console.log("The document is ready for action!"); 
 });
 </code></pre>
 
-<p>You can also wrap the document object in $() as jQuery does for the same functionality:</p>
+<h3 id="importscript">importScript</h3>
 
-<pre><code>$(document).ready(function() {
-    console.log("The document is ready for action!"); 
-});
-</code></pre>
-
-<p><strong>See Also:</strong></p>
-
-<p><a href="#$DOMReadyList">$.DOMReadyList</a></p>
-
-<p><a href="#$executeWhenDOMReady">$.executeWhenDOMReady</a></p>
-
-<p>&nbsp;</p>
-
-<h2 id="function_uihideurlbar">Function: $.UIHideURLbar</h2>
-
-<p>A method to hide the browser&#8217;s address bar. This is used at page load time and when the user navigates to different views. This is for use when a Web app is running in the mobile browser with an address bar. It&#8217;s not necessary for Web apps installed on the mobile device&#8217;s home screen.</p>
-
-<p><strong>Syntax:</strong></p>
-
-<pre><code>$.UIHideURLbar();
-</code></pre>
-
-<p><strong>Example:</strong></p>
-
-<pre><code>$.UIHideURLbar();
-</code></pre>
-
-<p>&nbsp;</p>
-
-<h2 id="function_importscript">Function: $.importScript</h2>
-
-<p>A method to import external scripts into the document. This method is attached directly to the $ object.</p>
-
-<p><strong>Syntax:</strong></p>
-
-<pre><code>$.importScript(URI);
-</code></pre>
-
-<p><strong>Parameters:</strong></p>
-
-<ul>
-<li>URI: A valid URI of the script to import into the document.</li>
-</ul>
+<p>A method to import external scripts into the document. This method does so by inserting a script tag into the head of the document, causing the script to load. As such, this method does not suffer from cross-domain scripting issues.</p>
 
 <p><strong>Example:</strong></p>
 
 <pre><code>$.importScript("https://bozo.com/scripts/myScript.js");
 </code></pre>
 
-<p><strong>Variables: iphone, ipad, ipod, android, webos, blackberry, touchEndabled, online, standalone</strong></p>
+<h2 id="variables">Variables</h2>
 
-<p>Properties to determine device platform, network connection and standalone status.</p>
+<h3 id="iphone">iphone</h3>
 
-<p><strong>Syntax:</strong></p>
+<p>Returns true if on an iPhone.</p>
 
-<pre><code>$.standalone // returns true or false
-</code></pre>
+<h3 id="ipad">ipad</h3>
 
-<p><strong>Example:</strong></p>
+<p>Returns true if on an iPad.</p>
 
-<pre><code>if (!$.standalone) {
-    alert("Please install this app before using.");
-}
-if($.iphone) {
-    // Code for iPhone here
-} else if ($.ipad) {
-    // Code for iPad here
-}
-</code></pre>
+<h3 id="ipod">ipod</h3>
 
-<p>&nbsp;</p>
+<p>Returns true if on an iPod.</p>
 
-<h2 id="function_elementxhr">Function: Element.xhr</h2>
+<h3 id="ios">ios</h3>
 
-<p>A method to insert content into a node using The XMLHttpRequest object. This method is attached directly to the Element object.</p>
+<p>Returns true if on a device runing iOS.</p>
 
-<p><strong>Syntax:</strong></p>
+<h3 id="android">android</h3>
 
-<pre><code>Element.xhr(URI);
-</code></pre>
+<p>Returns true if on a device running Android.</p>
 
-<p><strong>Parameters:</strong></p>
+<h3 id="webos">webos</h3>
 
-<ul>
-<li>URI: A valid URI to import into the document and fill an element.</li>
-<li>Callback: A function to execute when the HTTPRequest is successful.</li>
-</ul>
+<p>Returns true if on a device running WebOS.</p>
 
-<p><strong>Example:</strong></p>
+<h3 id="blackberry">blackberry</h3>
 
-<pre><code>$('#content').xhr('/data/customers.html');
-</code></pre>
+<p>Returns true if on a Blackberry device.</p>
 
-<p>&nbsp;</p>
+<h3 id="touchenabled">touchEnabled</h3>
 
-<h2 id="function_elementxhrjson">Function: Element.xhrjson</h2>
+<p>Returns true if the device supports touch interaction.</p>
 
-<p>A method to insert content into a node using The XMLHttpRequest object. This method is attached directly to the Element object.</p>
+<h3 id="online">online</h3>
 
-<p><strong>Syntax:</strong></p>
+<p>Returns true if the device has WiFi or a network connection.</p>
 
-<pre><code>Element.xhrjson(URI);
-</code></pre>
+<h3 id="standalone">standalone</h3>
 
-<p><strong>Parameters:</strong></p>
+<p>Returns true if the app is running as a pinned site, as apposed to running in a browser</p>
 
-<ul>
-<li>URI: A valid URI to import into the document and fill an element.</li>
-<li>options: An object literal mapping elements to json data.</li>
-</ul>
+<h3 id="ios4">ios4</h3>
 
-<p><strong>Example:</strong></p>
+<p>Returns true if on iOS 4. </p>
 
-<pre><code>$('#content').xhrjson('/data/customers.js');
-</code></pre>
+<h3 id="ios5">ios5</h3>
 
-<p>&nbsp;</p>
+<p>Returns true if on iOS 5.</p>
 
-<h2 id="function_elementdata">Function: Element.data</h2>
+<h3 id="useraction">userAction</h3>
 
-<p>A method to get and set a dataset value on an element.</p>
+<p>Returns &#8216;click&#8217; on desktops or devices without touch interfaces, and returns &#8216;touchend&#8217; on touch devices.</p>
 
-<p><strong>Syntax:</strong></p>
+<h3 id="mobile">mobile</h3>
 
-<pre><code>Element.data(key);
-Element.data(key, value);
-</code></pre>
+<p>Returns true if the device is mobile.</p>
 
-<p><strong>Parameters:</strong></p>
+<h3 id="desktop">desktop</h3>
 
-<ul>
-<li>key: A string defining the dataset key to access.</li>
-<li>value: A string defining the value to set the dataset key to.</li>
-</ul>
+<p>Returns true if the device is a desktop.</p>
 
-<p><strong>Example:</strong></p>
+<h3 id="localitem">localItem</h3>
 
-<pre><code>var customer = $('#customer').data('customer-name'); 
-$$(".customers").forEach(function(customer) {
-    console.log(customer.data("customer-name"));
-}
-$("#shirt).data("shirt-size", "XXL"); // outputs data-shirt-size="XXL" on #shirt
-</code></pre>
-
-<p>&nbsp;</p>
-
-<h2 id="function_elementremovedata">Function: Element.removeData</h2>
-
-<p>A method to remove a dataset from an element.</p>
-
-<p><strong>Syntax:</strong></p>
-
-<pre><code>Element.removeData(key);
-</code></pre>
-
-<p><strong>Parameters:</strong></p>
-
-<ul>
-<li>key: A string defining the dataset key to remove.</li>
-</ul>
-
-<p><strong>Example:</strong></p>
-
-<pre><code>$("#shirt).removeData("shirt-size"); // removes data-shirt-size from #shirt
-</code></pre>
-
-<p>&nbsp;</p>
-
-<h2 id="function_localitem">Function: $.localItem</h2>
-
-<p>Set a key/value pair to the browser&#8217;s localStorage, or retrieve a key value. If you pass only a key, it returns the key&#8217;s value if that key is present in localStorage. Otherwise, passing a key and a value will set these on localStorage.</p>
-
-<p><strong>Syntax:</strong></p>
-
-<pre><code>$.localItem(key, value)
-$.localItem(key)
-</code></pre>
-
-<p><strong>Parameters:</strong></p>
-
-<ul>
-<li>key: The key to retrieve from the browser&#8217;s localStorage.</li>
-<li>key: A key to add to the browser&#8217;s localStorage.</li>
-<li>value: A value to set to the key of the browser&#8217;s localStorage.</li>
-</ul>
+<p>Set a key/value pair to the browser’s localStorage, or retrieve a key value. If you pass only a key, it returns the key’s value if that key is present in localStorage. Otherwise, passing a key and a value will set these on localStorage.</p>
 
 <p><strong>Example:</strong></p>
 
@@ -2331,411 +1345,275 @@ var clientFirstName = $.localItem("clientFirstName");
 console.log("The client's name is: " + clientFirstName");
 </code></pre>
 
-<p>&nbsp;</p>
+<h3 id="deletelocalitem">deleteLocalItem</h3>
 
-<h2 id="function_deletelocalitem">Function: $.deleteLocalItem</h2>
-
-<p>Set a key/value pair to the browser&#8217;s localstorage.</p>
-
-<p><strong>Syntax:</strong></p>
-
-<pre><code>$.deleteLocalItem(key)
+<pre><code>// Remove 'clientFirstName' from localStorage:
+$.deleteLocalItem('clientFirstName');
 </code></pre>
 
-<p><strong>Parameters:</strong></p>
+<p>This method deletes the provided key and its value form localStorage.</p>
 
-<ul>
-<li>key: The key to remove from the browser&#8217;s localStorage.</li>
-</ul>
+<h3 id="clearlocalitems">clearLocalItems</h3>
 
-<p><strong>Example:</strong></p>
+<p>This method clears all items from localStorage.</p>
 
-<pre><code>$.deleteLocalItem("clientFirstName");
+<pre><code>$.clearLocalItems();
 </code></pre>
 
-<p>&nbsp;</p>
+<h2 id="templating">Templating</h2>
 
-<h2 id="function_clearlocalitems">Function: $.clearLocalItems</h2>
+<p>ChocolateChip provides its on built-in templating. However, although it is convenient and powerful for most templating needs, if you are dealing with large datasets where speed is important, you should consider a dedicated templating solution.</p>
 
-<p>A method to delete the localStorage. This requires no parameters and will completely remove the browser&#8217;s localStorage for that domain. A new one can be create again at any time.</p>
+<h3 id="templates">templates</h3>
 
-<p><strong>Example:</strong></p>
-
-<pre><code>$.clearLocalItem();
-</code></pre>
-
-<p><a name="$templates"></a></p>
-
-<p>&nbsp;</p>
-
-<h2 id="variable_templates">Variable: $.templates</h2>
-
-<p>An object that stores the templates you define. This is used by $.template. ChocolateChip-UI provides three ways of writing templates: JSP/ASP style tags, Mustache style (curly braces) and square brackets like Smarty. You can use whichever style you prefer, but the styles cannot be mixed up in the same template. However, different templates used in an app can have differ markup without a conflict. The tags allow you to mix in HTML markup with JavaScript to create dynamic templates for processing JSON data. Each style has two types of tags: one for executing JavaScript code and one for outputting the rendered value of a variable. The sets look like this:</p>
-
-<p><strong>Example:</strong></p>
-
-<p>In the example below, ingredients is an array in a JSON object. We&#8217;re going to output the array items as list items in our template.</p>
+<p>This is an object onto which you can store your templates. You can choose between three different templating styles: JSP, Mustache or Django.</p>
 
 <p><strong>JSP style tags:</strong></p>
 
-<p>The delimiters for this are &#8220;&lt;%&#8221; and &#8220;%>&#8221;. You can include any JavaScript code you want to execute in the template inside these delimiters. To output the value of a variable, use &#8220;&lt;%=&#8221; and &#8220;%>&#8221;.</p>
+<p>The delimiters for this are &#8220;&lt;%&#8221; and &#8220;%&gt;&#8221;. You can include any JavaScript code you want to execute in the template inside these delimiters. To output the value of a variable, use &#8220;<%=&#8221; and &#8220;%>&#8221;.</p>
+
+<p><strong>Example:</strong></p>
 
 <pre><code>var templates.ingredients =
-    "&lt;% /* Check if this recipe has ingredients: */ %&gt;\
-    &lt;% if (!!recipe.ingredients) { %&gt;\
-        &lt;ol class='ingredients'&gt;\
-            &lt;% recipe.ingredients.forEach(function(ingredient) { %&gt;\
-                &lt;li&gt;&lt;%= ingredient %&gt;&lt;/li&gt;\
-            &lt;% }); %&gt;\
-        &lt;/ol&gt;\
-    &lt;% } %&gt;";
+   "&lt;% /* Check if this recipe has ingredients: */ %&gt;\
+   &lt;% if (!!recipe.ingredients) { %&gt;\
+      &lt;ol class='ingredients'&gt;\
+          &lt;% recipe.ingredients.forEach(function(ingredient) { %&gt;\
+             &lt;li&gt;&lt;%= ingredient %&gt;&lt;/li&gt;\
+          &lt;% }); %&gt;\
+      &lt;/ol&gt;\
+   &lt;% } %&gt;";
 </code></pre>
 
 <p><strong>Mustache style tags:</strong></p>
 
 <p>The delimiters for this are &#8220;{{&#8221; and &#8220;}}&#8221;. You can include any JavaScript code you want to execute in the template inside these delimiters. To output the value of a variable, use &#8220;${&#8221; and &#8220;}&#8221;.</p>
 
+<p><strong>Example:</strong></p>
+
 <pre><code>var templates.ingredients =
-    "{{ /* Check if this recipe has ingredients: */ }}\
-    {{ if (!!recipe.ingredients) { }}\
-        &lt;ol class='ingredients'&gt;\
-            {{ recipe.ingredients.forEach(function(ingredient) { }}\
-                &lt;li&gt;${ ingredient }&lt;/li&gt;\
-            {{ }); }}\
-        &lt;/ol&gt;\
-    {{ } }}";
+   "{{ /* Check if this recipe has ingredients: */ }}\
+   {{ if (!!recipe.ingredients) { }}\
+      &lt;ol class='ingredients'&gt;\
+          {{ recipe.ingredients.forEach(function(ingredient) { }}\
+             &lt;li&gt;${ ingredient }&lt;/li&gt;\
+          {{ }); }}\
+      &lt;/ol&gt;\
+   {{ } }}";
 </code></pre>
 
-<p><strong>Square bracket style tags:</strong></p>
+<p><strong>Django square bracket style tags:</strong></p>
 
 <p>The delimiters for this are &#8220;[[&#8221; and &#8220;]]&#8221;. You can include any JavaScript code you want to execute in the template inside these delimiters. To output the value of a variable, use &#8220;$[&#8221; and &#8220;]&#8221;.</p>
 
-<pre><code>var templates.ingredients =
-    "[[ /* Check if this recipe has ingredients: */ ]]\
-    [[ if (!!recipe.ingredients) { ]]\
-        &lt;ol class='ingredients'&gt;\
+<p><strong>Example:</strong>
+    var templates.ingredients =
+       &#8220;[[ /* Check if this recipe has ingredients: */ ]]\
+       [[ if (!!recipe.ingredients) { ]]\
+          &lt;ol class='ingredients'&gt;\
             [[ recipe.ingredients.forEach(function(ingredient) { ]]\
-                &lt;li&gt;$[ ingredient ]&lt;/li&gt;\
+               &lt;li&gt;$[ ingredient ]&lt;/li&gt;\
             [[ }); ]]\
-        &lt;/ol&gt;\
-    [[ } ]]";
-</code></pre>
+          &lt;/ol&gt;\
+       [[ } ]]&#8221;;</p>
 
 <p><strong>Nesting Templates:</strong></p>
 
-<p>You can break down complex templates into manageable modules which you can nest. This allows you to update the nested templates separately from the parent, or the other way around. It&#8217;s probably a good idea to name nested templates so that their name reflects their relation to the parent template they belong to. Here&#8217;s how to do it. Just define the sub-templates the same way you would define a normal template, as a value on $.templates. Then, when building out the string for the parent template you concatenate the sub-template&#8217;s variable. This would be something like this:</p>
+<p>You can break down complex templates into manageable modules which you can nest. This allows you to update the nested templates separately from the parent, or the other way around. It’s probably a good idea to name nested templates so that their name reflects their relation to the parent template they belong to. Here’s how to do it. Just define the sub-templates the same way you would define a normal template, as a value on $.templates. Then, when building out the string for the parent template you concatenate the sub-template’s variable. This would be something like this:</p>
 
 <pre><code>$.templates.parent_child = 
-"&lt;ol&gt;\
-[[ ancestry.parent.child.forEach(function(child) { ]]\
-    &lt;li&gt;$[ ancestry.parent.child.name ]&lt;/li&gt;\
-[[ }); ]]\
-&lt;/ol&gt;";
+ "&lt;ol&gt;\
+ [[ ancestry.parent.child.forEach(function(child) { ]]\
+   &lt;li&gt;$[ ancestry.parent.child.name ]&lt;/li&gt;\
+ [[ }); ]]\
+ &lt;/ol&gt;";
 
-$.templates.parent = 
-"&lt;div&gt;
-    &lt;p&gt;$[ ancestry.parent.firstName ] $[ ancestry.parent.lastName ] &lt;/p&gt;"
-    + $templates.parent_child + 
-"&lt;/div&gt;";
+ $.templates.parent = 
+ "&lt;div&gt;
+   &lt;p&gt;$[ ancestry.parent.firstName ] $[ ancestry.parent.lastName ] &lt;/p&gt;"
+   + $templates.parent_child + 
+ "&lt;/div&gt;";
 </code></pre>
 
-<p>As you can see above, the parent_child template gets concatenated in the parent template. In the more complex example below, notice that I&#8217;m doing a conditional check to make sure the values that the nested templates depend on exist before outputting them in the parent template. Or you could put that conditional check in the nested template itself. Your call to make.</p>
+<p>As you can see above, the parent_child template gets concatenated in the parent template. In the more complex example below, notice that I’m doing a conditional check to make sure the values that the nested templates depend on exist before outputting them in the parent template. Or you could put that conditional check in the nested template itself. Your call to make.</p>
 
 <pre><code>/* The next two templates will be nested in $.templates.recipes: */
-$.templates.recipes_ingredients = 
-    "&lt;cellsubtitle&gt;\
-        &lt;div&gt;Ingredients&lt;/div&gt;\
-        &lt;ul&gt;\
-            [[ recipe.ingredients.forEach(function(ingredient) { ]]\
-                &lt;li&gt;$[ ingredient ]&lt;/li&gt;\
-            [[ }); ]]\
-        &lt;/ul&gt;\
-    &lt;/cellsubtitle&gt;";
-$.templates.recipes_directions = 
-    "&lt;celldetail&gt;\
-        &lt;div&gt;Directions&lt;/div&gt;\
-        &lt;ol&gt;\
-            [[ recipe.directions.forEach(function(direction) { ]]\
-                &lt;li&gt;$[ direction ]&lt;/li&gt;\
-            [[ }); ]]\
-        &lt;/ol&gt;\
-    &lt;/celldetail&gt;";
-/* The above two templates are nested in this template: */
-/* Before inserting the nested templates, we do a conditional check to make sure the current iteration of the JSON object has an ingredients and directions array: */
-$.templates.recipes = 
-    "[[ recipes.forEach(function(recipe) { ]]\
-        &lt;tablecell class='ui-no-hover'&gt;\
-            &lt;celltitle&gt;$[ recipe.title ]&lt;/celltitle&gt;\
-            [[ /* A conditional check for recipe ingredients: */ ]]\
-            [[ if (!!recipe.ingredients) { ]]"
-                 + $.templates.recipes_ingredients +
-            "[[ } ]]\
-            [[ /* A conditional check for recipe directions: */ ]]\
-            [[ if (!!recipe.directions) { ]]"
-                + $.templates.recipes_directions +
-            "[[ } ]]\
-        &lt;/tablecell&gt;\
-    [[ }); ]]";
+ $.templates.recipes_ingredients = 
+   "&lt;cellsubtitle&gt;\
+      &lt;div&gt;Ingredients&lt;/div&gt;\
+      &lt;ul&gt;\
+          [[ recipe.ingredients.forEach(function(ingredient) { ]]\
+             &lt;li&gt;$[ ingredient ]&lt;/li&gt;\
+          [[ }); ]]\
+      &lt;/ul&gt;\
+   &lt;/cellsubtitle&gt;";
+ $.templates.recipes_directions = 
+   "&lt;celldetail&gt;\
+      &lt;div&gt;Directions&lt;/div&gt;\
+      &lt;ol&gt;\
+          [[ recipe.directions.forEach(function(direction) { ]]\
+             &lt;li&gt;$[ direction ]&lt;/li&gt;\
+          [[ }); ]]\
+      &lt;/ol&gt;\
+   &lt;/celldetail&gt;";
+ /* The above two templates are nested in this template: */
+ /* Before inserting the nested templates, we do a conditional check to make sure the current iteration of the JSON object has an ingredients and directions array: */
+ $.templates.recipes = 
+   "[[ recipes.forEach(function(recipe) { ]]\
+      &lt;tablecell class='ui-no-hover'&gt;\
+          &lt;celltitle&gt;$[ recipe.title ]&lt;/celltitle&gt;\
+          [[ /* A conditional check for recipe ingredients: */ ]]\
+          [[ if (!!recipe.ingredients) { ]]"
+              + $.templates.recipes_ingredients +
+          "[[ } ]]\
+          [[ /* A conditional check for recipe directions: */ ]]\
+          [[ if (!!recipe.directions) { ]]"
+             + $.templates.recipes_directions +
+          "[[ } ]]\
+      &lt;/tablecell&gt;\
+   [[ }); ]]";
 </code></pre>
 
-<p>See Also:</p>
+<h3 id="template">template</h3>
 
-<p><a href="#$template">$.template</a></p>
-
-<p><a name="$template"></a></p>
-
-<p>&nbsp;</p>
-
-<h2 id="function_template">Function: $.template</h2>
-
-<p>A method to parse a JavaScript template and populate it with JSON data. You define the template as a string (see <a href="#$templates">$.templates</a> above) consisting of markup along with JavaScript enclosed in special delimiters. The $.template method parses the JSON object and passes it to the template, after which you can insert it where you wish.</p>
-
-<p><strong>Syntax:</strong></p>
-
-<pre><code>$.template(str, data);
-</code></pre>
-
-<p><strong>Parameters:</strong></p>
-
-<ul>
-<li>string: A string defining the template to use.</li>
-<li>data: JSON data to be mapped to elements in the template.</li>
-</ul>
+<p>A method to parse a JavaScript template and populate it with JSON data. You define the template as a string (see $.templates above) consisting of markup along with JavaScript enclosed in special delimiters. The $.template method parses the JSON object and passes it to the template, after which you can insert it where you wish.</p>
 
 <p><strong>Example:</strong></p>
 
 <pre><code>var result = $.template("ingredients", data);
-$.ready(function() {
-    $("#recipe").insert(result);
+$(function() {
+   $("#recipe").insert(result);
 });
 </code></pre>
 
-<p>One thing I want to point out in the above example, when you define a template with $.templates, such as $.templates.ingredients = &#8220;&#8230;&#8221; when you go to use the template in the $.template method, you don&#8217;t need to use $.templates.ingredients, you can just give the name of the template, &#8220;ingredients&#8221; in this case. The $.template method already knows to retrieve the template from the $.templates object.</p>
+<p>One thing I want to point out in the above example, when you define a template with $.templates, such as $.templates.ingredients = &#8220;…&#8221; when you go to use the template in the $.template method, you don’t need to use $.templates.ingredients, you can just give the name of the template, &#8220;ingredients&#8221; in this case. The $.template method already knows to retrieve the template from the $.templates object.</p>
 
-<p>See Also:</p>
+<h3 id="uiupdateorientationchange">UIUpdateOrientationChange</h3>
 
-<p><a href="#$templates">$.templates</a></p>
-
-<p>&nbsp;</p>
-
-<h2 id="function_uiupdateorientationchange">Function: $.UIUpdateOrientationChange</h2>
-
-<p>A method for outputting a class on the body tag to identify the orientation of the mobile device when the device&#8217;s orientation changes. In landscape mode it puts the class &#8220;landscape&#8221; on the body tag and in portrait mode it puts the &#8220;portrait&#8221; on the body tag. There can only be one or the other on the body tag at any given time. This class is to enable the use of styles based on the orientation of the device. You can create styles using these class as in the example below.</p>
+<p>A method for outputting a class on the body tag to identify the orientation of the mobile device when the device’s orientation changes. In landscape mode it puts the class &#8220;landscape&#8221; on the body tag and in portrait mode it puts the &#8220;portrait&#8221; on the body tag. There can only be one or the other on the body tag at any given time. This class is to enable the use of styles based on the orientation of the device. You can create styles using these class as in the example below.</p>
 
 <p><strong>Example:</strong></p>
 
-<pre><code>body.portrait app &gt; view {
-    background-color: green;
+<pre><code>body.portrait app > view {
+   background-color: green;
 }
-body.landscape app &gt; view {
-    background-color: orange;
+body.landscape app > view {
+   background-color: orange;
 }
 </code></pre>
 
-<p>&nbsp;</p>
+<h3 id="uilistenforwindowresize">UIListenForWindowResize</h3>
 
-<h2 id="function_uilistenforwindowresize">Function: $.UIListenForWindowResize</h2>
-
-<p>A method for outputting a class on the body tag to identify the orientation of the mobile device when the window is resized. If in window is wider than it is tall, it outputs the class &#8220;landscape&#8221; on the body tag, and when it is taller than it is wide, it outputs &#8220;portrait&#8221; on to the body tag. This allows you to testing for orientation change on the desktop for landscape and portrait modes.</p>
+<p>A method to imitate orientation change on mobile devices. It puts a class on the body tag to mimic the orientation of the mobile device when the window is resized. If the window is wider than it is tall, it outputs the class &#8220;landscape&#8221; on the body tag, and when it is taller than it is wide, it outputs &#8220;portrait&#8221; on to the body tag. This allows you to testing for orientation change on the desktop for landscape and portrait modes.</p>
 
 <p><strong>Example:</strong></p>
 
-<pre><code>body.portrait &gt; view {
-    background-color: green;
+<pre><code>body.portrait app > view {
+   background-color: green;
 }
-body.landscape &gt; view {
-    background-color: red;
+body.landscape app > view {
+   background-color: orange;
 }
 </code></pre>
 
-<p>&nbsp;</p>
+<h3 id="kvo">kvo</h3>
 
-<h2 id="function_kvo">Function: $.kvo</h2>
-
-<p>A method for set up key value observers for basic data binding. This allows you to register observers on UI elements to watch for a change in a value. This value could be that of some input or control or of an object. When the observed values change, the observers capture that change and update themselves automatically. In respect to MVC (model, view, controller) practice his allows you to decouple your models from your UI (views). This is especially useful for complex and interactive user interfaces. </p>
+<p>A method for set up key value observers for basic data binding. This allows you to register observers on UI elements to watch for a change in a value. This value could be that of some input or control or of an object. When the observed values change, the observers capture that change and update themselves automatically. In respect to MVC (model, view, controller) practice his allows you to decouple your models from your UI (views). This is especially useful for complex and interactive user interfaces.</p>
 
 <p>In the case of the following HTML we can put together an example in which we want the label to be aware of the value of the text input field:</p>
 
 <p><strong>Example:</strong></p>
 
 <pre><code>&lt;input id="textinput" type="text"&gt;
-&lt;br&gt;
-&lt;label id="labeltext"&gt;Doh!&lt;/label&gt;
-&lt;script&gt;
-
-$(function() {
-    var input = $("#textinput");
-    var label = $("#labeltext");
-    kvo.registerObserver(label, "text");
-    //var currentValue = "Bozo;
-    label.keyWillUpdate = function(object, key, currentValue, newValue) {
-        if (newValue) {
-            this.innerText = input.value;
-        } else {
-            this.innerText = currentValue;
-        }
-    };
-    input.onkeyup = function() {
-        kvo.set("text", this.value);
-    };
-});
-&lt;/script&gt;
+ &lt;br&gt;
+ &lt;label id="labeltext"&gt;Doh!&lt;/label&gt;
+ 
+ &lt;script&gt;
+ $(function() {
+   var input = $("#textinput");
+   var label = $("#labeltext");
+   kvo.registerObserver(label, "text");
+   //var currentValue = "Bozo;
+   label.keyWillUpdate = function(object, key, currentValue, newValue) {
+      if (newValue) {
+          this.innerText = input.value;
+      } else {
+          this.innerText = currentValue;
+      }
+   };
+   input.onkeyup = function() {
+      kvo.set("text", this.value);
+   };
+ });
+ &lt;/script&gt;
 </code></pre>
 
-<p>&nbsp;</p>
-
-<h2 id="function_form2json">Function: $.form2JSON</h2>
+<h3 id="form2json">form2JSON</h3>
 
 <p>A method that converts form values to a JSON object. This can be converted to a string for sending to the server with a GET or POST request, or stored on the client side in localStorage or the client side SQLite database.</p>
-
-<p><strong>Syntax:</strong></p>
-
-<pre><code>$.form2JSON(selector, delimiter);
-</code></pre>
 
 <p><strong>Paramters:</strong></p>
 
 <ul>
 <li>selector: a valid selector for the form to be processed.</li>
-<li>delimiter: a character to use as a delimiter for the marking of JSON member relations in the form element&#8217;s name values (see example below). This defaults to &#8220;.&#8221;, but you can use any other character that suits your purposes.</li>
+<li>delimiter: a character to use as a delimiter for the marking of JSON member relations in the form element’s name values (see example below). This defaults to &#8220;.&#8221;, but you can use any other character that suits your purposes.</li>
 </ul>
 
-<p>For this method to work properly you must name all form elements that you want to retrieve so that they match the structure of the resulting JSON object you would like. You use &#8220;.&#8221; to indicate the sub objects of the JSON object. For example, if your form was for signing up a user, you might have inputs with names such as </p>
+<p>For this method to work properly you must name all form elements that you want to retrieve so that they match the structure of the resulting JSON object you would like. You use &#8220;.&#8221; to indicate the sub objects of the JSON object. For example, if your form was for signing up a user, you might have inputs with names such as:</p>
 
 <pre><code>&lt;form id="newUser"&gt; 
-    &lt;input type="text" name="newUser.name.first"&gt;&lt;/input&gt;
-    &lt;input type="text" name="newUser.name.last"&gt;&lt;/input&gt;
-    &lt;input type="text" name="newUser.address.street"&gt;&lt;/input&gt;
-    &lt;input type="text" name="newUser.address.city"&gt;&lt;/input&gt;
-    &lt;input type="text" name="newUser.address.state"&gt;&lt;/input&gt;
-    &lt;input type="text" name="newUser.address.zip"&gt;&lt;/input&gt;
-    &lt;input type="text" name="newUser.phone"&gt;&lt;/input&gt;
-    &lt;input type="text" name="newUser.email"&gt;&lt;/input&gt;
-&lt;/form&gt;
-&lt;script&gt;
-    $("#main &gt; navbar &gt; uibutton[ui-implements=done]").bind("click", function() {
-        var formData = $.form2JSON('#personalInfo');
-        formData = JSON.stringify(formData);
-        window.location = "ajax/template.html?" + formData;
-    });
-&lt;/script&gt;
+   &lt;input type="text" name="newUser.name.first"&gt;&lt;/input&gt;
+   &lt;input type="text" name="newUser.name.last"&gt;&lt;/input&gt;
+   &lt;input type="text" name="newUser.address.street"&gt;&lt;/input&gt;
+   &lt;input type="text" name="newUser.address.city"&gt;&lt;/input&gt;
+   &lt;input type="text" name="newUser.address.state"&gt;&lt;/input&gt;
+   &lt;input type="text" name="newUser.address.zip"&gt;&lt;/input&gt;
+   &lt;input type="text" name="newUser.phone"&gt;&lt;/input&gt;
+   &lt;input type="text" name="newUser.email"&gt;&lt;/input&gt;
+ &lt;/form&gt;
+ <script>
+   $("#main > navbar > uibutton[ui-implements=done]").bind("click", function() {
+      var formData = $.form2JSON('#personalInfo');
+      formData = JSON.stringify(formData);
+      window.location = "ajax/template.html?" + formData;
+   });
+ </script>
 </code></pre>
 
 <p>This would result in a JSON object like this:</p>
 
 <pre><code>{"newUser":
-    {"name": 
-        {"first": "someValueHere"},
-        {"last": "someValueHere"}
-    },
-    {"address":
-        {"street": "someValueHere"},
-        {"city": "someValueHere"},
-        {"state": "someValueHere"},
-        {"zip": "someValueHere"}
-    },
-    {"phone": "someValueHere" },
-    {"email": "someValueHere"}
-}
+   {"name": 
+      {"first": "someValueHere"},
+      {"last": "someValueHere"}
+   },
+   {"address":
+      {"street": "someValueHere"},
+      {"city": "someValueHere"},
+      {"state": "someValueHere"},
+      {"zip": "someValueHere"}
+   },
+   {"phone": "someValueHere" },
+   {"email": "someValueHere"}
+ }
 </code></pre>
 
 <p>Disabled form elements or ones which have no value will be ignored.</p>
 
-<p>If you need to create an array from something like a set of choices, you&#8217;ll need to marke the name with brackets &#8220;[]&#8221; to indicate that it&#8217;s an array:</p>
+<p>If you need to create an array from something like a set of choices, you’ll need to marke the name with brackets &#8220;[]&#8221; to indicate that it’s an array:</p>
 
 <pre><code>&lt;div&gt;Favorite food&lt;/div&gt;
-&lt;p&gt;
-    &lt;label&gt;Salad:&lt;/label&gt;
-    &lt;input type="checkbox" name="user.favoriteFood[]" value="salad"&gt;
-&lt;/p&gt;
-&lt;p&gt;
-    &lt;label&gt;Pizza:&lt;/label&gt;
-    &lt;input type="checkbox" name="user.favoriteFood[]" value="pizza"&gt;
-&lt;/p&gt;
-&lt;p&gt;
-    &lt;label&gt;Chicken:&lt;/label&gt;
-    &lt;input type="checkbox" name="user.favoriteFood[]" value="chicken"&gt;
-&lt;/p&gt;
+ &lt;p&gt;
+   &lt;label&gt;Salad:&lt;/label&gt;
+   &lt;input type="checkbox" name="user.favoriteFood[]" value="salad"&gt;
+ &lt;/p&gt;
+ &lt;p&gt;
+   &lt;label&gt;Pizza:&lt;/label&gt;
+   &lt;input type="checkbox" name="user.favoriteFood[]" value="pizza"&gt;
+ &lt;/p&gt;
+ &lt;p&gt;
+   &lt;label&gt;Chicken:&lt;/label&gt;
+   &lt;input type="checkbox" name="user.favoriteFood[]" value="chicken"&gt;
+ &lt;/p&gt;
 </code></pre>
 
-<p>If the user checks all three, this would produce:
-    {&#8220;user&#8221;: 
-        {&#8220;favoriteFood&#8221;:[&#8220;salad&#8221;,&#8221;pizza&#8221;,&#8221;chicken&#8221;]}
-    }</p>
-
-<p>&nbsp;</p>
-
-<h2 id="function_functionbind">Function: Function.bind</h2>
-
-<p>Add bind capability to the Function object for versions of Webkit that don&#8217;t support it.</p>
-
-<p><strong>Syntax:</strong></p>
-
-<pre><code>Function.bind(function, object);
-</code></pre>
-
-<p><strong>Example:</strong></p>
-
-<pre><code>var greeter = {
-    name: "greeter object",
-    speaks: function() {
-    constructGreeting = function(greeting) {
-        console.log(greeting + " " + this.name);
-    }.bind(this) // Bound to "greeter"
-        constructGreeting("hello");
-    }
-};
-greeter.speaks("hello");
-</code></pre>
-
-<p>&nbsp;</p>
-
-<h2 id="function_elementuicheckforoverflow">Function: Element.UICheckForOverflow</h2>
-
-<p>Determines whether an element has content overflowing its bounds or not.</p>
-
-<p><strong>Syntax:</strong>
-    Element.UICheckForOverflow();</p>
-
-<p><strong>Returns:</strong></p>
-
-<p>A boolean true or false.</p>
-
-<p><strong>Example:</strong></p>
-
-<pre><code>if($("tableview:first-of-type").UICheckForOverflow();) {
-    // Handle scrolling.
-}
-</code></pre>
-
-<h2 id="library_compatibility">Library compatibility</h2>
-
-<p>ChocolateChip now checks to see if the global $ exists. If it doesn&#8217;t, it makes its $ and $$ available as objects of the window. But if the $ is already attached to the window, it checks to see if it has the property window.$.libraryName with a value of &#8220;ChocolateChip&#8221;. If it does not, it sets its $ to window.$chocolatechip and its $$ to window.$$chocolatechip. This allows you to use ChocolateChip with other libraries that use $ and/or $$, such as jQuery, Prototype, Mootools, etc.</p>
-
-<p>For this to work, you must load the other library before ChocolateChip. Then, instead of writing your code like:</p>
-
-<pre><code>$.ready(function() {
-    // ChocolateChip stuff here.
-});
-    // or:
-$(function() {
-    // ChocolateChip stuff here.
-});
-</code></pre>
-
-<p>You would need to enclose the ChocolateChip code inside an anonymous function and pass in the $chocolatechip and $$chocolatechip variables:</p>
-
-<pre><code>// ChocolateChip code:
-(function($, $$) {
-    $(function() {
-        $("body").css("border: solid 4px red;");
-        $$("p").forEach(function(p) {
-            p.css("font-weight: bold");
-        });
-    });
-})($chocolatechip, $$chocolatechip);
-// jQuery code:
-$(function() {
-    $("a").css({display: "block", "text-decoration": "none"});
-})
-</code></pre>
